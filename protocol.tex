@@ -1,0 +1,71 @@
+\section{Protocols}
+\subsection{Notations:} $A$ - Represents an attribute\\$dom(A)$ - Domain of attribute  $A$\\$s_A$ - Size of the dom($A$)\\$v_i, i \in [s_A]$-$dom(A)=\{v_1,v_2,\ldots, v_{s_A}\}$\\$ct_{A,i}$-\# records with value $v_i$ for attribute $A$\\m-\# number of data onwers\\$\mathcal{D}$- Encrypted database\\ $\mathcal{A}=\{\mathcal{A}_1,...\mathcal{A}_l\}$ - The set of attributes in the relational schema of $\mathcal{D}$\\
+$x \times y$ table $T$ - A table  with $x$ rows/records and $y$ columns one for each  attribute, serves as one of the inputs to a transformation primitive
+\\
+$x' \times y'$ table $T'$ - A table  with $x'$ rows/records and $y'$ columns one for each  attribute, serves as the output of a transformation primitive\\
+$\mathcal{E}(x)$- Represents the one-hot-coding for x\\
+Boldface characterizes encrypted value\\
+$\tilde{}$ characterizes that the data is in one-hot-coding\\
+Throughout this section we will assume that there is an encryption
+scheme $\mathcal{E}$ is a $4$-tuple $(Gen,Enc,Dec,Eval)$, which is
+homomorphic with respect to all functions in a set $\mathcal{F}$.
+
+\subsection{Parties}
+
+There are three type of entities involved in the protocol: {\it
+  analytics server (AS)}, {\it crypto-service provider (CSP)}, and
+users. CSP runs the key-generation algorithm $Gen(\lambda)$ and 
+obtains a pair of keys $(sk,pk)$. We assume that a secure mechanism 
+is used to distribute $pk$ to  AS and the users. 
+
+\subsection{Protocol 1 (Uses Homomorphic Encryption)}
+
+\noindent
+{\bf Step 1:} We assume that $U=\{ u_1, \cdots, u_n \}$ is the set of
+users. Whenever a user $u_i$ needs to send a value $v$ to AS, he/she
+sends the encrypted value $Enc_{pk} (v)$ to AS.
+
+\noindent
+{\bf Step 2:} Assume that AS has encryptions of some values
+(i.e. $Enc_{pk}(v_1),\cdots,Enc_{pk}(v_m)$). AS generates a random
+value $r$ according to some distribution (e.g. a random value
+corresponding to the Laplace or Guassian distribution) and needs to
+compute some function $G(f(v_1,\cdots,v_m),r)$ (we can think of $G$ as
+DP version of the function $f$). For example, if we are computing the
+sum of the values in a differentially private manner then
+$f(v_1,\cdots,v_m) = \sum_{i=1}^m v_i$, $r$ is distributed according
+to the Laplace distribution, and $G(x,y) = x+y$. Now assume that the
+function $G(f(v_1,\cdots,v_m),r) \in \mathcal{F}$. Assuming that for
+$1 \leq i \leq m$, $c_i = Enc_{pk}(v_i)$, AS computes
+$Eval(G,c_1,\cdots,c_m,r)$ which yields $Enc_{pk}(G(f(m_1,\cdots,m_r),r))$.
+
+\noindent
+{\bf Step 3:} AS generates another random value $z$ (assuming that
+addition is in the set of functions $\mathcal{F}$) and computes
+$Enc_{pk}(G(f(m_1,\cdots,m_r),r)+z)$ and sends it to CSP. CSP decrypts
+the value using the secret $sk$ and obtains $G(f(m_1,\cdots,m_r),r)+z$
+and sends it to AS.  AS subtracts $z$ and obtains
+$G(f(m_1,\cdots,m_r),r)$, which is the desired result.
+
+\subsection{Protocol 2 (Uses SMC)}
+
+If $G(f(v_1,\cdots,v_m),r) \not\in \mathcal{F}$, then we cannot simply
+use homomorphic encryption and thus we use secure multiparty
+computation (SMC).
+
+{\it Inputs:} AS's input $i$ to the SMC protocol is
+$Enc_{pk}(v_1),\cdots,Enc_{pk}(v_m)$ and a random variable $r$. CSP's
+input $j$ is the secret key $sk$. The function $z (i,j)$ corresponds
+to the following two steps:
+\begin{itemize}
+\item Decrypt $Enc_{pk}(v_1),\cdots,Enc_{pk}(v_m)$ using $sk$ and obtain
+$v_1,\cdots,v_m$.
+\item Compute $G(f(v_1,\cdots,v_m),r)$
+\end{itemize}
+
+{\it Output:} At the end of the protocol, AS receives the output of the
+function $z(i,j)$ and CSP receives no output.
+
+\am{Does the CSP get to see the plaintext of the original entries $v_1, \ldots, v_m$?}
+
+

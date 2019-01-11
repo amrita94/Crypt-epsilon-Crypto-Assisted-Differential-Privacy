@@ -1,0 +1,100 @@
+\begin{comment}\item Filtering rows- This transformation reduces the size of the dataset by removing the rows which are of no interest for answering the query at hand. 
+	As an illustration, for the aforementioned example query of reporting the dataset with records of \emph{males in their 30s}, the filtering row transformation removes any row corresponding to female employees or males with $age<30$ and $age>30$.
+	\item Filtering columns (or marginalization)- This transformation is similar to the one above except that it acts on data columns instead. 
+	Infact it is analogous to the operation of marginalization which is described as follows.
+	Assuming  $A$ and $B$ to be two attributes with finite domains, let $x$ be a vector of counts representing a histogram over the cross product of the domain (with $|A|*|B|$ entries).
+	Marginalization over the attribute $B$ results in a vector of counts on the attribute $A$ alone by adding up counts corresponding to the same value of $A$.
+	
+	\item Partitioning (into groups)- The partition operator takes as input a set of candidate keys and a data source (table or vector), and splits the input data into a set of data source (table or vector), one for each of the keys, each containing a subset ( possibly empty) of records that map to the associated key. 
+	Thus this transformation, "partitions" the input dataset into a  disjoint subset of the input domain. The partition operator has gained significant prominence in the recent past as most of the state-of-the-art algorithms for histogram counting and range queries leverage on partitinng for reducing the domain size of the data vector by grouping together cells with similar counts. 
+	Another advantage of partitioning is that,  by splitting the dataset into smaller datasets we can now create independent subplans for disjoint parts of the domain thereby allowing parallel composition of differential privacy. 
+	\item Reducing (aggregating into groups ... like marginalization but not on columns) The reduce transformation decreases the dimensionality of the dataset by either eliminating cells from it or grouping together cells. 
+	This reduction in the domain size has the distinct advantage of abating the magnitude of noise injection requisite for differentially private computations. 
+	\item Generate Multi-Dimension Histograms- This transformation involves generating histograms over the product of domains covering multiple attributes. In our setting this boils down to, given the individual encryptions of the one-hot-coding for $n$ attributes, compute the corresponding encryption for the one-hot-coding of n-dimension domain and then aggregate them to obtain the histogram. 
+ \end{comment}
+ 
+ \begin{comment}\paragraph{\textbf{Geometric Mechanism:}} For a count query $f(D)$ the $\epsilon$-differentially private geometric mechanism  with range $\mathcal{Z}$ is defined as follows. When the true query result is $f(D)$, the mechanism outputs $f(D) +
+\eta$, where $\eta$ is a random variable with a two-sided geometric distribution with p.d.f
+\begin{gather}\mathbf{f}(x)=\frac{1-e^{-\epsilon}}{1+e^{-\epsilon}}e^{-\epsilon|x|}\end{gather} for any integer $x$.
+Sometimes due to practical concerns, the output of the geometric distribution is truncated. For example, for any count query on database $D$ with $n$ records has to lie within $[n]$. 
+To address this, the truncated $\epsilon$- geometric mechanism rounds up any negative value to $0$ and rounds down any value greater than $n$ to $n$.   In other words, the mechanism uses the following distribution of noise $\eta$ when the query result is $f(D)$\begin{gather*}
+Pr \big(\eta < -f(D)\big)= Pr \big(\eta > n - f(D)]\big)= 0\\
+Pr \big(\eta = -f(D)\big) = \frac{e^{-\epsilon f(D)}}{1 + e^{-\epsilon}}
+\\ Pr \big(\eta =
+n - f(D)\big) = \frac{e^{-\epsilon(n-f(D))}}{1+e^{-\epsilon}}
+\end{gather*} This does not affect the differential privacy properties. Note that the laplacian distribution is actually the generalization of the symmetric (or two-sided) geometric distribution in the continuous domain. 
+\paragraph{\textbf{Noisy Max:}}Noisy-Max is a type of differentially-private selection mechanism where the goal is to determine the counting query with the highest value out of $m$ different counts.  
+	The algorithm works as follows. First, generate each of the counts and then add independent Laplace noise from the distribution $Lap(\frac{1}{\epsilon})$ to each of them. The index of the largest noisy count is then reported as the noisy max.
+	This has two fold advantage over the naive implementation of finding the maximum count.
+Firstly, noisy-max applies "information minimization" as rather than releasing all the noisy counts
+and allowing the analyst to find the max and its index, only the
+index corresponding to the maximum is made public.
+Secondly, the noise added is much smaller than that in the case of the naive implementation (it has sensitivity $\Delta f=m$). \end{comment}
+
+The protocol goes as follows. The first party, called
+garbler, builds a “garbled” version of a circuit computing f.
+It then gives to the second party, called evaluator, the
+garbled circuit as well as the garbled-circuit input values that
+correspond to a1 (and only those ones). We use the notation
+GI(a1) to denote these input values. It also provides the
+mapping between the garbled-circuit output values and the
+actual bit values. Upon receiving the circuit, the evaluator
+engages in a 1-out-of-2 oblivious transfer protocol [13],
+[14] with the garbler, playing the role of the chooser, so
+as to obliviously obtain the garbled-circuit input values
+corresponding to its private input a2, GI(a2). From GI(a1)
+and GI(a2), the evaluator can therefore calculate f(a1, a2).
+In more detail, the protocol evaluates the function f
+through a Boolean circuit. To each wire wi of the circuit, the
+garbler associates two random cryptographic keys, K0wi
+and
+K1wi
+, that respectively correspond to the bit-values bi = 0
+and bi = 1. Next, for each binary gate g (e.g., an OR-gate)
+with input wires (wi,wj) and output wire wk, the garbler
+computes the four ciphertexts
+Enc
+(K
+bi
+wi
+,K
+bj
+wj )
+(Kg(bi,bj )
+wk ) for bi, bj ∈ {0, 1} .
+The set of these four randomly ordered ciphertexts defines
+the garbled gate.
+bi g
+bj
+g(bi, bj) = bi ∨ bj
+K0w
+i
+,K1w
+i
+K0w
+j
+,K1w
+j
+K0w
+k
+,K1w
+k
+Figure 2: Example of a garbled OR-gate
+It is required that the symmetric encryption algorithm
+Enc, which is keyed by a pair of keys, has indistinguishable
+encryptions under chosen-plaintext attacks. It is also
+required that given the pair of keys (Kbi
+wi ,Kbj
+wj ), the corresponding
+decryption process unambiguously recovers the
+value of Kg(bi,bj )
+wk from the four ciphertexts constituting the
+garbled gate; see e.g. [15] for an efficient implementation.
+It is worth noting that the knowledge of (Kbi
+wi ,Kbj
+wj ) yields
+only the value of Kg(bi,bj )
+wk and that no other output values
+can be recovered for this gate. So the evaluator can evaluate
+the entire garbled circuit gate-by-gate so that no additional
+information leaks about intermediate computations.

@@ -1,0 +1,125 @@
+
+\section{Use Cases}
+\subsection{DPBench algorithms}
+\paragraph{\textbf{AHP}}- Zhang et al in \cite{AHP} outline a state-of-the-art technique for  publishing differentially private histogram.  They introduce a new clustering (or grouping) framework which evaluates 
+the trade-off between the approximation error due to clustering
+and the Laplace error due to Laplace noise injected. This results in significant improvements in the accuracy of the sanitized histograms as compared to existing results.
+
+\paragraph{\textbf{MWEM}}- In this  paper \cite{MWEM}, Hardt et al  combine the Exponential Mechanism with the Multiplicative Weights update rule \cite{MW} to produce a synthetic database that
+substantially improves the performance of differentially private linear queries. The Multiplicative Weights is an iterative approach  maintaining and correcting an approximate distribution through queries  on which the approximate and true datasets
+differ. The Exponential Mechanism, in this context, selects the queries that are most incorrect with respect to the current approximation. 
+\am{MWEM, AHP, DAWA, type algorithms can be implemented}
+\subsection{Learning}\label{Learning}
+\paragraph{\textbf{Linear Regression}}-
+A linear regression is a supervised learning algorithm  that assumes a linear relationship between a quantitative outcome and a set of quantitative explanatory variables. Specifically, on an input of
+n points $\{(x_1, y_1), ... , (x_n , y_n)\}$ (where $x_i \in \mathcal{R}^d 
+$ and $y_i \in \mathcal{R} $), the algorithm outputs a vector $w* \in \mathcal{R}^d
+$
+such that $w*|
+x_i \approx y_i \forall i \in \{1,...,n\}$. The computation of $w$ is done by minimizing a linear combination of a loss function and a regularization term, that
+is, $w* \in \arg\min_{w \in R^d} f_{X,y}(w) + \lambda R(w) $ where $\lambda \geq 0$ is fixed. A popular and convenient loss function is the squared loss function  which penalizes the
+residual of the prediction quadratically, $f_{X,y}(w)=||Xw-y||_2^2$. Here $X \in \mathcal{R}^{n\times d}$
+is the matrix with the vector $x^T_i$ as $i^{th}$ row and $y \in R^n$
+is the vector with the value $y_i$ as $i^{th}$ component. We assume
+that X is always full rank (i.e., $rk(X)=d$). The regularization term is
+added to avoid over-fitting the training dataset and  prevents the weights from getting too large. In
+practice, one of the most common regularization terms is the 2-norm $(R(w)=||w||_2^2)$ which
+generates a model with overall smaller components. Such a model is called the ridge regression and is computed by minimizing the function $F_{ridge}(w)=||Xw - y||_2^2+ \lambda ||w||_2^2$. Since,
+$\Delta F_{ridge}(w) =2X^T(Xw - y) + 2\lambda w$,  $w*$
+can be computed by solving the linear system
+\begin{gather}Aw =b \end{gather}
+where $A=X^TX + \lambda I$ (symmetric $d \times d$ matrix) and $b= X^Ty$ (vector of d components).
+Notice that since X is full-rank, A is positive definite and therefore $det(A) > 0$ (in particular
+A is invertible).
+\\ In this section, we illustrate how to adapt the computation of a differentially private linear regression model to our proposed protocols. The AS is the machine learning engine (MLE) in our context. The CSP and the $m$ data owners $ DO_1,... , DO_m$ remain unchanged
+ as in \cite{LReg}. For the collection of data from the data owners and the subsequent privacy preserving computation, we are using the model as proposed in \cite{LReg}. For the appropriate noise to be added to achieve differential privacy, consider the following discussion.\\
+\textbf{Definition  (L2-sensitivity)}. Assume that  $f$ is a deterministic query that maps a dataset to a vector in $R^d$. The L2-
+sensitivity of $f$ is defined to be $\Delta_2(f ) = \max_{S\sim S'}
+||f (S) - f (S')||$ where $S$ and $S'$ are neighboring datasets.
+The following theorem relates $\epsilon$-differential privacy and L2-sensitivity.
+
+\textbf{Theorem}\cite{sensitivity} Let $f$ be a deterministic query that maps a database to a vector in $R
+^d$
+. Then publishing $f (D)+\eta$
+where $\eta$ is sampled from the distribution with density
+\begin{gather}p(\eta) \propto  exp\Big(-\frac{\epsilon||\eta||}{\Delta_2(f)}\Big)
+\label{noise}
+\end{gather}
+ensures $\epsilon$-differential privacy.\\\\\\
+Notations:
+\arc{Ideally these would be explained in details earlier in the paper depending on the LHE scheme we use. I am temporarily including it here for ease of readability.}
+\\
+$\mathcal{M}$ denotes the message space.\\
+Let C be the set of all possible ciphertexts. Then $\odot$ represents an operation on C such that
+for any a-tuple of ciphertexts $c_1 \leftarrow Enc_{pk}(m_1), ... , c_a \leftarrow Enc_{pk}(m_a)$ (a positive integer), it
+holds that $Pr\Big[Dec_{sk}(c_ \odot ... \odot c_a) = m_1 +... + m_a\Big]  =1$. Also $cMult(a,c)=c\odot...\odot c$(a times). \\  Here we use of \textit{labeled-homomorphic encryption}, labHE which can be constructed from a LHE and a pseduorandom function. The operation $labMult(c, c')$ works as follows. On input two labeled ciphertexts, $c  (a, c)$ and $c'=(a',c')$ 
+ it computes a
+“multiplication” ciphertext $d  =labMult(c, c')$ as  as $ d =Enc_{pk}(a \cdot a')\odot cMult(a, c')\odot cMult(a',c)$.\\\\\\\\
+The protocol works as follows
+\\ \textbf{Parties:} \textit{ CSP, AS, and }$DO_k$ \textit{ with input } $D_k, \forall k \in \{1,...m\}$\\
+\textbf{Output:}  \textit{ AS gets A' and b'
+(i.e., encryptions of A and b, respectively).}\\
+\textbf{Step 1: } \textit{ (key-generation) CSP runs  }$(sk, pk) \leftarrow Gen(\kappa) $\textit{ and makes } $pk$ \textit{ public,}\\ \textit{    while it keeps } sk \textit{ secret.}\\
+\textbf{Step 2:} \textit{ (local computation) } $\forall k \in \{1,...,m\}   DO_k$
+\textit{computes } $A_k=\sum_ix_i^Tx_i$ \text{ and } $b_k=\sum_iy_ix_i$ \textit{ with } $n_{k-1}+1 \leq i\leq n_k$; next $DO_k$ encrypts $A'$
+\textit{ next, }$DO_k$ \textit{ encrypts them, } $A'_k[i,j]=Enc_{pk}(A_k[i,j]), b'_k[i]=Enc_{pk}(b_k[i]), \forall i,j \in \{1,...,d\}, j\geq i$; \textit{ finally } $DO_k$ \textit{ sends all } $A'_k$ \textit{ and } $b'_k$ \textit{ to AS }.
+\\
+\textbf{Step 3:} \textit{(datasets merge) }\begin{gather*}A'[i,j]=\begin{cases}\Big(\bigodot^m_{k=1}A'_k[i,i]\Big)\odot Enc_{pk}(\lambda) &\mbox{ if } j=i\\\bigodot_{k=1}^m A'_k[i,j] &\mbox{ if } j > i\end{cases},b'[i]=\bigodot_{k=1}^m b'_k[i]\end{gather*}
+\\\textbf{Step 4:} \textit{ AS computes the differentially private regression model using } \\\textbf{Protocol - 1}.
+\\ \textbf{Step 4a:}\textit{(data masking) AS samples a random invertible matrix } $R \in GL(d,Z_N)$ \textit{ and a random vector } $r \in Z_N$ \textit{ and } $\eta$ \textit{ from the distribution  } \eqref{noise} \textit{ and it uses the linear homomorphic property of the underlying encryption
+scheme to compute } $C'= Enc_{pk}(AR)$ \textit{ and } $g'=Enc_{pk}(b + A(r+\eta))$. \textit{ The values } $C'= AR$ \textit{ and } and
+$g'=  b + A(r+\eta)$ are the “masked data.” Specifically the performs the following operation \begin{gather*} C'[i,j]=\bigodot^d_{k=1}cMult(R[k,j],A'[i,k])\\g'[i,j]=b'[i]\odot\Big(\bigodot^d_{k=1}cMult(r[k]+\eta[k],A'[i,k])\Big)\end{gather*}
+$\forall i,j \in\{1,...,d\}$; next AS sends $C'$ and $d'$ to CSP.
+\\\textbf{Step 4b: }\textit{(masked model computation)}
+\textit{ The CSP decrypts } $C'$ \textit{ and }$g'$ \textit{ and computes }$\tilde{w}=  C^{-1}g$. \textit{ The vector w is the “masked
+model” sent back to the AS.}
+ \\\textbf{Step 4c:} \textit{(model reconstruction) The AS computes the desired model as } $w =R\tilde{w} - r$. \textit{ Indeed, it is easy to verify that}
+\begin{gather*}R\tilde{w} - r =R\big(AR)^{-1}(b+A(r+\eta)\big)-r\\=A^{-1}b+\eta
+\end{gather*}
+\subsection{Example Queries}
+In this section we illustrate four working examples for our proposed protocols.\\ Let us assume that every data owner $DO_k, k \in\{1,...,m\}$ holds a two-tuple in \textit{Age}$\times$\textit{Gender}. Recall that the chosen representation for our values is one-hot-coding. Let $Gender^k_{Enc}$ and $Age^k_{Enc}$ denote the ciphers for the categories  gender and age respectively for the data owner $DO_k$.  Assume that for the category gender, male is encoded as bit string $10$ and female as $01$ and the age is an integer in $[1,...100]$. Thus the cipher for a female data owner of age 24 would be $Gender_{Enc}=[Enc_{pk}(0),Enc_{pk}(1)], Age_{Enc}=[\underbrace{Enc_{pk}(0),...,Enc_{pk}(0)}_\text{23},Enc_{pk}(1),\underbrace{Enc_{pk}(0),...,Enc_{pk}(0)}_\text{76}]$.   For the rest of the discussion, we assume that each data owner $DO_k$ communicates  his/her respective cipher pair $\{Gender^k_{Enc},Age^k_{Enc}\}$ to the AS beforehand.\\\\
+\textbf{Query 1:} Drop the gender column and partition the age data into 100 bins, where the $i^{th}$ bin corresponds to age $i \in \{1,...,100\}$.  Design a mechanism to provide differentially private answers to queries of the form "Report the number of data owners with age less than equal to $i$".
+\paragraph{Mechanism:} 
+\begin{enumerate}\item First the AS simply ignores the cipher $Gender^k_{Enc}, \forall k \in \{1,...,m\}$. \item Next the AS performs a vector like addition (i.e., add corresponding components of the tuple together) of all the ciphers $Age^k_{Enc}, \forall k \in \{1,...,m\}$. Let $\mathcal{A}'$ be the resulting tuple, thus we have \begin{gather}\mathcal{A}'[i]=Age^1_{Enc}[i]\odot....\odot Age_{Enc}^m[i], i \in [1,...,100] \label{A}\end{gather} It is easy to see that $Dec_{sk}(\mathcal{A}'[i]) = \# \textit{ people with age = i}$.
+\item In order to compute the number the people with age at most i, the AS performs $C'=\mathcal{A}'[1]\odot ...\odot \mathcal{A}'[i]$. Clearly $Dec_{sk}(C')=C=\#\textit{people with age at most i}$. \item Finally it uses the proposed \textbf{Protocol-1} as follows.\begin{enumerate}\item AS samples a random integral value $r \in \mathcal{Z}$ and and sends masked value $\tilde{C}'=C'\odot r$  to the CSP. \item The CSP decrypts $Dec_{sk}(\tilde{C}')=\tilde{C}=C+r$.  \item CSP sends noisy value $\hat{C}=\tilde{C}+\eta, \eta \in Lap(\frac{1}{\epsilon})$ to AS.  \item Finally AS subtracts $r$ from $\hat{C}$ to report the $\epsilon$-differentially private query response $C+\eta$.  \end{enumerate} \end{enumerate}
+\textbf{Query 2:}Drop the gender column of the data and partition the age into 100 bins like before. Design a $\epsilon$-differentially private mechanism to report the age with the maximum count, i.e., mode.
+\paragraph{Mechanism:}\begin{enumerate}\item AS ignores the ciphers $Gender^k_{Enc}, \forall k \in \{1,...,m\}$ and computes $\mathcal{A}'$ as in \eqref{A}. \item Next AS draws an uniformly random sample $\textbf{R} \in_R [\mathcal{Z}]^{100}$ and computes $\tilde{\mathcal{A}}'[i]=\mathcal{A}'[i]\odot\textbf{R}[i], i \in \{1,...,100\}$ \item AS sends $\tilde{\mathcal{A}}'$ to CSP and engages in \textbf{Protocol-2}. \begin{enumerate}\item First CSP decrypts $\tilde{\mathcal{A}}'$. \item Next the CSP constructs a garbled circuit that performs the following actions \\\textbf{Input}- CSP:$\eta \in [Lap(\frac{1}{\epsilon})]^{100}$; AS: R \begin{enumerate}\item Removes the mask $R$ from $\tilde{\mathcal{A}}$ to recover the corresponding $\mathcal{A}$
+\item Injects laplacian noise to get $\hat{\mathcal{A}}=\mathcal{A}+\eta$ \item Outputs $\arg_{i}\max\{\mathcal{A}[i]\}, i \in \{1,...,100\}$  \end{enumerate}  The CSP subsequently makes the garbled circuit  and the garbled inputs corresponding to $\eta$ available
+to the AS. \item Then, it engages in an oblivious transfer
+protocol with the AS, so that the AS obtains garbled
+values of the masks: $GI(R)$. 
+\item Finally, the AS evaluates
+the circuit, whose final (ungarbled) output comprises the
+requested noisy max.\end{enumerate}
+\end{enumerate}
+\textbf{Query 3:}Partition the data first by gender and then by age in ranges of 10. Release the $\epsilon$-differentially private  count for each bin. \paragraph{Mechanism}For this we use the labeled homomorphic encryption scheme (labHE).
+\begin{enumerate}\item AS generates two sets of "multiplication" ciphers 
+′k,j[i]=labMult(GenderEnc[j],AgeEnc[i])j={1,2},k∈{1,...,m},i∈{1,...,100}
+ Thus if data owner DOk is male then Decsk(Tk,2)[i]=0∀i∈{1,...,100} and Decsk(Tk,1) gives us the one-hot-code for the data owner's age. \item Next AS computes 
+′j[i]=′1,j[i]⊙...⊙′m,j[i],j∈{1,2},i∈{1,...,100}
+Hence Decsk(′1) and Decsk(′2)  gives us the count of the number of males and females respectively of age i. \item Then, the AS reduces the counts into ranges of 10 as follows
+A′j[i]=′j[(i−1)∗10+1]⊙...⊙′j[i∗10],i∈{1,...,10}
+\item Next AS follows \textbf{Protocol -1} to report the noisy counts for each of the 10 bins in Aj
+\begin{enumerate}\item AS draws an uniformly random sample $R \in [\mathcal{Z}]^{10}$ and mask $\textbf{A}_j$ as $\mathbf{\tilde{A}}'_j=\textbf{A}_j[i]\odot R[i] i \in \{1,...,10\}$; AS sends $\mathbf{\tilde{A}}'_j$ to CSP.  \item The CSP decrypts $Dec_{sk}(\mathbf{\tilde{A}}'_j)=\mathbf{\tilde{A}}_j=\mathcal{A}_j+R$.  \item CSP sends noisy value $\hat{A}_j=\mathbf{\tilde{A}}_j+\eta, \eta \in [Lap(\frac{1}{\epsilon})]^{10}$ to AS.  \item Finally AS subtracts $R$ from $\hat{A}_j$ to report the $\epsilon$-differentially private query response $\textbf{A}_j+\eta$. \end{enumerate}
+\end{enumerate} However the aforementioned mechanism results in 200 \textit{ labMult()} operations for each data owner driving up the computation costs. An alternative mechanism is outlined below.  Let us assume that each data owner now generates two ciphers E[1:] and E[2:] which represent either a 0-vector or the age in one-hot-coding based on the gender of DOk. If the gender of data owner DOk is male and age \textbf{i} 
+Ek[1,i]=Encpk(1)Ek[1,i]=Encpk(0)∀i∈{1,...,100},i≠iEk[2,i]=Encpk(0)∀i∈{1,...,100}
+ The cipher for female data owners are generated similarly. 
+\begin{enumerate}\item AS computes \begin{gather}\mathcal{A}'_j[i]=E^1[j,i]\odot ...\odot E^m[j,i], j \in \{1,2\}, i \in \{1,...,100\}\end{gather} \item Rest of the procedure is same as that for the previously described mechanism. \end{enumerate}
+ Note that now the burden of additional cost is shifted to the data owners who have to carry out extra encryptions owing to the expanded cipher size.\\\textbf{Query 4:} For this query we assume that the data owners DOk  have  a bit string of length d. Design a ϵ- differentially private mechanism to pick the most frequent bit string. \paragraph{Mechanism}  The naive implementation constitutes encoding the strings in a 2d bit long string using one-hot-coding and then following the similar procedure as shown for \textbf{Query 2}. However this might be computationally inefficient  as the representation size blows up exponentially . Moreover if m<<2d then we can have at most m different values  for the bit strings. Let Bk be the encoding for the bit strings in one-hot-coding for DOk. At least 2d−m entries of Bk will be 0 for all the data owners. \\
+\arc{To exploit this we can use CRT based packing techniques to pack the data for $n > 1$ entries in a single cipher, i.e., $B'_k[j]=pack{Enc_{pk}(B_k[i_1]),...,Enc_{pk}(B_k[i_n])} j \in {1,...,2^d/n},  i \in \{1,...,2^d\}$.  Now for a given $B'_k[j]$ if $B_k[i_1]=...=B_k[i_n]=0$, then $Dec_{sk}(B'_k[j])=0$. Let $D'[j]=B'_1[j]\odot...B'_m[j]$. While decrypting $D'$, if $Dec_{sk}(D'[j])=0$ then it means that $\sum_{k=1}^m B_k[i_1]=...=B_k[i_n]=0$. Thus the CSP does need to unpack D and decrypt the values for the individual $i$s thereby saving in $n-1$ operations. If n is the packing size, then it means we will have $2^d/n$ packets in total. The total number of operations is $\frac{2^d}{n}m$ ( cost of summing the ciphers) + $\frac{2^d}{n}$ (cost of decrypting the packets by CSP) + $m(n+1)$ (cost of unpacking and decrypting individual $i$s) The optimum value for $n\approx 2^{d/2}$ is obtained by minimizing the above equation.}
+\subsection{Design Decisions}
+\paragraph{Symmetric key LHE vs Assymetric key LHE:} Symmetric Key\\ Pros:\begin{itemize} \item More efficient than assymteric key cryptosytems in general.\end{itemize}Cons:\begin{itemize}\item CSP needs a private channel with each of the data owners to communicate the secret key. This might be problematic in certain scenarios; for instance if the data is collected from a crowdsourcing platform where the participant population is huge and dynamic in nature ( people can join and leave arbitrarily at short intervals). \end{itemize}
+Assymetric Key\\
+Pros:
+\begin{itemize}\item CSP can publish the public key $pk$. Hence anybody can be contribute encrypted data to the AS w/o any further communication with the CSP. \end{itemize}
+Cons:
+\begin{itemize} \item The performance usually lags behind that of a symmetric key system.\end{itemize}
+\paragraph{Who will add the noise?}
+Considering a semi-honest model for the AS, we can entrust it with the responsibility of adding the suitable laplacian noise requisite for achieving differential privacy. This semi-honest adversary model can be easily transformed to that of a malicious one via statistical ZKP protocols where the AS has to prove that it has added the requisite noise. One other option can be making the CSP add the desired noise instead.  For \textbf{Protocol-1} this would result in an extra noise addition step for the CSP after the decryption of the masked inputs from AS (Note that the random mask used by AS is still needed as this is used in protecting even the DP result from the CSP.)
+In \textbf{Protocol-2} this would amount to additional garbled inputs, corresponding to the Lap noise, from the CSP in the resulting garbled ckt.
+This has the advantage in that the result of the DP computation is never revealed to the CSP, hence it has no incentive at all to not add the noise and cheat.
+Additionally, the CSP can compute the sensitivity of the query at hand easily because the functions computed ( i.e.,  a series of transformations) is publicly known in our setting.
+However the implementation of the flexibility might not be straightforward always.   For instance in our use case example of computing the linear regression model,  as described in section \ref{Learning}, if the AS  is responsible for adding the noise then the model in \cite{LReg} can be almost directly adapted to  our proposed $\textbf{Protocol-1}$. However, the mechanism is not entirely straightforward in case the CSP is responsible for the noise injection as the CSP is given the masked versions of  $A$ and $b$. Of course one can switch over to  $\textbf{Protocol -2}$ instead to compute the linear model, however this would be computationally heavier than the former approach. 
+
+\paragraph{Decryption in Protocol 2} The decryption of the AS's input in \textbf{Protocol - 2} can be performed either as a part of the garbled circuit or outside the circuit. For the latter, AS needs to mask the inputs and the CSP decrypts the masked values. Then the AS also  needs to provide the masks as its input to the garbled circuit which then removes the mask as a first step before carrying out the desired secure computation. In case of the former option, CSP needs to enter the secret key as an input to the circuit. We can choose between the two based on performance efficiency.\\
+\am{SGD from the deep learning paper??}

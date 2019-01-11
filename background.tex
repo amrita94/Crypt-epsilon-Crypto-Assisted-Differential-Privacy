@@ -1,0 +1,139 @@
+
+\section{Background}
+
+\subsection{Differential Privacy}
+\begin{definition} An algorithm $\mu$
+satisfies $\epsilon$-differential privacy ($\epsilon$-DP), where $\epsilon \geq 0$ is a privacy parameter, if
+and only if for any two datasets $D$ and $D'$ that differ in a single record, we have
+\begin{gather}
+\forall t \in Range(\mu), Pr \big[\mu(D) = t\big] \leq e^{\epsilon}Pr\big[\mu(D') = t\big]
+\end{gather}
+where $Range(\mu)$ denotes the set of all possible outputs
+of the algorithm $\mu$.
+\end{definition}
+
+
+\begin{comment}\subsubsection{Local Differential Privacy}
+\arc{Not final-placeholder}
+In the local setting, there is no trusted third party. An aggregator
+wants to gather information from users. Users
+are willing to help the aggregator, but do not fully trust
+the aggregator for privacy. For the sake of privacy, each
+user perturbs her own data before sending it to the aggregator
+(via a secure channel). 
+
+Consider a setting where each user has a single value $v$, which can be viewed
+as the user’s answer to a given question. The aggregator
+aims to find out the frequencies of values among the
+population. Such a data collection protocol consists of
+the following algorithms:
+\begin{enumerate}
+\item Encode is executed by each user. The algorithm
+takes an input value v and outputs an encoded value
+x.
+\item  Perturb, which takes an encoded value x and outputs
+y. Each user with value v reports y =
+Perturb(Encode(v)). For compactness, we use
+PE(·) to denote the composition of the encoding
+and perturbation algorithms, i.e., PE(·) =
+Perturb(Encode(·)). PE(·) should satisfy $\epsilon$-local
+differential privacy, as defined below.
+\item Aggregate is executed by the aggregator; it takes all
+the reported values, and outputs aggregated information.
+\end{enumerate}
+\begin{definition}
+ Local Differential Privacy- An algorithm
+$A$ satisfies $\epsilon$-local differential privacy ($\epsilon$-LDP),
+where $\epsilon \leq 0$, if and only if for any input $v_1$ and $v_2$, we
+have
+\begin{gather} \forall y  \in Range(A) : Pr [A(v_1) = y] \leq e^{\epsilon} Pr [A(v_2) = y] \end{gather}
+where $Range(A)$ denotes the set of all possible outputs
+of the algorithm $A$.
+\end{definition}
+This notion is related to randomized response [24],
+which is a decades-old technique in social science to collect
+statistical information about embarrassing or illegal
+behavior. To report a single bit by random response, one
+reports the true value with probability p and the flip of the
+true value with probability 1-p. This satisfies
+(
+ln p
+1-p
+)
+-
+LDP.
+Comparing to the setting that requires a trusted data
+curator, the local setting offers a stronger level of protection,
+because the aggregator sees only perturbed data.
+Even if the aggregator is malicious and colludes with all
+other participants, one individual’s private data is still
+protected according to the guarantee of LDP.
+\subsubsection{Computational Differential Privacy}
+\begin{definition}
+ (IND-CDP privacy) An ensemble $\{f_\kappa\}\kappa  \in N$ of randomized
+functions $f_\kappa : D \rightarrow R_\kappa$ provides $(\epsilon,
+\kappa)$-ind-cdp if there exists a negligible function $negl(\cdot)$ such that for every nonuniform p.p.t turing machine (“distinguisher”) $A$, every polynomial $p(\cdot)$, every sufficiently large $\kappa \in N$ all
+data sets $D,D' \in \mathcal{D}$ of size at most $p(\kappa)$ such that $|D-D'|\leq  1$, and
+every advice string $z_{\kappa}$ of size at most $p(\kappa)$, it holds that \begin{gather}
+Pr [A_{\kappa}(f_{\kappa}(D)) = 1] \leq e^{\epsilon} \times Pr[A_{\kappa}(f_{\kappa}(D')) = 1]
++ negl(\kappa)\end{gather}
+where we write $A_\kappa(x)$ for $A(1^{\kappa}, z_{\kappa}, x)$ and the probability is taken over
+the randomness of mechanism $f_\kappa$ and adversary $A_\kappa$.
+\end{definition}
+
+
+\end{comment}
+\subsection{Cryptographic Primitives}
+\subsubsection{Linearly Homomorphic Encryption}
+Our system relies on the usage of linearly homomorphic
+encryption (LHE). Let $(\mathcal{M}, +)$ be a finite group. A LHE scheme 
+for messages in $\mathcal{M}$ is defined by three algorithms:\begin{enumerate}
+\item Key Generation ($Gen$) -The key generation algorithm $Gen$ takes the security parameter $\kappa$ as input and outputs
+a matching pair of secret and public keys, $(s_k, p_k) \leftarrow Gen(\kappa)$.
+\item Encryption ($Enc$)- This is a randomized algorithm that encrypts a message $m \in \mathcal{M}$ via the public key $p_k$, to generate ciphertext $c \leftarrow Enc_{pk}(m)$.
+\item Decryption ($Dec$) - The decryption algorithm $Dec$ is a deterministic function that uses the secret key $s_k$ to
+recover the original plaintext from a ciphertext c.
+\end{enumerate}
+In addition, linearly homomorphic encryption scheme supports the following two operations
+\begin{itemize}\item Operator $\oplus$- Let $c_1 \leftarrow Enc_{pk}(m1), \ldots, c_a \leftarrow Enc_{pk}(m_a) (a \in \mathcal{Z}_{>0})$. Then we have  $Pr\big[Dec_{sk}(c_1\oplus c_2 ...\oplus c_a)\big]=    m_1 + \ldots   + m_a$  
+\item Operator $Dec_{sk}(cMult(a,c))=am$ where $cMult(a,c)=c\oplus \ldots \oplus c$( a times) \end{itemize}
+\subsubsection{Labeled Homomorphic Encryption}
+Let $(Gen,Enc,Dec)$ be an LHE scheme with security parameter $\kappa$ and message space $\mathcal{M}$. Assume that a multiplication operation is given in $\mathcal{M}$, i.e., is a finite ring. Let also $\mathcal{F}:\{0,1\}^s \times \mathcal{L}\rightarrow \mathcal{M}$ be a pseudo-random function with speed space $\{0,1\}^s$( s= poly($\kappa $)) and the label space $\mathcal{L}$. Define
+\begin{itemize}
+\item $labGen(\kappa)$: On input $\kappa$, it runs $Gen(\kappa)$ and outputs $(sk,pk)$
+\item $localGen(pk)$
+– localGen(pk): For each user $i$ and with the public key as input, it samples a random seed $\sigma_i \in \{0,1\}^s$ and computes $pk_i = Enc_{pk}(\ddot{\sigma_i})$ where $\ddot{\sigma_i}$ is an  encoding of $\sigma_i$ as an  element of $\mathcal{M}$. It outputs $(\sigma_i,pk_i)$.
+\item $labEnc_{pk}(\sigma_i, m , \tau)$: On input a message $m \in \mathcal{M} $ with label $\tau \in \mathcal{L}$  from user $i$, it computes $b=\mathcal{F}(\sigma_i, \tau))$ and outputs the labeled ciphertext $\mathbf{c}=(a,c) \in \mathcal{M} \times \mathcal{C}$ with $ a= m- b$ in $\mathcal{M}$ and $c=Enc_{pk}(b)$.
+\item $labDec_{sk}(\mathbf{c})$: This functions inputs a cipher $\mathbf{c}=(a,c) \in \mathcal{M} \times \mathcal{C}$ encrypted under the labHE scheme and decrypts it as $m=a-Dec_{sk}(c)$.
+\end{itemize}
+In addition to the aforementioned operations supported by a linear homomorphic encryption scheme, labeled homomorphic encryption supports multiplication of two labeled ciphers as follows.
+Operators
+\begin{enumerate}\item $labMult(\mathbf{c}_1,\mathbf{c}_2)$-
+
+On input two labeled ciphers $\mathbf{c}_1=(a_1,c_1)$ and $\mathbf{c}_2=(a_2,c_2)$, it computes a "multiplication" ciphertext $\mathbf{d}=labMult(\mathbf{c_1,c_2})=Enc_{pk}(a_1,a_2)\odot cMult(c_1,a_2) \odot cMult(c_2,a_1)$. Observe that $Dec_{sk}(\mathbf{d})=m_1\cdot m_2 -b_1 \cdot b_2$.
+\item $labMultDec_{sk}(c_1,c_2,\mathbf{d})$-On input two labels $c_1,c_2$ of two labHE ciphers $\mathbf{c_1},\mathbf{c_2}$ and the output $\mathbf{d}$ of $labMult(\mathbf{c_1},\mathbf{c_2})$, it decrypts the product as $m_3=Dec_{sk}(\mathbf{d})+Dec_{sk}(c_1)\cdot Dec_{sk}(c_2) = m_1\cdot m_2$ .    \end{enumerate}
+In this paper we propose an efficient way of extending the labMult() operation for a n-way multiplication in section \ref{implementation}.
+\subsubsection{Secure Computation}
+%\arc{Not final:placeholder}
+Garbled circuit, also known as Yao's protocol\cite{Yao,yao2},  is a generic method for secure multi-party computation. In this paper we just discuss the two-party scenario but it can be generalized to $n > 2$ parties. In its basic form, a garbled circuit allows two-party evaluation of a function $f(x_1,x_2)$ in the presence of semi-honest adversaries. The protocol is run between two data owners with respective private inputs $x_1$ and $x_2$ such that at the end, no party learns more  
+than what is revealed from the output value $f(x_1,x_2)$. In the protocol, one of the parties called
+garbler or generator, builds a “garbled” version of a circuit computing $f$ and sends it over to the second party, called evaluator, alongside the garbled input values 
+corresponding to $x_1$.  Upon receiving the circuit, the evaluator 
+engages in an oblivious transfer protocol with the generator to obliviously obtain the garbled input for $x_2$. Finally the evaluator can securely calculate the desired output $f(x_1, x_2)$ from the garbled circuit and the corresponding garbled inputs for $\{x_1,x_2\}$.
+\begin{comment}\subsection{Data \& Queries}
+\subsubsection{One-hot-encoding} - One-hot-coding is a way of representation for categorical attributes. First the data is converted to an integral representation as follows. Let us assume that the total number of categories is $k$ then each category is represented by an unique integer in $\{1,..., k\}$. Now the one-hot-encoding for a category $x$ with integral representation $t , t \in [k]$ is given by a $k$-lengthed vector $\tilde{x}$ such that $tilde{x}[t]=1, \forall i \in [k], i\neq t, \tilde{x}[i]=0$. 
+For example consider an attribute $Age$ with domain $\{1,...,100\}$. In this case since the categories itself are integral, we can skip the first step. Thus the one-hot-encoding corresponding to a value $x=30, type(x)=Age$ is given by $\tilde{x}[30]=1, $equivalent to. In fact the one-hot-coding can be generalized to  represent data across $n$ different attributes. For example, in addition to the aforementioned $Age$ attribute consider  another attribute  $Gender$ with domain $\{Male, Female, Other\}$. Let the categorical values $\textit{Male, Female }$ and $Other$ be represented by integers $1, 2$ and $3$ respectively. Thus a one-hot-encoding for a value $X=<1,30> \in Age \times Gender$ is given by \begin{gather*}i \in [300] \\\tilde{X}[i]=\begin{cases}1, \textit{ if } i =30,\\ 0 , \textit{ otherwise }\end{cases}\end{gather*}
+\begin{comment}\subsubsection{Unary Query Type}
+We support unary queries that is queries that operate on a single dataset
+\am{Single Table, categorical attributes, in tabular form (and not in vector form), Counting queries ...}
+Let condition formula, $\phi$ be a Boolean
+condition that can be evaluated on any tuple of $D$ and let $\phi(D )$ 
+denote the number of tuples in $D$ for which $\phi$ is true. A number of
+operators in Crypt$\epsilon$ answer linear queries over the table. A linear
+query is the linear combination of any finite set of condition counts:
+\begin{definition}
+ (Linear counting query (declarative)). A linear query
+$q$ on $D$ is defined by conditions $\phi_1 \ldots \phi_k$ and coefficients $c_1 \ldots c_k \in \mathcal{Z}$
+ and returns \begin{equation}q(D ) = c_1\phi_1(D) + \ldots + c_k\phi_k (D ) \label{countingq}\end{equation}
+\end{definition}
+\end{comment}

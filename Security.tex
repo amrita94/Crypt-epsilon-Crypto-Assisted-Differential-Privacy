@@ -1,0 +1,66 @@
+\section{Security Analysis}
+\subsection{Security Model}
+The involved parties in Crypt$\epsilon$ are m data owners $DO_1,\ldots, DO_m$ and two servers AS and the CSP. In this paper we consider a
+semi-honest adversary  $Adv$ who can corrupt any subset of the data owners and at most one of the two
+servers. This captures our assumption that the two servers are non-colluding, i.e. if one is controlled
+by the adversary, the second one behaves honestly. Thus the requisite security definition should state that $Adv$ only learns the data of the corrupted data owners and the final differentially private output but nothing else about the honest data owners. In other words, the view of the adversary $Adv$ should be computationally indistinguishable from a truly differentially private protocol.
+The target ideal functionality $\mathcal{F}$ for our protocols is described in Figure 3. Answering a query in Crypt$\epsilon$ can be considered to be a two-phase protocol. In the first phase the data owners submit there data encrypted under a labeled homomorphic encryption scheme to the AS. Let this phase be represented by protocol $\Pi_1$. This is followed by the actual computation of the query answer via a joint computation of an equivalent Crypt$\epsilon$ program by the As and the CSP.  Let protocol $\Pi_2$ represent this second phase. Using this the ideal functionality of Crypt$\epsilon$ can be represented by Figure \ref{ideal}. 
+ \begin{figure}\noindent
+\framebox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\itshape \textbf{Parties}:- AS, CSP and $DO_i$, $\forall i \in \{1,...,m\} \\ \textbf{Input}:-  D_i, \forall i \in \{1,...,m\} , \thinspace\thinspace\thinspace\thinspace\thinspace\thinspace\textit{Query Q}$ \\
+\textbf{Output}:- Differentially private output for Q, $\hat{c}$\\\\\textbf{Phase 1:} AS, CSP and $DO_i$ jointly run protocol $\Pi_1$\\\textbf{Phase 2:} AS and CSP run protocol $\Pi_2$ to generate $\hat{c}$ }} \label{ideal} \caption{Ideal functionality $\mathcal{F}$ of Crypt$\epsilon$} \end{figure}
+To formally prove the security, we use the standard simulation based definition \cite{Goldreich}.
+Let us consider a public function $\phi: (\{0,1\}^k)^n\mapsto \{0,1\}^t$ and let $P_1; \cdots ; P_n$ be $n$ players modeled
+as PPT machines. Each player $P_i$ holds the value $x_i \in \{0,1\}^k$ and wants to compute the
+value $\phi(x_1;\cdots ; x_n)$ while keeping his input private. The players can communicate among
+them using point-to-point secure channels in the synchronous model. If necessary, we
+also allow the players to use a broadcast channel. To achieve their goal, the players jointly
+run a $n$-party MPC protocol . The latter is a protocol for $n$ players that is specified via the
+next-message functions: there are several rounds of communication and in each round the player $P_i$ sends to other players a message that is computed as a deterministic function
+of the internal state of $P_i$ (his initial input $x_i$ and his random tape $k_i$) and the messages
+that $P_i$ has received in the previous rounds of communications. The view of the player $P_j$
+,
+denoted by $ViewP_j()$
+(a1, . . . , an), is defined as the concatenation of the private input aj
+, the
+random tape kj and all the messages received by Pj during the execution of $\Pi$. Finally, the
+output of $\Pi$ for the player $P_j$ can be computed from the view ViewPj
+. In order to be private,
+the protocol $\Pi$ needs to be designed in such a way that a curious player $P_i$ cannot infer
+information about $x_j, j \neq i$  from his view $ViewP_i$.
+More precisely, we have the following definition.
+
+\begin{definition}  Let $S$ a subset of at most $n - 1$ players, the protocol $\Pi$ realizes $\phi$ with privacy against
+$S$ if it is correct and there exists a PPT algorithm $Sim$ such that $(ViewP_i)_{P_i\in S}$ and
+$Sim(\{x_i,P_i\in S\} , \phi(x_1, . . . , x_n))$ are computationally indistinguishable for all inputs.
+ \end{definition}
+%Let us list the interactions of the cSP - the CSP has no interactions with the data owners ever. Moreover which prevents the . Always decrypt the nout is always a . Hence it 
+%From the For the it can thus $\delta$ comes from the  Next
+The evaluation of any Crypt$\epsilon$ program can  be seen as an MPC for m + 2 parties: $DO_1, . . . , DO_m$, AS and
+CSP.
+
+\begin{theorem}Let $S \subset \{1,...,m\}$ then $\Pi$ realizes $\psi$  with correctness and privacy against
+the adversaries $Adv_1=AS \cup \{DO_i, i \in S\}$  and $Adv_2=CSP \cup  \{ DO_i, i \in S\} $\end{theorem}
+\begin{proof} \begin{comment}The interactions between the AS and the CSP can be categorized into three types \begin{enumerate}\item Yao's garbled circuits - Primitives: NoisyMax, CountDistinct\item Decryption of masked data - Primitives: GroupBy \item Decryption of differentially private output- Primitives: Laplace \end{enumerate} Thus there are three possibilities for protocol $\pi_2$. For the garbled circuit based protocol $\pi_2$, the output of both the primitives NoisyMax and CountDistinct are differentially private by definition.  Hence by the standard semantic security of garbled circuits \cite{Yao, yao2}, the protocol is secure against a P.P.T adversary revealing nothing other than the differentially private  circuit outputs. 
+We will discuss the simulators for the other two cases as follows starting of with the second case, i.e., when the CSP decrypts masked data.
+\end{comment}
+Let simulators $S_1$ and $S_2$ simulate the view of ${Adv}_1$ and $Adv_2$ respectively. Let $l$ be the length of the data-records when expressed in the suitable attribute-wise one-hot-coding representation.\\
+$S_1=Sim_1(\{D_i, i \in S\}, \hat{c}, pk, \eta_1)$
+\begin{enumerate}\item Run $Gen(\kappa)\mapsto (pk,sk)$ 
+\item Draw $\eta' \in Lap(\frac{1}{\epsilon})$
+\item Compute $c'=\hat{c}-\eta'-\eta_1$
+\item For all $i \in \{1,...,m\}$ if $i \in S$ then encrypt $D_i$. 
+Otherwise compute $Enc_pk(D_i)$ as a random $l$-lengthed vector $r_i \in \mathcal{C}^l$.
+\item Output $\Big(\{D_i, i \in S\},pk,D',Enc_{pk}(c'),\hat{c} \Big)$ where $D'=\{r_i\},i \in \{1,...,m\} i \not \in S$ as computed in step 4.
+\end{enumerate}
+It follows from the semantic security of the encryption scheme that the simulation
+output has the same distribution of the views of the corrupted parties in $adv_1$ in the
+protocol $\pi$.
+$S_2=Sim_2(D_i, i \in S, \hat{c}=c+\eta_1+\eta_2,pk,sk,)$
+\begin{enumerate}\item Run $Gen(\kappa)\mapsto (pk,sk)$ \item $\bar{c}=\hat{c}-\eta_2=c+\eta_1$
+\item Output $\Big(\{D_i, i \in S\},pk,Enc_{pk}(\bar{c}),\hat{c} \Big)$
+\end{enumerate}
+Thus the simulation output has the same distribution of the
+views of the corrupted parties in $Adv_2$ in the protocol $\Pi$. 
+
+
+\end{proof}
