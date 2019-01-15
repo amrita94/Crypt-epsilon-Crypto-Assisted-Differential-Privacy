@@ -1,9 +1,26 @@
-\documentclass{article}
-%\documentclass{IEEEtran}
-\usepackage[utf8]{inputenc}
-%\IEEEoverridecommandlockouts
-% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
-\usepackage{cite}
+%
+% The first command in your LaTeX source must be the \documentclass command.
+\documentclass[sigconf]{acmart}
+
+%
+% defining the \BibTeX command - from Oren Patashnik's original BibTeX documentation.
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08emT\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+    
+% Rights management information. 
+% This information is sent to you when you complete the rights form.
+% These commands have SAMPLE values in them; it is your responsibility as an author to replace
+% the commands and values with those provided to you when you complete the rights form.
+%
+% These commands are for a PROCEEDINGS abstract or paper.
+\copyrightyear{2018}
+\acmYear{2018}
+\setcopyright{acmlicensed}
+\acmConference[Woodstock '18]{Woodstock '18: ACM Symposium on Neural Gaze Detection}{June 03--05, 2018}{Woodstock, NY}
+\acmBooktitle{Woodstock '18: ACM Symposium on Neural Gaze Detection, June 03--05, 2018, Woodstock, NY}
+\acmPrice{15.00}
+\acmDOI{10.1145/1122445.1122456}
+\acmISBN{978-1-4503-9999-9/18/06}
+%\usepackage{cite}
 \usepackage{enumitem}
 \usepackage{amsmath,amssymb,amsfonts,fullpage}
 \usepackage{algorithmic}
@@ -17,29 +34,33 @@
 \usepackage{fullpage,amsmath}
 \usepackage{times}
 \usepackage{xspace}
+\usepackage{caption}
+\captionsetup[figure]{font=small,labelfont=small}
+\usepackage{subcaption}
 \newtheorem{theorem}{Theorem}
 \newtheorem{definition}{Definition}
 \newtheorem{exmp}{Example}[section]
 \usepackage{mathtools}
+%\usepackage[demo]{graphicx}
+%\usepackage{subcaption}
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
 \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 \input{defs}
 
-\title{Crypt$\epsilon$ : Crypto-Assisted Differential Privacy}
-\author{TBD}
 
 \begin{document}
-\maketitle
-
-\begin{abstract}\arc{Not final-placeholder}
-In the last decade, differential privacy has become the order of the day for achieving strong privacy guarantees on statistical data analysis. Traditionally, differential privacy implementations in practice can be classified into two types: the “central" model where in a trusted centralized server collects the records from the data owners in the clear and outputs differentially private statistics; and the “local” model, in which the data owners do not necessarily trust the server and hence individually randomizes their inputs. The local model thus assures stronger privacy guarantee to the data owners albeit at a cost of strictly limited accuracy and algorithmic expressibility due to the independent coin flips of each data owners. In this work we propose a new two-server model Crypt$\epsilon$ that leverages on cryptographic primitives of linearly homomorphic encryption and two-party secure computation to  \\
-1) achieve the accuracy guarantees of the central model without the need of any \\
+\title{Crypt$\epsilon$ : Crypto-Assisted Differential Privacy}
+\author{}
+\begin{abstract}
+Differential privacy has steadily become the de-facto standard for achieving strong privacy guarantees on statistical data analysis. Depending on the implementation, differential privacy can be classified into two types: the "central" model where in a trusted centralized server collects the records from the data owners in the clear and outputs differentially private statistics; and the "local" model, in which the data owners do not necessarily trust the server and hence individually randomizes their inputs. The local model thus assures stronger privacy guarantee to the data owners albeit at a cost of strictly limited accuracy and restricted algorithmic expressibility due to the independent noise generation of each data owner. In this work, we propose a new two-server model for differential privacy, Crypt$\epsilon$  that leverages on the cryptographic primitives of linearly homomorphic encryption and two-party secure computation to  \\
+1) achieve the accuracy guarantees of the central model without the need of any trusted server \\
 2) provide strictly greater expressibility than the local model. \\
-In order to improve the efficiency of Crypt$\epsilon$ we also propose two differentially private optimization schemes.  We domesnatrate the usability of Crypt$\epsilon$ for practical settings via extensive performance evaluation.
+In order to improve the efficiency of Crypt$\epsilon$ we also propose two differentially private optimization schemes.  We demonstrate the usability of Crypt$\epsilon$ for practical settings via extensive performance evaluation.
 \end{abstract}
 
 %\begin{IEEEkeywords}
-Crypto-assisted Differential Privacy, Crypto Service Provider, 
+\keywords{Crypto-assisted Differential Privacy, Crypto Service Provider, Linear Homomorphic Encryption}
+\maketitle
 %\end{IEEEkeywords}
 \input{Introduction}
 \input{background}
@@ -48,11 +69,11 @@ Crypto-assisted Differential Privacy, Crypto Service Provider,
 \input{Program}
 %\input{separation}
 \input{optimizations}
-\input{Security}
+%\input{Security}
 \input{evaluation}
 \input{relatedwork}
 \input{discussion}
 \input{conclusion}
-\bibliographystyle{plain}
+\bibliographystyle{ACM-Reference-Format}
 \bibliography{references.bib}
 \end{document}

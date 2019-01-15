@@ -3,8 +3,8 @@
 
 \subsection{Differential Privacy}
 \begin{definition} An algorithm $\mu$
-satisfies $\epsilon$-differential privacy ($\epsilon$-DP), where $\epsilon \geq 0$ is a privacy parameter, if
-and only if for any two datasets $D$ and $D'$ that differ in a single record, we have
+satisfies $\epsilon$-differential privacy ($\epsilon$-DP), where $\epsilon \geq 0$ is a privacy parameter, iff
+ for any two datasets $D$ and $D'$ that differ in a single record, we have
 \begin{gather}
 \forall t \in Range(\mu), Pr \big[\mu(D) = t\big] \leq e^{\epsilon}Pr\big[\mu(D') = t\big]
 \end{gather}
@@ -84,40 +84,36 @@ the randomness of mechanism $f_\kappa$ and adversary $A_\kappa$.
 
 \end{comment}
 \subsection{Cryptographic Primitives}
-\subsubsection{Linearly Homomorphic Encryption}
-Our system relies on the usage of linearly homomorphic
-encryption (LHE). Let $(\mathcal{M}, +)$ be a finite group. A LHE scheme 
-for messages in $\mathcal{M}$ is defined by three algorithms:\begin{enumerate}
+\subsubsection{Linearly Homomorphic Encryption (\textsf{LHE})}
+ Let $(\mathcal{M}, +)$ be a finite group. A \textsf{LHE} scheme 
+for messages in $\mathcal{M}$ is defined by three algorithms:\begin{itemize}
 \item Key Generation ($Gen$) -The key generation algorithm $Gen$ takes the security parameter $\kappa$ as input and outputs
 a matching pair of secret and public keys, $(s_k, p_k) \leftarrow Gen(\kappa)$.
-\item Encryption ($Enc$)- This is a randomized algorithm that encrypts a message $m \in \mathcal{M}$ via the public key $p_k$, to generate ciphertext $c \leftarrow Enc_{pk}(m)$.
+\item Encryption ($Enc$) - This is a randomized algorithm that encrypts a message $m \in \mathcal{M}$ via the public key $p_k$, to generate ciphertext $c \leftarrow Enc_{pk}(m)$.
 \item Decryption ($Dec$) - The decryption algorithm $Dec$ is a deterministic function that uses the secret key $s_k$ to
 recover the original plaintext from a ciphertext c.
-\end{enumerate}
+\end{itemize}
 In addition, linearly homomorphic encryption scheme supports the following two operations
-\begin{itemize}\item Operator $\oplus$- Let $c_1 \leftarrow Enc_{pk}(m1), \ldots, c_a \leftarrow Enc_{pk}(m_a) (a \in \mathcal{Z}_{>0})$. Then we have  $Pr\big[Dec_{sk}(c_1\oplus c_2 ...\oplus c_a)\big]=    m_1 + \ldots   + m_a$  
-\item Operator $Dec_{sk}(cMult(a,c))=am$ where $cMult(a,c)=c\oplus \ldots \oplus c$( a times) \end{itemize}
-\subsubsection{Labeled Homomorphic Encryption}
-Let $(Gen,Enc,Dec)$ be an LHE scheme with security parameter $\kappa$ and message space $\mathcal{M}$. Assume that a multiplication operation is given in $\mathcal{M}$, i.e., is a finite ring. Let also $\mathcal{F}:\{0,1\}^s \times \mathcal{L}\rightarrow \mathcal{M}$ be a pseudo-random function with speed space $\{0,1\}^s$( s= poly($\kappa $)) and the label space $\mathcal{L}$. Define
+\begin{itemize}\item Operator $\oplus$ - Let $c_1 \leftarrow Enc_{pk}(m1), \ldots, c_a \leftarrow Enc_{pk}(m_a), a \in \mathcal{Z}_{>0}$. Then we have  $Pr\big[Dec_{sk}(c_1\oplus c_2 ...\oplus c_a)=    m_1 + \ldots   + m_a\big]=1$  
+\item Operator $cMult(a,c)$ - Let $c\leftarrow  Enc_{sk}(m)$. Then  \\ $Dec_{sk}\big(cMult(a,c)\big)=am$ where $cMult(a,c)=c\oplus \ldots \oplus c$ (a times) \end{itemize}
+\subsubsection{Labeled Homomorphic Encryption(\textsf{labHE})}
+Let $(Gen,Enc,Dec)$ be an \textsf{LHE} scheme with security parameter $\kappa$ and message space $\mathcal{M}$. Assume that a multiplication operation is given in $\mathcal{M}$, i.e., is a finite ring. Let also $\mathcal{F}:\{0,1\}^s \times \mathcal{L}\rightarrow \mathcal{M}$ be a pseudo-random function with speed space $\{0,1\}^s$( s= poly($\kappa $)) and the label space $\mathcal{L}$. Define
 \begin{itemize}
-\item $labGen(\kappa)$: On input $\kappa$, it runs $Gen(\kappa)$ and outputs $(sk,pk)$
-\item $localGen(pk)$
-– localGen(pk): For each user $i$ and with the public key as input, it samples a random seed $\sigma_i \in \{0,1\}^s$ and computes $pk_i = Enc_{pk}(\ddot{\sigma_i})$ where $\ddot{\sigma_i}$ is an  encoding of $\sigma_i$ as an  element of $\mathcal{M}$. It outputs $(\sigma_i,pk_i)$.
+\item $labGen(\kappa)$ - On input $\kappa$, it runs $Gen(\kappa)$ and outputs $(sk,pk)$
+\item $localGen(pk)$ -  For each user $i$ and with the public key as input, it samples a random seed $\sigma_i \in \{0,1\}^s$ and computes $pk_i = Enc_{pk}(\ddot{\sigma_i})$ where $\ddot{\sigma_i}$ is an  encoding of $\sigma_i$ as an  element of $\mathcal{M}$. It outputs $(\sigma_i,pk_i)$.
 \item $labEnc_{pk}(\sigma_i, m , \tau)$: On input a message $m \in \mathcal{M} $ with label $\tau \in \mathcal{L}$  from user $i$, it computes $b=\mathcal{F}(\sigma_i, \tau))$ and outputs the labeled ciphertext $\mathbf{c}=(a,c) \in \mathcal{M} \times \mathcal{C}$ with $ a= m- b$ in $\mathcal{M}$ and $c=Enc_{pk}(b)$.
-\item $labDec_{sk}(\mathbf{c})$: This functions inputs a cipher $\mathbf{c}=(a,c) \in \mathcal{M} \times \mathcal{C}$ encrypted under the labHE scheme and decrypts it as $m=a-Dec_{sk}(c)$.
+\item $labDec_{sk}(\mathbf{c})$ - This functions inputs a cipher $\mathbf{c}=(a,c) \in \mathcal{M} \times \mathcal{C}$ encrypted under the labHE scheme and decrypts it as $m=a-Dec_{sk}(c)$.
 \end{itemize}
 In addition to the aforementioned operations supported by a linear homomorphic encryption scheme, labeled homomorphic encryption supports multiplication of two labeled ciphers as follows.
-Operators
-\begin{enumerate}\item $labMult(\mathbf{c}_1,\mathbf{c}_2)$-
-
+\begin{itemize}\item $labMult(\mathbf{c}_1,\mathbf{c}_2)$ -
 On input two labeled ciphers $\mathbf{c}_1=(a_1,c_1)$ and $\mathbf{c}_2=(a_2,c_2)$, it computes a "multiplication" ciphertext $\mathbf{d}=labMult(\mathbf{c_1,c_2})=Enc_{pk}(a_1,a_2)\odot cMult(c_1,a_2) \odot cMult(c_2,a_1)$. Observe that $Dec_{sk}(\mathbf{d})=m_1\cdot m_2 -b_1 \cdot b_2$.
-\item $labMultDec_{sk}(c_1,c_2,\mathbf{d})$-On input two labels $c_1,c_2$ of two labHE ciphers $\mathbf{c_1},\mathbf{c_2}$ and the output $\mathbf{d}$ of $labMult(\mathbf{c_1},\mathbf{c_2})$, it decrypts the product as $m_3=Dec_{sk}(\mathbf{d})+Dec_{sk}(c_1)\cdot Dec_{sk}(c_2) = m_1\cdot m_2$ .    \end{enumerate}
-In this paper we propose an efficient way of extending the labMult() operation for a n-way multiplication in section \ref{implementation}.
+\item $labMultDec_{sk}(c_1,c_2,\mathbf{d})$ - On input two labels $c_1,c_2$ of two labHE ciphers $\mathbf{c_1},\mathbf{c_2}$ and the output $\mathbf{d}$ of $labMult(\mathbf{c_1},\mathbf{c_2})$, it decrypts the product as $m_3=Dec_{sk}(\mathbf{d})+Dec_{sk}(c_1)\cdot Dec_{sk}(c_2) = m_1\cdot m_2$ .    \end{itemize}
+In this paper we propose an efficient way of extending the $labMult()$ operation for a n-way multiplication in section \ref{implementation}.
 \subsubsection{Secure Computation}
 %\arc{Not final:placeholder}
-Garbled circuit, also known as Yao's protocol\cite{Yao,yao2},  is a generic method for secure multi-party computation. In this paper we just discuss the two-party scenario but it can be generalized to $n > 2$ parties. In its basic form, a garbled circuit allows two-party evaluation of a function $f(x_1,x_2)$ in the presence of semi-honest adversaries. The protocol is run between two data owners with respective private inputs $x_1$ and $x_2$ such that at the end, no party learns more  
+Garbled circuit, also known as Yao's protocol \cite{Yao,yao2},  is a generic method for secure multi-party computation. In this paper we just discuss the two-party scenario but it can be generalized to $n > 2$ parties. In its basic form, a garbled circuit allows two-party evaluation of a function $f(x_1,x_2)$ in the presence of semi-honest adversaries. The protocol is run between two data owners with respective private inputs $x_1$ and $x_2$ such that at the end, no party learns more  
 than what is revealed from the output value $f(x_1,x_2)$. In the protocol, one of the parties called
-garbler or generator, builds a “garbled” version of a circuit computing $f$ and sends it over to the second party, called evaluator, alongside the garbled input values 
+garbler or generator, builds a "garbled" version of a circuit computing $f$ and sends it over to the second party, called evaluator, alongside the garbled input values 
 corresponding to $x_1$.  Upon receiving the circuit, the evaluator 
 engages in an oblivious transfer protocol with the generator to obliviously obtain the garbled input for $x_2$. Finally the evaluator can securely calculate the desired output $f(x_1, x_2)$ from the garbled circuit and the corresponding garbled inputs for $\{x_1,x_2\}$.
 \begin{comment}\subsection{Data \& Queries}
