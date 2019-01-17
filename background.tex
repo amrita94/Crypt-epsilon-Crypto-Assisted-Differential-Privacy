@@ -86,9 +86,9 @@ the randomness of mechanism $f_\kappa$ and adversary $A_\kappa$.
 \subsection{Cryptographic Primitives}
 \subsubsection{Linearly Homomorphic Encryption (\textsf{LHE})}
  Let $(\mathcal{M}, +)$ be a finite group. A \textsf{LHE} scheme 
-for messages in $\mathcal{M}$ is defined by three algorithms:\begin{itemize}
+for messages in $\mathcal{M}$ is defined as\begin{itemize}
 \item Key Generation ($Gen$) -The key generation algorithm $Gen$ takes the security parameter $\kappa$ as input and outputs
-a matching pair of secret and public keys, $(s_k, p_k) \leftarrow Gen(\kappa)$.
+a pair of secret and public keys, $(s_k, p_k) \leftarrow Gen(\kappa)$.
 \item Encryption ($Enc$) - This is a randomized algorithm that encrypts a message $m \in \mathcal{M}$ via the public key $p_k$, to generate ciphertext $c \leftarrow Enc_{pk}(m)$.
 \item Decryption ($Dec$) - The decryption algorithm $Dec$ is a deterministic function that uses the secret key $s_k$ to
 recover the original plaintext from a ciphertext c.
@@ -104,11 +104,11 @@ Let $(Gen,Enc,Dec)$ be an \textsf{LHE} scheme with security parameter $\kappa$ a
 \item $labEnc_{pk}(\sigma_i, m , \tau)$: On input a message $m \in \mathcal{M} $ with label $\tau \in \mathcal{L}$  from user $i$, it computes $b=\mathcal{F}(\sigma_i, \tau))$ and outputs the labeled ciphertext $\mathbf{c}=(a,c) \in \mathcal{M} \times \mathcal{C}$ with $ a= m- b$ in $\mathcal{M}$ and $c=Enc_{pk}(b)$.
 \item $labDec_{sk}(\mathbf{c})$ - This functions inputs a cipher $\mathbf{c}=(a,c) \in \mathcal{M} \times \mathcal{C}$ encrypted under the labHE scheme and decrypts it as $m=a-Dec_{sk}(c)$.
 \end{itemize}
-In addition to the aforementioned operations supported by a linear homomorphic encryption scheme, labeled homomorphic encryption supports multiplication of two labeled ciphers as follows.
+In addition to the aforementioned operations supported by a \textsf{LHE}  scheme, \textsf{labHE} supports multiplication of two labeled ciphers as follows.
 \begin{itemize}\item $labMult(\mathbf{c}_1,\mathbf{c}_2)$ -
 On input two labeled ciphers $\mathbf{c}_1=(a_1,c_1)$ and $\mathbf{c}_2=(a_2,c_2)$, it computes a "multiplication" ciphertext $\mathbf{d}=labMult(\mathbf{c_1,c_2})=Enc_{pk}(a_1,a_2)\odot cMult(c_1,a_2) \odot cMult(c_2,a_1)$. Observe that $Dec_{sk}(\mathbf{d})=m_1\cdot m_2 -b_1 \cdot b_2$.
 \item $labMultDec_{sk}(c_1,c_2,\mathbf{d})$ - On input two labels $c_1,c_2$ of two labHE ciphers $\mathbf{c_1},\mathbf{c_2}$ and the output $\mathbf{d}$ of $labMult(\mathbf{c_1},\mathbf{c_2})$, it decrypts the product as $m_3=Dec_{sk}(\mathbf{d})+Dec_{sk}(c_1)\cdot Dec_{sk}(c_2) = m_1\cdot m_2$ .    \end{itemize}
-In this paper we propose an efficient way of extending the $labMult()$ operation for a n-way multiplication in section \ref{implementation}.
+In this paper we propose an efficient way of extending the $labMult$ operation for a $n$-way multiplication in section \ref{implementation}.
 \subsubsection{Secure Computation}
 %\arc{Not final:placeholder}
 Garbled circuit, also known as Yao's protocol \cite{Yao,yao2},  is a generic method for secure multi-party computation. In this paper we just discuss the two-party scenario but it can be generalized to $n > 2$ parties. In its basic form, a garbled circuit allows two-party evaluation of a function $f(x_1,x_2)$ in the presence of semi-honest adversaries. The protocol is run between two data owners with respective private inputs $x_1$ and $x_2$ such that at the end, no party learns more  
