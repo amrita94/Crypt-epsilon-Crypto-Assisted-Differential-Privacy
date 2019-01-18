@@ -98,3 +98,49 @@ wk and that no other output values
 can be recovered for this gate. So the evaluator can evaluate
 the entire garbled circuit gate-by-gate so that no additional
 information leaks about intermediate computations.
+
+
+
+
+
+
+\subsection*{Crypt$\epsilon$ Program 1}
+Program 1 counts the number of records having age in range [50,60].  
+\\\textbf{\textsf{LDP} Competitor} - The competing \textsf{LDP} implementation uses the frequency oracle of \cite{LDP1}. 
+\\\textbf{Error Measure} - The error measure used is  $Error = |C-\hat{C}|$ where $C$ is the true count and $\hat{C}$ is the noisy differentially private output. We report the mean error observed over 10 repetitions. \\
+\textbf{Optimization}- For this program, the optimized implementation uses the range tree to answer the counting query.
+\\\textbf{Observations} - For Program 1 we report our experimental results in Figure 3a. The first observation is that the error for the base case Crypt$\epsilon$ implementation is approximately $\frac{2}{\epsilon}$ (error=$17.60$ for $\epsilon=0.1$, mean error = $0.1$ for $\epsilon=1.9$). This is in cohorts with our expectation as we add two instances of Laplace noise at the \textsf{AS} and the \textsf{CSP} and s.t.d of $Lap(\frac{1}{\epsilon})$ is given by $\frac{1}{\epsilon}$. In contrast, the error corresponding to the $\textsf{LDP}$ implementation is at least $400 >11\cdot \sqrt{m}=  11\cdot \sqrt{1000} \approx 352$ times worse. This observation is intuitive as each frequency oracle count for the \textsf{LDP} is expected to have $O(\frac{\sqrt{m}}{\epsilon})$ error and for answering Program 1 we need to read $11$  such counts (for the range [50,60]). For e.g., the error for $\textsf{LDP}$ is $967 \times$  higher than that of Crypt$\epsilon$ for $\epsilon=1.9$.  \arc{TO-DO New exp to showcase range tree accuracy gain}
+\subsection*{Crypt$\epsilon$ Program 2}
+Program 2 counts the top 5 most frequent age values.
+\\\textbf{\textsf{LDP} Competitor} - The competing \textsf{LDP} implementation uses the frequency oracle of \cite{LDP1}. 
+\\\textbf{Error Measure} - The error measure used is given by $\sigma= \text{the fraction of age values }$ returned in the top 5 that have value less than $ct_5-\alpha$  where  $ct_5$ is the count of the $5^{th}$ largest value and $\alpha=\frac{1}{\epsilon}\log\frac{1}{\delta}$ is a slack parameter. The slack parameter is required because with probability $1-\delta$ no differentially private algorithm can distinguish between any two counts that differ by less than $\alpha$. \\
+\textbf{Optimization}- The optimized implementation reads of the values of all the leaves in  the range tree (each leaf corresponds to the count of a single age value) and returns age values with the top 5 counts.
+\\\textbf{Observations} - The experimental results of  Program  2 are reported in  Figure 3b. 
+
+\subsection*{Crypt$\epsilon$ Program 3}
+Program 3 reports the marginal on attributes \textsf{Age} and \textsf{Gender}.  
+\\\textbf{\textsf{LDP} Competitor} - For the  \textsf{LDP} implementation, we construct a frequency oracle based on \cite{LDP1} over the marginal attribute $\textsf{Age}\times\textsf{Gender}$. 
+\\\textbf{Error Measure} - For Program 3 we use the L1-norm error metric $ Error=\sum_{i}|C[i]-\hat{C}[i]|, i \in [200]$ where $C$ is the true marginal and $\hat{C}$ is the noisy one. 
+\\\textbf{Observations} - Figure 2c reports the experimental results for Program 3. Attribute $Age$ has domain size $100$ while attribute $Gender$ is of size $2$. Hence $Age\times Gender$ is of size $200$. We observe that the errors for Crypt$\epsilon$ is approximately $\frac{200}{\epsilon}$(error=$2127$ for $\epsilon=0.1$, error=$641$ for $\epsilon=0.3$) which is the expected value. As for the \textsf{LDP} implementation, the error is way worse, for e.g. for $\epsilon=1.9$ its error is $32 \approx \sqrt{1000} \times$ higher than that of Crypt$\epsilon$.
+
+\subsection*{Crypt$\epsilon$ Program 4}
+Program 4 reports the marginal on attributes \textsf{Age} and \textsf{Gender} with \textsf{NativeCountry} Mexico.  
+\\\textbf{\textsf{LDP} Competitor} -  The  \textsf{LDP} implementation constructs a frequency oracle based on \cite{LDP1} over the marginal attribute $Age\times Gender\times\textsf{NativeCountry}$. 
+\\\textbf{Error Measure} - The error metric used is  the L1-norm  $ Error=\sum_{i}|C[i]-\hat{C}[i]|, i \in [200]$ where $C$ is the true marginal and $\hat{C}$ is the noisy one. \\\textbf{Optimization}- For Program 4 we construct a DP index over the attribute \textsf{NativeCountry} with $\epsilon=1$ and 5 bins.
+\\\textbf{Observations} - The experimental results are reported in Fig 2d. The error for the base Crypt$\epsilon$ implementation is as expected approximately around $\frac{200}{\epsilon}$. For e.g., for $\epsilon=0.1$, the error is $2012$. On the other hand, the \textsf{LDP} implementation has much higher error rates. For e.g., for $\epsilon=0.1$ the error for \textsf{LDP} is almost $20\times$ worse than that for Crypt$\epsilon$. We also report the error measures for the optimized Crypt$\epsilon$ implementation. For  this privacy parameter $\epsilon=1.1$ means that $\epsilon=1$ is invested in the DP index construction while $0.1$ is expended in the subsequent count. Observe that the accuracy of the optimized implementation for Crypt$\epsilon$ is much lower than that of the base case, for e.g., the accuracy is $3\times$ lower for $\epsilon=1.9$. However, it is still $4.2 \times$ higher than that of the \textsf{LDP} implementation.  
+\subsection*{Crypt$\epsilon$ Program 5}
+Program 5 counts the number of natively Mexican male employees of age 30.
+\\\textbf{\textsf{LDP} Competitor} -  The  \textsf{LDP} implementation constructs a frequency oracle based on \cite{LDP1} over the marginal attribute $Age\times Gender\times NativeCountry$. 
+\\\textbf{Error Measure} - The error metric used is  the L1-norm  $ Error=\sum_{i}|C[i]-\hat{C}[i]|, i \in [200]$ where $C$ is the true marginal and $\hat{C}$ is the noisy one. \\\textbf{Optimization}- The optimized Crypt$\epsilon$ program uses a DP index over the attribute $NativeCountry$ with $\epsilon=1$ and 5 bins.
+\\\textbf{Observations} - We report the experimental results for Program 5  in Fig 2e. The error for the base Crypt$\epsilon$ implementation is as expected at most $\frac{2}{\epsilon}$. For e.g., $\epsilon=0.1$ results in error = $21.8$ while for $\epsilon=1.9$ we get an error of only $0.3$. In comparison, the \textsf{LDP} implementation has  at least $25 \times$ higher error values. For e.g., for $\epsilon=0.1$ \textsf{LDP} has $30 \times$ higher error values. The error values for the optimized implementations of Crypt$\epsilon$  is at most $18.8 \times$ worse than that of the base case and at least $2\times$ better than that of the \textsf{LDP} implementation.
+\subsection*{Crypt$\epsilon$ Program 6}
+Program 6 counts the number of distinct age values for male employees.  
+\\\textbf{\textsf{LDP} Competitor} - The competing \textsf{LDP} implementation uses the frequency oracle of \cite{LDP1} $Age\times Gender$ and reports the number of non-zero counts after suitable adjustment for thresholding. 
+\\\textbf{Error Measure} - The error measure used is  $Error = |C-\hat{C}|$ where $C$ is the true count and $\hat{C}$ is the noisy differentially private output. \\
+\textbf{Optimization}- For this program, the optimized implementation uses a DP index on $Gender$ constructed with $\epsilon=1$ and $5$ bins.
+\\\textbf{Observations} - From Figure 2f we observe that the error values for Crypt$\epsilon$ is at least $38.5 \times$ less than that for the \textsf{LDP} implementation. The true answer for the program for our experimental setup happens to be $47$. For $\epsilon=0.1$ the relative error ( $\frac{|C-\hat{C}|}{C}$) for the base case Crypt$\epsilon$ implementation is given by  $0.4$ while \textsf{LDP} has error $1.2$. For the optimized implementation, the error values reduce sharply as we increase $\epsilon$. For e.g., $\epsilon=1.9$ error values of the optimized implementation is only $6\times$ worse than that of the base case. 
+\subsection*{Crypt$\epsilon$ Program 7}
+Program 7 counts the number of age values with at least 10 records.  
+\\\textbf{\textsf{LDP} Competitor} - The competing \textsf{LDP} implementation uses the frequency oracle of \cite{LDP1}. 
+\\\textbf{Error Measure} - The error measure used is  $Error = |C-\hat{C}|$ where $C$ is the true count and $\hat{C}$ is the noisy differentially private output. 
+\\\textbf{Observations} - Figure 2g reports the results for Program 7. Observe that for $\epsilon=0.3$ the error for Crypt$\epsilon$ is $6.7$ while that for the \textsf{LDP} implementation is $26.2$. The true non-noisy answer for the program for our experimental setup is $38$. Thus the relative error $\frac{|C-\hat{C}|}{C}$ for Crypt$\epsilon$ is $0.18$ as compared to that of $0.69$ for the \textsf{LDP} implementation.  For $\epsilon=1.9$, Crypt$\epsilon$ gives an error of just $0.5$. In contrast,  for \textsf{LDP} we still get an error of $10.6$. 

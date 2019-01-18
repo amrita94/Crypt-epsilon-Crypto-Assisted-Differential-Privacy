@@ -21,6 +21,7 @@
 \acmDOI{10.1145/1122445.1122456}
 \acmISBN{978-1-4503-9999-9/18/06}
 %\usepackage{cite}
+\usepackage[bottom]{footmisc}
 \usepackage{enumitem}
 \usepackage{amsmath,amssymb,amsfonts,fullpage}
 \usepackage{algorithmic}
@@ -54,10 +55,10 @@
 \title{Crypt$\epsilon$ : Crypto-Assisted Differential Privacy}
 \author{}
 \begin{abstract}
-In the last decade, differential privacy has steadily become the order of the day for achieving strong privacy guarantees in statistical data analysis. Depending on the implementation, differential privacy can be classified into two types: the "central" model where in a trusted centralized server collects the records from the data owners in the clear and outputs differentially private statistics; and the "local" model, in which the data owners do not necessarily trust the server and hence individually randomizes their inputs.  In the central model, differential privacy for the outputs can be achieved by adding only a single instance of random noise thereby resulting in constant error bounds. In contrast, the local model assures stronger privacy guarantees to the data owners albeit at a cost of strictly limited accuracy and restricted algorithmic expressibility due to the independent noise addition of each data owner. In this work, we propose a  two-server model of implementation for differential privacy, Crypt$\epsilon$  that  \\
+In the last decade, differential privacy has steadily become the de-facto standard for achieving strong privacy guarantees in data analysis. Depending on the implementation, differential privacy can be classified into two types: the "central" model where in a trusted centralized server collects the records from the data owners in the clear and outputs differentially private statistics; and the "local" model, in which the data owners do not necessarily trust the server and hence individually randomizes their inputs.  In the central model, differential privacy for the outputs can be achieved by adding only a single instance of random noise thereby resulting in constant error bounds. In contrast, the local model assures stronger privacy guarantees  albeit at a cost of strictly limited accuracy and restricted algorithmic expressibility due to the independent noise addition of each data owner. In this work, we propose a  two-server model of implementation for differential privacy, Crypt$\epsilon$  that  \\
 1) achieves the accuracy guarantees of the central model without the need of any trusted server \\
 2) provides strictly greater expressibility than the local model. \\
-Crypt$\epsilon$ achieves this "best of both worlds" result with the assistance of two cryptographic primitives - linear homomorphic encryption and two-party Yao's garbled circuit. Crypt$\epsilon$ is equipped with a set of primitives which can be used by an data analyst to obtain differentially private answers for a useful class of programs. We further propose two differentially private optimization schemes to improve the the efficiency of Crypt$\epsilon$.  The  usability of Crypt$\epsilon$ for practical settings is demonstrated via extensive performance evaluation.
+Crypt$\epsilon$ achieves this "best of both worlds" result with the assistance of two cryptographic primitives - linear homomorphic encryption and two-party Yao's garbled circuit. Crypt$\epsilon$ is equipped with a set of primitives which can be used by an data analyst to obtain differentially private answers for a useful class of programs. Further, we propose two differentially private optimization schemes to improve the the efficiency of Crypt$\epsilon$.  The  usability of Crypt$\epsilon$ for practical settings is demonstrated via extensive performance evaluation.
 \end{abstract}
 
 %\begin{IEEEkeywords}
@@ -78,4 +79,6 @@ Crypt$\epsilon$ achieves this "best of both worlds" result with the assistance o
 \input{conclusion}
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{references.bib}
+\appendix
+\input{Security}
 \end{document}
