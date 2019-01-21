@@ -1,6 +1,30 @@
-\begin{table}[h!]
-\small
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
 
+
+\begin{table*}[]
+\small{
+\caption {\system Primitives}\label{tab:primitives}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+\bf{Types}                           & \bf{Name}         & \bf{Notation} & \bf{Input} & \bf{Output} & \bf{Functionality} \\ \hline \hline
+\multirow{7}{*}{Transformation} & CrossProdcut &  $\crossproduct_{A_i,A_j}(\cdot)$ &  $(\encT,\encB)$   &  $(\encT',\encB)$   & Generates new attribute $A'$ (in one-hot-encoding) to represent $A_i$ and $A_j$  \\ \cline{2-6}
+                                & Project      & $\project_{A^*}(\cdot)$  &  $(\encT,\encB)$       &  $(\encT',\encB)$       &  Discards all atributes but $A^∗$ \\ \cline{2-6}
+                                & Filter       & $\filter_{\phi}(\cdot)$   &  $(\encT,\encB)$      &   $(\encT,\encB')$     &  Zeros out records not satisfying $\phi$              \\ \cline{2-6}
+                                & Count              & $\countagg(\cdot)$         & $(\encT,\encB)$  &  $\encV$    &  Counts the number of 1s in $\encB$               \\ \cline{2-6}
+                                & GroupByCount*              & $\groupbystar_{A}(\cdot)$ &  $(\encT,\encB)$  & $\encV$    & Returns encrypted histogram of $A$                \\ \cline{2-6}
+                                & GroupByCount              & $\groupbystar_{A}(\cdot)$    &$(\encT,\encB)$       & $\tilde{\encV}$        &  Returns encrypted histogram of $A$ in one-hot-encoding    \\ \cline{2-6}
+                                & CountDistinct             & $\countdistinct(\cdot)$     &    $\encV$   & $\encV'$   &  Counts the number of non-zero values in $\encV$       \\ \hline
+\multirow{2}{*}{Measurement}    & Laplace      & $\lap_{\epsilon,\Delta}(\cdot)$    &  $\encV$      &   $\hat{V}$    &  Adds Laplace noise to $\encV$    \\ \cline{2-6}
+                                & NoisyMax     & $\noisymax_{\epsilon,\Delta}^k(\cdot)$         & $\encV$       &  $\hat{P}$      &  Adds Laplace noise to $\encV$ and outputs indices of the top $k$ noisy values              \\ \hline
+\end{tabular}
+}
+\end{table*}
+
+
+\eat{
+\begin{table*}[h!]
+\small
 \caption {\system Primitives}
  \begin{tabular}{@{}l c@{}c@{}l@{}}  \toprule
 \multicolumn{1}{c}{\textbf{Primitives}} & \textbf{Input}  & \textbf{Output}  & \multicolumn{1}{c}{\textbf{Functionality}}  \\ [0.5ex] 
@@ -16,4 +40,5 @@
   [1ex] 
  \bottomrule
  \end{tabular}
-\end{table}
+\end{table*}
+}
