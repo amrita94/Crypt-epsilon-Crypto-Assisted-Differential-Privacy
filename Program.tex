@@ -1,6 +1,9 @@
-\section{Writing Crypt$\epsilon$ Programs}\label{program}
+\subsection{Writing \system Programs}\label{program}
 In this section we illustrate via examples how the aforementioned primitives can be composed into a Crypt $\epsilon$ program to answer data queries.
 Crypt$\epsilon$ programs can be classified into three classes based on the number and type of interaction required between the \textsf{AS} and the \textsf{CSP}.
+
+\xh{Now we may simplify the programs using the notations in Table~\ref{tab:primitives}. We can even simply represent them into a table. This table has three columns: (1) query; (2) program; (3) interactions. In this section, we don't discuss implementations. Next we show implementations and explain which programs need interactions.}
+
 \paragraph{\textbf{Single Decrypt Interaction Programs}}
 Recall that the output of all the transformation primitives are encrypted.  Since  the \textsf{CSP} has exclusive access to the secret key, it is the only entity in the Crypt$\epsilon$ setting capable of decryption. Thus for releasing any result (albeit noisy) in the clear, we need to interact at least once with the \textsf{CSP} so that it can decrypt the encrypted noisy answer. Crypt$\epsilon$ supports this type of interactions via the two measurement primitives. Some Crypt$\epsilon$ programs require only this one round of interaction at the very end to release the noisy output. All other transformations can be performed by the \textsf{AS} via homomorphic operations on the encrypted data records. Typically these programs are counting queries on a single attribute or noisy max on a single attribute. 
 Consider a database scheme $\{Age, Gender, NativeCountry, Department, Salary\}$ such that \begin{itemize}\item $dom(Age)=\{1,\ldots,100+\}$  \item $dom(Gender)=\{Male, Female, Other\}$\item $dom(NativeCountry)=\{US,Spain,India\}$ \item $dom(Department)=\{A/C \& Finance, R\&D, Production,$\\$ Marketing,$ $HRM, Purchasing \}$ \item $dom(Salary)=\{100K,150K,...,500K\}$ \end{itemize} 
@@ -10,7 +13,7 @@ Consider a database scheme $\{Age, Gender, NativeCountry, Department, Salary\}$ 
 Let $\phi=(Age=50 \vee Age=51 \vee ... \vee Age=60)$ \end{exmp}
 \begin{enumerate} \item $\mathbf{\tilde{T}}_1$=\textsf{Project}($\boldsymbol{\tilde{\mathcal{D}}}$, $Age$)  \item  $\mathbf{T_2}$ = \textsf{Filter}($\mathbf{\tilde{T}}_1,\phi$)\item $\mathbf{C}$ = \textsf{Count}($\mathbf{T_2}$) \item $\hat{C}$=\textsf{Laplace}($\mathbf{C},\epsilon)$\end{enumerate}
 
-
+\xh{ $\lap_{\epsilon,1}(\countagg(\filter_{\phi}(\project_{Age}(\encD))))$}
 
 \begin{exmp}\textit{Query: } Return the 5 most frequent age values.\\\textbf{Crypt$\epsilon$ Program:}\\ The domain of $Age$ is $\{1,100\}$.\end{exmp}\begin{enumerate} \item $\mathbf{C}$=\textsf{GroupBy*}($\boldsymbol{\tilde{\mathcal{D}}},Age$)   \item $\tilde{C}$=\textsf{NoisyMax}($\mathbf{C},5,\epsilon)$\end{enumerate}
 \begin{exmp}\textit{Query: } Return the marginal over attributes Age and Gender values.\\\textbf{Crypt$\epsilon$ Program:}\end{exmp} \begin{enumerate} \item $\tilde{\mathbf{T_1}}$=\textsf{CrossProduct}$(\boldsymbol{\tilde{\mathcal{D}}},Age,Gender)$ \item $\tilde{\mathbf{T_2}}$=\textsf{Project}$(\tilde{\mathbf{T_1}}, Age \times Gender)$\item  $\mathbf{C}$=\textsf{GroupBy*}($\tilde{\mathbf{T_2}},Age \times Gender $)   \item $\hat{C}$=\textsf{Laplace}($\mathbf{C},\epsilon)$\end{enumerate}
