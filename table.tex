@@ -1,0 +1,19 @@
+\begin{table}[h!]
+\small
+
+\caption {\system Primitives}
+ \begin{tabular}{@{}l c@{}c@{}l@{}}  \toprule
+\multicolumn{1}{c}{\textbf{Primitives}} & \textbf{Input}  & \textbf{Output}  & \multicolumn{1}{c}{\textbf{Functionality}}  \\ [0.5ex] 
+ \midrule \midrule \textsf{CrossProduct} &$\tilde{\mathbf{T}}, A_i, A_j$ & $\tilde{\mathbf{T'}}$ & Generates  one-hot-coding for the\\&& & attribute $A_i\times A_j$ 
+ \\\textsf{Project}&$\tilde{\mathbf{T}}, A^*$&$\tilde{\mathbf{T'}}$ &Discards all atributes but $A^*$
+ \\\textsf{Filter}&$\tilde{\mathbf{T}},\phi$&$\tilde{\mathbf{B}}$&Zeros out records not satisfying $\phi$
+ \\\textsf{Count}&$\tilde{\mathbf{T}}$&$\mathbf{C}$&Counts the number of records in $\textbf{B}$ 
+ \\$\textsf{GroupBy}^*$ &$\tilde{\mathbf{T}},A$&$\mathbf{V}$& Returns encrypted histogram of $A$
+ \\\textsf{GroupBy} &$\tilde{\mathbf{T}},A$ &$\tilde{\mathbf{V}}$ &Returns encrypted histogram of $A$\\&&& in one-hot-coding
+ \\\textsf{CountDistinct} &$\mathbf{V}$&$\mathbf{C}$ &Counts the number of non-zero values in $\textbf{V}$
+ \\\textsf{Laplace}&$\textbf{V},\epsilon$ &$\hat{\textbf{V}}$ & Both \textsf{CSP} and {AS} adds Laplace noise to $\textbf{V}$ 
+ \\\textsf{NoisyMax} & $\textbf{V},\epsilon, k$&$P$ &Outputs top k values from noisy vector $\textbf{V}$\\
+  [1ex] 
+ \bottomrule
+ \end{tabular}
+\end{table}
