@@ -8,14 +8,14 @@
 \begin{tabular}{|l|l|l|l|l|l|}
 \hline
 \bf{Types}                           & \bf{Name}         & \bf{Notation} & \bf{Input} & \bf{Output} & \bf{Functionality} \\ \hline \hline
-\multirow{7}{*}{Transformation} & CrossProduct &  $\crossproduct_{A_i,A_j}(\cdot)$ &  $\encT$   &  $\encT'$   & Generates new attribute $A'$ (in one-hot-encoding) to represent $A_i$ and $A_j$  \\ \cline{2-6}
-                                & Project      & $\project_{A^*}(\cdot)$  &  $\encT$       &  $\encT'$       &  Discards all attributes but $A*$ \\ \cline{2-6}
-                                & Filter       & $\filter_{\phi}(\cdot)$   &  $\encT$      &   $\encB'$     &  Zeros out records not satisfying $\phi$    in $\encB$          \\ \cline{2-6}
+\multirow{7}{*}{Transformation} & CrossProduct &  $\crossproduct_{(A_i,A_j)\rightarrow A'}(\cdot)$ &  $\encT$   &  $\encT'$   & Generates new attribute $A'$ (in one-hot-encoding) to represent $A_i$ and $A_j$  \\ \cline{2-6}
+                                & Project      & $\project_{\bar{A}}(\cdot)$  &  $\encT$       &  $\encT'$       &  Discards all attributes but $\bar{A}$ \\ \cline{2-6}
+                                & Filter       & $\filter_{\phi}(\cdot)$   &  $\encT$      &   $\encT'$     &  Zeros out records not satisfying $\phi$    in $\encB$ assoicated to $\encT$         \\ \cline{2-6}
                                 & Count              & $\countagg(\cdot)$         & $\encB$  &  $\encC$    &  Counts the number of 1s in $\encB$               \\ \cline{2-6}
                                 & GroupByCount*              & $\groupbystar_{A}(\cdot)$ &  $\encT$  & $\encV$    & Returns encrypted histogram of $A$                \\ \cline{2-6}
                                 & GroupByCount              & $\groupbystar_{A}(\cdot)$    &$\encT$       & $\tilde{\encV}$        &  Returns encrypted histogram of $A$ in one-hot-encoding    \\ \cline{2-6}
                                 & CountDistinct             & $\countdistinct(\cdot)$     &    $\encV$   & $\encC$   &  Counts the number of non-zero values in $\encV$       \\ \hline
-\multirow{2}{*}{Measurement}    & Laplace      & $\lap_{\epsilon,\Delta}(\cdot)$    &  $\encV$      &   $\hat{V}$    &  Adds Laplace noise to $\encV$    \\ \cline{2-6}
+\multirow{2}{*}{Measurement}    & Laplace      & $\lap_{\epsilon,\Delta}(\cdot)$    &  $\encV$/$\encC$    &   $\hat{V}$/$\hat{C}$    &  Adds Laplace noise to $\encV$/$\encC$    \\ \cline{2-6}
                                 & NoisyMax     & $\noisymax_{\epsilon,\Delta}^k(\cdot)$         & $\encV$       &  $\hat{P}$      &  Adds Laplace noise to $\encV$ and outputs indices of the top $k$ noisy values              \\ \hline
 \end{tabular}
 }
