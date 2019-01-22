@@ -64,3 +64,20 @@ views of the corrupted parties in $Adv_2$ in the protocol $\Pi$.
 
 
 \end{proof}
+\begin{table}[h!]
+\small
+\centering
+\caption {Comparative analysis of the different DP models}
+ \begin{tabular}{l| c c c}  \toprule
+\multicolumn{1}{c}{\textbf{Features}} & \textbf{LDP}  & \textbf{CDP}  & \textbf{Crypt$\epsilon$}  \\ [0.5ex] 
+ \midrule \midrule \# Servers & 1& 1 & 2\\\hline
+Trust  & & & Untrusted \\  Assumption & Untrusted & Trusted & Semi Honest \\for Server &  &   &  Non-Colluding  \\ \hline
+Data Storage & \multirow{2}{*}{Noisy} & \multirow{2}{*}{Clear} & \multirow{2}{*}{Encrypted} \\in Server & &  &  \\\hline
+Adversary & Unbounded & Unbounded & Bounded \\\hline
+ Error & $O\Big(\frac{\sqrt(n)}{\epsilon}\Big)$& $O\Big(\frac{1}{\epsilon}\Big)$ & $O\Big(\frac{1}{\epsilon}\Big)$\\\hline
+ Impossibility & Everything && \\results & beyond SQ model & None & None\footnotemark\\
+  [1ex] 
+ \bottomrule
+ \end{tabular}
+\end{table}
+\footnotetext{Theoretically no restriction, however practical constraints maybe present}
