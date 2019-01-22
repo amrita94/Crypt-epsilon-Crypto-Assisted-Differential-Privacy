@@ -24,6 +24,7 @@
 \usepackage[bottom]{footmisc}
 \usepackage{enumitem}
 \usepackage{amsmath,amssymb,amsfonts,fullpage}
+\usepackage{algorithm}
 \usepackage{algorithmic}
 \usepackage{graphicx}
 \usepackage{comment}
@@ -43,6 +44,7 @@
 \newtheorem{definition}{Definition}
 \newtheorem{exmp}{Example}[section]
 \usepackage{mathtools}
+%\usepackage[noend]{algpseudocode}
 %\usepackage{enumerate}
 %\usepackage[demo]{graphicx}
 %\usepackage{subcaption}
@@ -65,20 +67,23 @@ In the last decade, differential privacy has steadily become the de-facto standa
 \keywords{Crypto-assisted Differential Privacy, Crypto Service Provider, Linear Homomorphic Encryption}
 \maketitle
 %\end{IEEEkeywords}
-\input{introduction}
+\input{Introduction}
 \input{background}
 \input{system_description}
 \input{primitives}
-\input{program}
-%\input{separation}
+\input{Program}
+\input{implementation}
 \input{optimizations}
 %\input{Security}
 \input{evaluation}
-\input{relatedwork}
-\input{discussion}
+%\input{relatedwork}
 \input{conclusion}
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{references.bib}
 \appendix
-\input{security}
+\input{dp_seq.tex}
+\input{Security}
+\input{primitive_appen.tex}
+\input{relatedwork}
+\input{discussion}
 \end{document}
