@@ -1,0 +1,42 @@
+\section{Related Work}
+\subsection{Differential Privacy}
+Introduced by Dwork et al. in \cite{Dork}, differential privacy has enjoyed immense attention from both academia and industry in the last decade. In this section, we will discuss some of the most recent directions in differential privacy in both the \textsf{CDP} and \textsf{LDP} models. An interesting line of work in the \textsf{CDP} model has been towards proposing "derived" mechanisms \cite{MVG} or  "revised algorithms" \cite{Blocki} whose privacy guarantee can be deduced from basic mechanisms (like exponential mechanism, Laplace mechanism etc) via the composition theorems and
+the post-processing immunity property \cite{Dork}. Such mechanisms have the advantage of better utility as their design leverages on  specific properties of the query and the data.   One such technique is based on data partition and aggregation  \cite{AHP,DAWA,hist1,hist2,hist3,hist4,hist6,hist7,hist8} and is helpful in answering histogram queries. Another technique involves 
+non-uniform data weighting where each data sample is weighed based on their query contribution. Research in this line of work include \cite{u1,u2,MWEM}. Yet another popular method is to utilize past/auxiliary information
+to improve the utility of the query answers. Examples are \cite{A1,A2,A3,A4,A5,A6,A7,A8}
+%Another interesting line of work has been towards developing programming frameworks to enable non-experts to write easy differentially private programs. This line of work was started by the PINQ platform \cite{PINQ} and there has been a series of follow up work  \cite{FWPINQ,p2, airavat}. The most recent one is the Ektelo \cite{ektelo} framework where all existing algorithms for answering linear counting queries can be expressed as a composition of its operators. 
+\par
+The local differential privacy model was first introduced by Kasiviswanathan
+et al. in\cite{Kasivi}. Possibly the most simple \textsf{LDP} technique is the randomized response \cite{RR} protocol which was proposed by Warner in 1960s.  In the recent times, constructing a frequency oracle to estimate the frequencies of any value in the domain, is perhaps the most fundamental \textsf{LDP} problem. The state-of-the-art locally differentially private histogram estimator solutions are \cite{LDP1, LDP2, Rappor1}.  However, when the domain size of the input values is extremely large, it might be computationally infeasible to construct the histogram over the entire domain. To tackle this, specialized algorithms to compute the most frequently occurring values, also known as the heavy hitters, have been proposed \cite{HH,Rappor2,HH2}. Another practical setting can be when the user's data is a set of items and the aggregator is interested in  the $k$ most frequent item sets. This problem is addressed in \cite{15,itemset}. In \cite{Cormode, CALM} the authors propose efficient constructions of marginal tables in the local differential privacy setting. Due to their attractive trust model, \textsf{LDP} has also enjoyed significant industrial adoption.  Google has integrated RAPPOR \cite{Rappor1, Rappor2} with Chrome. It is primarily tasked with collecting user statistics like default browser homepage, default search engine et al in order to monitor malicious hijacking of user settings. Apple \cite{Apple} has also deployed differential privacy to collect of data like most frequent emojis, help with auto-completion of spellings etc.  Samsung \cite{Samsung} proposed a similar system 
+which enables the collection of both categorical 
+(like screen resolution) as well as numerical data (like
+time of usage, battery volume), although it is not clear
+whether they went ahead with the actual deployment. \par
+Recently it has been showed that augmenting the local differential privacy setting by an additional layer of anonymity can improve the privacy
+guarantees. The first work to study this was PROCHLO \cite{Prochlo} implementation by Google. In \cite{Prochlo} the authors propose a  Encode, Shuffle, Analyze (ESA) architecture
+ which relies on an explicit intermediate shuffler that processes the randomized LDP reports
+from users to ensure their anonymity. PROCHLO necessitates  this intermediary to be trusted, this is implemented via trusted hardware enclaves (Intel's SGX). However, as showcased by recent attacks \cite{Foreshadow}, it is notoriously difficult to design a  truly secure hardware in practice. Motivated by PROCHLO, the authors in \cite{amplification}, present a tight upper-bound on the worst-case privacy loss. Formally, they show that  any permutation invariant
+algorithm satisfying $\epsilon$-local differential privacy will satisfy $O(\epsilon\sqrt{\frac{\log(\frac{1}{\delta})}{n}},\delta)$ -central differential
+privacy. Cheu et al in \cite{mixnets} demonstrate privacy amplification by the same factor for 1-bit randomized response by using a mixnet architecture to provide the anonymity. Another important result from this work is that, they prove that the power of the mixnet model lies strictly between those of the central and local
+models.
+\par A parallel line of work involves efficient use of cryptographic primitives for differentially private
+functionalities. In \cite{kamara}  Agarwal et al. propose an algorithm for computing histogram over encrypted data. Rastogi et al. \cite{Rastogi} and
+Shi et al. \cite{Shi} proposed algorithms that allow an untrusted aggregator to periodically
+estimate the sum of $n$ users' values in a  privacy preserving fashion. However both the schemes are irresilient to user failures. Chan et al. tackle this in \cite{Shi2} by constructing binary interval trees over the users.
+\subsection{Two-Server Model}
+The two-server model is a popular choice for privacy preserving machine learning techniques. In \cite{Boneh1}, \cite{LReg}, \cite{Ver} and \cite{Ridge2}, the authors propose privacy preserving ridge regression systems with the help of a cryptographic service provider. While \cite{Ridge2} uses a hybrid multi-party computation scheme with a secure inner product technique, \cite{Boneh1} proposes a hybrid approach combining homomorphic encryptions and Yao's garbled circuits. Gascon et al. \cite{Ver} extended the results in \cite{Boneh1} to include vertically partitioned data and \cite{LReg} solves the problem using just linear homomorphic encryption.  Zhang et al in \cite{secureML} also propose secure machine learning protocols using a privacy-preserving stochastic gradient descent method. Their main contribution includes developing efficient algorithms for secure arithmetic
+operations on shared decimal numbers and proposing alternatives to non-linear
+functions such as sigmoid and softmax tailored for MPC computations. 
+In \cite{Boneh2} and \cite{Matrix2} the authors solve the problem of privacy-preserving matrix factorization. In both the papers, use a hybrid approach combining homomorphic encryptions and Yao's garbled circuits for their solutions. 
+
+\subsection{Homomorphic Encryption}
+With improvements made in implementation efficiency and new constructions developed in the recent past, there has been a surge in practicable privacy preserving solutions employing homomorphic encryptions. A lot of the aforementioned two-server models employ homomorphic encryption \cite{Boneh1,Boneh2,LReg,Matrix2}.  
+In \cite{CryptoDL,CryptoNet,NN} the authors enable neural networks to be applied to homomorphic-ally encrypted data.
+Linear homomorphic encryption is used in \cite{Irene2} to enable privacy-preserving machine learning for ensemble methods while %\cite{FHEReg} 
+uses  fully-homomorphic encryption
+to approximate the coefficients of a logistic-regression model.
+\cite{grid} uses somewhat-
+homomorphic encryption scheme to compute the forecast
+prediction of consumer usage for smart grids. 
+%Privacy preserving multi-party machine learning with homomorphic encryption
+
