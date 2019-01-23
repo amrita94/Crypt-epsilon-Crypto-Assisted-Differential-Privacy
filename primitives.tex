@@ -33,15 +33,16 @@ Thus the \textsf{Filter} transformation suppresses all the records that are extr
 
 %Another data format for transformation primitives is a vector of encrypted counts, denoted by $\bf{V}$. If these counts are in one-hot-encoding, they are represented by $\tilde{\encV}$. An encrypted scalar is represented by $\encC$.
  
-\stitle{4) \textsf{Count}} $\countagg(\encT)$: This primitive simply counts the number of rows in $\encT$ that are pertinent to the program at hand, i.e. the number of $1$s in the associated bit vector $\encB$.  This primitive outputs an encrypted scalar $\encC$. Typically, this transformation is followed by a measurement primitive and is immediately preceded by a \textsf{Filter} primitive. \\
+\stitle{4) \textsf{Count}} $\countagg(\encT)$: This primitive simply counts the number of rows in $\encT$ that are pertinent to the program at hand, i.e. the number of $1$s in the associated bit vector $\encB$.  This primitive outputs an encrypted scalar $\encC$. Typically, this transformation is followed by a measurement primitive and is immediately preceded by a \textsf{Filter} primitive. 
 % 4) \textbf{\textsf{Count}}$:\countagg(\mathbf{T})$  - The \textsf{Count} transformation outputs the encrypted value of the non-noisy true count for the program at hand. For answering linear counting queries, typically \textsf{Count}  is the last transformation to be applied and is immediately preceded by a \textsf{Filter} transformation. Recall that the \textsf{Filter} transformation sets bit $i \in [m]$ to be 1 (encrypted) if the $i^{th}$ record satisfies the filter condition and 0 otherwise and outputs this encrypted $m\times 1$ vector. Hence the \textsf{Count} primitive simply adds up all the entries of this bit vector $\mathbf{B}$ and  outputs the sum which is a single encrypted value. 
-    \textbf{5) \textsf{GroupByCount* }} $\groupbystar_{A}(\mathbf{\tilde{T}})$: The  \textsf{GroupByCount*} primitive buckets the input table $\mathbf{\tilde{T}}$ into groups of records having the same value for an attribute of choice $A$. The output of this transformation is thus, an encrypted  vector $\mathbf{V}$ which is the encrypted histogram for $A$.
-    This primitive serves as a preceding transformation for other Crypt$\epsilon$ primitives like \textsf{NoisyMax}, \textsf{CountDistinct} et al.\\
-      \textbf{6) \textsf{GroupByCount}} $\groupby_{A}(\mathbf{\tilde{T}})$ : This primitive is similar to the aforementioned \textsf{GroupByCount*} primitive. The only difference between the two is that, the former outputs the encrypted histogram of attribute $A$ in one-hot-coding, $\tilde{V}$.  This transformation allows us to answer queries based on the count of a particular value for attribute $A$.\\
+
+\stitle{5) \textsf{GroupByCount*}} $\groupbystar_{A}(\mathbf{\tilde{T}})$: The  \textsf{GroupByCount*} primitive buckets the input table $\mathbf{\tilde{T}}$ into groups of records having the same value for an attribute of choice $A$. The output of this transformation is thus, an encrypted  vector $\mathbf{V}$ which is the encrypted histogram for $A$.
+    This primitive serves as a preceding transformation for other Crypt$\epsilon$ primitives such as \textsf{NoisyMax}, \textsf{CountDistinct}.
+
+\stitle{6) \textsf{GroupByCount}} $\groupby_{A}(\mathbf{\tilde{T}})$ : This primitive is similar to the aforementioned \textsf{GroupByCount*} primitive. The only difference between the two is that, \textsf{GroupByCount} outputs the encrypted histogram of attribute $A$, where each count in the histogram is in one-hot-coding, $\tilde{V}$.  This transformation allows us to answer queries based on the count of a particular value for attribute $A$.
      %Note that since for \textsf{GroupBy} we need to create the one-hot-coding of the counts, this requires an interaction with the \textsf{CSP}. 
-      \textbf{7) \textsf{CountDistinct } }$\countdistinct(\mathbf{V})$: As mentioned above, this primitive is always preceded by a \textsf{GroupByCount*} primitive. Hence the input vector $\mathbf{V}$ is an encrypted histogram for some attribute $A$ and this primitive returns the number of distinct values of $A$ that appear in  $\boldsymbol{\tilde{\mathcal{D}}}$ by counting the non-zero entries of $V$.  
 
-
+\stitle{7) \textsf{CountDistinct } }$\countdistinct(\mathbf{V})$: As mentioned above, this primitive is always preceded by a \textsf{GroupByCount*} primitive. Hence the input vector $\mathbf{V}$ is an encrypted histogram for some attribute $A$ and this primitive returns the number of distinct values of $A$ that appear in  $\boldsymbol{\tilde{\mathcal{D}}}$ by counting the non-zero entries of $V$.
 
 
 %The input to Crypt$\epsilon$ is an encrypted instance of a database $\boldsymbol{\tilde{\mathcal{D}}}$ with a single relational schema $\langle \mathcal{A}_1,\mathcal{A}_2, . . . ,\mathcal{A}_l\rangle$. Each attribute $\mathcal{A}_i$ is assumed to be discrete (or suitably discretized) and represented in one-hot-coding form.
@@ -74,21 +75,31 @@ For each record of the database $\boldsymbol{\tilde{\mathcal{D}}}$ (i.e., data c
 }
 
 
-\subsection{Measurement} \label{sec:measurement_primitives}
-The measurement primitives take encrypted data as input and return noisy measurements on it in the clear. These implement two of the most popular differentially private mechanisms: Laplace mechanism  and NoisyMax mechanism. 
-\\\textbf{1) \textsf{Laplace }}$\lap_{\epsilon,\Delta}(\mathbf{V}/\encC)$:  %The \textsf{Laplace} primitive  denoted by  $\lap_{\epsilon,\Delta}(\cdot)$ takes a vector of encrypted counts $\bf{V}$ and privacy paramters $\epsilon,\Delta$ as input, and outputs a noisy plaintext vector $\hat{V}$, where $\epsilon$ is the privacy budget and $\Delta$ is defined as the maximum change to the count vector  $\bf{V}$ if changing one user's input (sensitivity). The noise to be added is drawn from the distribution $Lap(\frac{\Delta f}{\epsilon})$ 
-In the traditional Laplace mechanism, in order
-to publish $f(D)$ where $f : D \mapsto R$, $\epsilon$-differentially private mechanism $\mathcal{M}$ 
-publishes $f(D) + Lap\Big(\frac{\Delta f}{\epsilon}\Big)$  
-where $\Delta f = \max_{D,D'}||f(D)-f(D')||_1$ is known as the sensitivity of the query. The p.d.f of $Lap(b)$ is given by $\mathbf{f}(x)={\frac  {1}{2b}}e^{ \left(-{\frac  {|x-\mu |}{b}}\right)}$. %The sensitivity of the function $f$ basically captures the magnitude by which a single individual's data can change the function $f$ in the worst case. Therefore, intuitively, it captures the uncertainty in the response that we must introduce in order to hide the participation of a single individual. 
-For counting queries the sensitivity is 1. The \textsf{Laplace} primitive of \system implements this mechanism. Specifically, it takes as input an encrypted vector $\mathbf{V}$ (could be a scalar too), a privacy parameter $\epsilon$ and sensitivity $\Delta$ and  outputs a noisy plaintext vector $\hat{V}$ where the noise is drawn from $[Lap(\frac{\Delta}{\epsilon})]^{|V|}$.\\
- \textbf{2)\textsf{NoisyMax }}$\noisymax_{\epsilon,\Delta}^k(\mathbf{V})k$:Noisy-Max is a type of differentially-private selection mechanism \cite{Dork} where the goal is to determine the counting query with the highest value out of $n$ different counts.  
-	The algorithm works as follows. First, generate each of the counts and then add independent Laplace noise from the distribution $Lap(\frac{1}{\epsilon})$ to each of them. The index of the largest noisy count is then reported as the noisy max.
-	This has two fold advantage over the naive implementation of finding the maximum count.
+\subsection{Measurement Primitives} \label{sec:measurement_primitives}
+The measurement primitives take encrypted vector of counts $\encV$ (or a single count $\encC$) as input and return noisy measurements on it in the clear. These implement two of the most popular differentially private mechanisms: Laplace mechanism and NoisyMax mechanism.
+Both mechanisms add noise $\eta$ drawn from Laplace distribution, denoted by $Lap(b)$, where $\Pr[\eta =x]\propto e^{-{\frac{|x|}{b}}}$. The scale of the noise depends on the transformations applied on the base database $\encD$. Let the sequence of transformations $\bar{T}=(T_l,\ldots,T_1)$ applied on $\encD$ to get $\encV$ be $\bar{T}(\encD) = T_l(\cdots T_2((T_1(\encD))))$. We define the \emph{sensitivity} of a sequence of transformations as  the maximum change to the output of this sequence of transformations when changing a row in the input database, i.e.,
+$$\Delta_{\bar{T}} = \max_{|(D-D')\cup (D'-D)|=1} \|Dec(\bar{T}(\encD))-Dec(\bar{T}(\encD'))\|_1.$$
+The sensitivity of $\bar{T}$ can be upper bounded by the product of the stability of these transformation primitives (\xh{define this in appendix, and add a link.)}, i.e. $\Delta_{\bar{T}=(T_l,\ldots,T_1)} = \prod_{i=1}^l \Delta T_i$. The transformation operators in Table~\ref{tab:primitives} have a stability of 1, except GroupByCount and GroupByCount* has a stability of 2. We will see how these two mechanisms add noise and their privacy guarantee.
+
+\stitle{1) \textsf{Laplace}} $\lap_{\epsilon,\Delta}(\mathbf{V}/\encC)$:  This primitive implements the classic Laplace mechanism~\cite{}.
+Given an encrypted vector $\encV$ (could be a scalar too), a privacy parameter $\epsilon$ and sensitivity $\Delta$ of the preceding transformations, the primitive adds noise vector (scalar) from $Lap^{|\encV|}(b)$, where $b=\frac{\Delta}{\epsilon}$. This primitive ensures $\epsilon$-differential privacy when data analyst views the plaintext answer.
+
+
+%The \textsf{Laplace} primitive  denoted by  $\lap_{\epsilon,\Delta}(\cdot)$ takes a vector of encrypted counts $\bf{V}$ and privacy paramters $\epsilon,\Delta$ as input, and outputs a noisy plaintext vector $\hat{V}$, where $\epsilon$ is the privacy budget and $\Delta$ is defined as the maximum change to the count vector  $\bf{V}$ if changing one user's input (sensitivity). The noise to be added is drawn from the distribution $Lap(\frac{\Delta f}{\epsilon})$
+%In the traditional Laplace mechanism, in order to publish $f(D)$ where $f : D \mapsto R$, $\epsilon$-differentially private mechanism $\mathcal{M}$ publishes $f(D) + Lap\Big(\frac{\Delta f}{\epsilon}\Big)$ where $\Delta f = \max_{D,D'}||f(D)-f(D')||_1$ is known as the sensitivity of the query. The p.d.f of $Lap(b)$ is given by $\mathbf{f}(x)={\frac  {1}{2b}}e^{ \left(-{\frac  {|x-\mu |}{b}}\right)}$.
+%The sensitivity of the function $f$ basically captures the magnitude by which a single individual's data can change the function $f$ in the worst case. Therefore, intuitively, it captures the uncertainty in the response that we must introduce in order to hide the participation of a single individual.
+
+
+\stitle{2)\textsf{NoisyMax }} $\noisymax_{\epsilon,\Delta}^k(\mathbf{V})$:  Noisy-Max is a type of differentially-private selection mechanism \cite{Dork} where the goal is to determine the counting query with the highest value out of $n$ different counts. The algorithm works as follows. First, generate each of the counts and then add independent Laplace noise from the distribution $Lap(\frac{1}{\epsilon})$ \xh{$\frac{\Delta}{\epsilon}$?} to each of them. The index of the largest noisy count is then reported as the noisy max. \xh{Are we reporting the indices of the $k$ largest noisy counts? or just 1}
+
+\xh{I am not sure if we need the following discussion.}
+This has two fold advantage over the naive implementation of finding the maximum count.
 Firstly, noisy-max applies "information minimization" as rather than releasing all the noisy counts
 and allowing the analyst to find the max and its index, only the
 index corresponding to the maximum is made public.
 Secondly, the noise added is much smaller than that in the case of the naive implementation (it has sensitivity $\Delta f=m$). Thus the \textsf{NoisyMax} primitive of \system takes as input of encrypted vector $encV$ where each vector element is a count alonside privacy parameter $\epsilon$ and sensitivity $\Delta$. It then adds noise drawn from $Lap(\frac{\Delta}{\epsilon})$ to each vector element and computes the indices of the top k elements $\hat{P}$.
+
+
 
 %\xh{Do not need to mention CSP or AS here, this is all hidden from data analyst, but focus on what Laplace and noisy max is and what it can achieve.}
 
