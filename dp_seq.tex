@@ -7,3 +7,17 @@ use sequential composition as defined above for our paper.
 
 \stitle{Secure Computation}
 Add more details
+
+
+\stitle{Stability of a transformation}
+\begin{definition}A transformation $\mathcal{T}$ is defined to be $t-$ stable if for two datasets $D$ and $D'$, we have\begin{gather}|\mathcal{T}(D)\ominus \mathcal{T}(D')| \leq t \cdot |D\ominus D'|  \end{gather} where $\ominus$ denotes the symmetric difference (i.e.,  $D \ominus D'$ is the set of records in $D$ or $D'$, but not both. \end{definition}
+Transformations with bounded stability scale the differential privacy guarantee of their outputs, by their stability constant \cite{PINQ}.
+\begin{theorem}
+Let $\mu$ provide $\epsilon$-differential privacy, and let $\mathcal{T}$
+be an arbitrary $t$-stable transformation. The composite computation $\mu \circ \mathcal{T}$ provides $(\epsilon \cdot t)$-differential privacy.\end{theorem}
+\stitle{Noisy Max Cntd}
+The Noisy Max algorithm has two fold advantage over the naive implementation of finding the maximum count.
+Firstly, noisy-max applies "information minimization" as rather than releasing all the noisy counts
+and allowing the analyst to find the max and its index, only the
+index corresponding to the maximum is made public.
+Secondly, the noise added is much smaller than that in the case of the naive implementation (it has sensitivity $\Delta f=m$).
