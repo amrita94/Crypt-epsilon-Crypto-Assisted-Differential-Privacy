@@ -1,21 +1,18 @@
 
 \section{Background}
-In this section we give a brief introduction to differential privacy and the cryptographic primitives used in \system. 
+In this section we give a brief introduction to definitions and primitives relevant to \system. 
 
 \subsection{Differential Privacy}
-\begin{definition} An algorithm $\mu$
+\begin{definition} An algorithm $\mathcal{A}$
 satisfies $\epsilon$-differential privacy ($\epsilon$-DP), where $\epsilon \geq 0$ is a privacy parameter, iff
  for any two datasets $D$ and $D'$ that differ in a single record, we have
 \begin{gather}
-\forall t \in Range(\mu), Pr \big[\mu(D) = t\big] \leq e^{\epsilon}Pr\big[\mu(D') = t\big]
+\forall t \in Range(\mu), Pr \big[\mathcal{A}(D) = t\big] \leq e^{\epsilon}Pr\big[\mu(D') = t\big]
 \end{gather}
 where $Range(\mu)$ denotes the set of all possible outputs
 of the algorithm $\mu$.
 \end{definition} 
-The differential privacy guarantee  when
-invoked multiple times can
-be bounded with sequential composition (section A).
-
+For basic properties of differential privacy we refer the readers to the brilliant book by Dwork et al. \cite{Dork}.
 \subsection{Cryptographic Primitives}
 \stitle{Linearly Homomorphic Encryption (\textsf{LHE}).}
 Let $(\mathcal{M}, +)$ be a finite group. A \textsf{LHE} scheme
@@ -26,22 +23,20 @@ $\bullet$ \textbf{Encryption} ($Enc$) - This is a randomized algorithm that encr
 $\bullet$\textbf{Decryption} ($Dec$) - The decryption algorithm $Dec$ is a deterministic function that uses the secret key $s_k$ to
 recover the original plaintext $m$ from ciphertext $\mathbf{c}$.
 \\
-In addition, linearly homomorphic encryption scheme supports the two operations $\oplus$ and $cMult$ with the following properties:
-\\$\bullet$ \textbf{Operator} $\oplus$ - Let $c_1 \leftarrow Enc_{pk}(m1), \ldots, c_a \leftarrow Enc_{pk}(m_a), a \in \mathcal{Z}_{>0}$. Then we have  $Dec_{sk}(c_1\oplus c_2 ...\oplus c_a)=    m_1 + \ldots   + m_a$  \\
-$\bullet$ \textbf{Operator} $cMult(a,c)$ - Let $c\leftarrow  Enc_{sk}(m)$. Then  \\ $Dec_{sk}\big(cMult(a,c)\big)=a\cdot m$ where $cMult(a,c)=c\oplus \ldots \oplus c$ (a times) 
-
-
+In addition, \textsf{LHE} supports the operator $\oplus$ that allows the summation of ciphers as follows:
+\\ \textbf{Operator} $\oplus$ - Let $c_1 \leftarrow Enc_{pk}(m1), \ldots, c_a \leftarrow Enc_{pk}(m_a), a \in \mathcal{Z}_{>0}$. Then we have  $Dec_{sk}(c_1\oplus c_2 ...\oplus c_a)=    m_1 + \ldots   + m_a$.  \\
+One can multiply a cipher $c\leftarrow  Enc_{sk}(m)$ by a plaintext positive integer $a$ by $a$ repetitions of $\oplus$. We denote this operation by $cMult(a,c)$ such that $Dec_{sk}\big(cMult(a,c)\big)=a\cdot m$.\\
 \stitle{Labeled Homomorphic Encryption(\textsf{labHE}).}
-Let $(Gen,Enc,Dec)$ be an \textsf{LHE} scheme with security parameter $\kappa$ and message space $\mathcal{M}$. Assume that a multiplication operation is given in $\mathcal{M}$, i.e., is a finite ring. Let also $\mathcal{F}:\{0,1\}^s \times \mathcal{L}\rightarrow \mathcal{M}$ be a pseudo-random function with speed space $\{0,1\}^s$( s= poly($\kappa $)) and the label space $\mathcal{L}$. Define
+Let $(Gen,Enc,Dec)$ be an \textsf{LHE} scheme with security parameter $\kappa$ and message space $\mathcal{M}$. Assume that a multiplication operation is given in $\mathcal{M}$, i.e., is a finite ring. Let also $\mathcal{F}:\{0,1\}^s \times \mathcal{L}\rightarrow \mathcal{M}$ be a pseudo-random function with seed space $\{0,1\}^s$( s= poly($\kappa $)) and the label space $\mathcal{L}$. Define
 \\
  $\bullet \textbf{labGen}(\kappa)$ - On input $\kappa$, it runs $Gen(\kappa)$ and outputs $(sk,pk)$
-\\$\bullet \textbf{localGen}(pk)$ -  For each user $i$ and with the public key as input, it samples a random seed $\sigma_i \in \{0,1\}^s$ and computes $pk_i = Enc_{pk}(\ddot{\sigma_i})$ where $\ddot{\sigma_i}$ is an  encoding of $\sigma_i$ as an  element of $\mathcal{M}$. It outputs $(\sigma_i,pk_i)$.\\
+\\$\bullet \textbf{localGen}(pk)$ -  For each user $i$ and with the public key as input, it samples a random seed $\sigma_i \in \{0,1\}^s$ and computes $pk_i = Enc_{pk}(\sigma_i')$ where $\sigma_i'$ is an  encoding of $\sigma_i$ as an  element of $\mathcal{M}$. It outputs $(\sigma_i,pk_i)$.\\
 $\bullet \textbf{labEnc}_{pk}(\sigma_i, m , \tau)$: On input a message $m \in \mathcal{M} $ with label $\tau \in \mathcal{L}$  from user $i$, it computes $b=\mathcal{F}(\sigma_i, \tau))$ and outputs the labeled ciphertext $\mathbf{c}=(a,c) \in \mathcal{M} \times \mathcal{C}$ with $ a= m- b$ in $\mathcal{M}$ and $c=Enc_{pk}(b)$.\\
 $\bullet \textbf{labDec}_{sk}(\mathbf{c})$ - This functions inputs a cipher $\mathbf{c}=(a,c) \in \mathcal{M} \times \mathcal{C}$ encrypted under the labHE scheme and decrypts it as $m=a-Dec_{sk}(c)$.
 \\
 In addition to the aforementioned operations supported by a \textsf{LHE}  scheme, \textsf{labHE} supports multiplication of two labeled ciphers as follows.
 \\ $\bullet \textbf{labMult}(\mathbf{c}_1,\mathbf{c}_2)$ -
-On input two labeled ciphers $\mathbf{c}_1=(a_1,c_1)$ and $\mathbf{c}_2=(a_2,c_2)$, it computes a "multiplication" ciphertext $\mathbf{d}=labMult(\mathbf{c_1,c_2})=Enc_{pk}(a_1,a_2)\odot cMult(c_1,a_2) \odot cMult(c_2,a_1)$. Observe that $Dec_{sk}(\mathbf{d})=m_1\cdot m_2 -b_1 \cdot b_2$.\\
+On input two labeled ciphers $\mathbf{c}_1=(a_1,c_1)$ and $\mathbf{c}_2=(a_2,c_2)$, it computes a "multiplication" ciphertext $\mathbf{d}=labMult(\mathbf{c_1,c_2})=Enc_{pk}(a_1,a_2)\oplus cMult(c_1,a_2) \oplus cMult(c_2,a_1)$. Observe that $Dec_{sk}(\mathbf{d})=m_1\cdot m_2 -b_1 \cdot b_2$.\\
  $\bullet \textbf{labMultDec}_{sk}(c_1,c_2,\mathbf{d})$ - On input two labels $c_1,c_2$ of two labHE ciphers $\mathbf{c_1},\mathbf{c_2}$ and the output $\mathbf{d}$ of $labMult(\mathbf{c_1},\mathbf{c_2})$, it decrypts the product as $m_3=Dec_{sk}(\mathbf{d})+Dec_{sk}(c_1)\cdot Dec_{sk}(c_2) = m_1\cdot m_2$ .   \\
 In this paper we propose an efficient way of extending the $labMult$ operation for a $n$-way multiplication in section \ref{implementation}.
 
