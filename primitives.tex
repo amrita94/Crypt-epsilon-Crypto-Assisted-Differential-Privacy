@@ -76,12 +76,12 @@ For each record of the database $\boldsymbol{\tilde{\mathcal{D}}}$ (i.e., data c
 
 
 \subsection{Measurement Primitives} \label{sec:measurement_primitives}
-The measurement primitives take encrypted vector of counts $\encV$ (or a single count $\encC$) as input and return noisy measurements on it in the clear. These implement two of the most popular differentially private mechanisms: Laplace mechanism and NoisyMax mechanism.
+The measurement primitives take encrypted vector of counts $\encV$ (or a single count $\encC$) as input and return noisy measurements on it in the clear. These implement two of the most popular differentially private mechanisms: Laplace mechanism and Noisy-Max mechanism.
 Both mechanisms add noise $\eta$ drawn from Laplace distribution, denoted by $Lap(b)$, where $\Pr[\eta =x]\propto e^{-{\frac{|x|}{b}}}$. The scale of the noise depends on the transformations applied on the base database $\encD$. Let the sequence of transformations $\bar{T}=(T_l,\ldots,T_1)$ applied on $\encD$ to get $\encV$ be $\bar{T}(\encD) = T_l(\cdots T_2((T_1(\encD))))$. We define the \emph{sensitivity} of a sequence of transformations as  the maximum change to the output of this sequence of transformations when changing a row in the input database, i.e.,
 $$\Delta_{\bar{T}} = \max_{|(D-D')\cup (D'-D)|=1} \|Dec(\bar{T}(\encD))-Dec(\bar{T}(\encD'))\|_1.$$
 The sensitivity of $\bar{T}$ can be upper bounded by the product of the stability (definition in section A2) of these transformation primitives , i.e. $\Delta_{\bar{T}=(T_l,\ldots,T_1)} = \prod_{i=1}^l \Delta T_i$. The transformation operators in Table~\ref{tab:primitives} have a stability of 1, except GroupByCount and GroupByCount* has a stability of 2. We will see how these two mechanisms add noise and their privacy guarantee.
 
-\stitle{1) \textsf{Laplace}} $\lap_{\epsilon,\Delta}(\mathbf{V}/\encC)$:  This primitive implements the classic Laplace mechanism~\cite{}.
+\stitle{1) \textsf{Laplace}} $\lap_{\epsilon,\Delta}(\mathbf{V}/\encC)$:  This primitive implements the classic Laplace mechanism \cite{Dork}.
 Given an encrypted vector $\encV$ (could be a scalar too), a privacy parameter $\epsilon$ and sensitivity $\Delta$ of the preceding transformations, the primitive adds noise vector (scalar) from $Lap^{|\encV|}(b)$, where $b=\frac{\Delta}{\epsilon}$. This primitive ensures $\epsilon$-differential privacy when data analyst views the plaintext answer.
 
 
@@ -90,8 +90,8 @@ Given an encrypted vector $\encV$ (could be a scalar too), a privacy parameter $
 %The sensitivity of the function $f$ basically captures the magnitude by which a single individual's data can change the function $f$ in the worst case. Therefore, intuitively, it captures the uncertainty in the response that we must introduce in order to hide the participation of a single individual.
 
 
-\stitle{2)\textsf{NoisyMax }} $\noisymax_{\epsilon,\Delta}^k(\mathbf{V})$:  Noisy-Max is a type of differentially-private selection mechanism \cite{Dork} where the goal is to determine the counting query with the highest value out of $n$ different counts. The algorithm works as follows. First, generate each of the counts and then add independent Laplace noise from the distribution $Lap(\frac{1}{\epsilon})$ %\xh{$\frac{\Delta}{\epsilon}$?} 
-to each of them. The index of the largest noisy count is then reported as the noisy max. %\xh{Are we reporting the indices of the $k$ largest noisy counts? or just 1}
+\stitle{2)\textsf{NoisyMax }} $\noisymax_{\epsilon,\Delta}^k(\mathbf{V})$:  Noisy-Max is a type of differentially-private selection mechanism \cite{Dork} where the goal is to determine the query with the highest value out of $n$ different noisy values. The algorithm works as follows. First, generate each of the $N$ answers and then add independent Laplace noise from the distribution $Lap(\frac{\Delta}{\epsilon})$ 
+to each of them. The index of the largest noisy value is then reported as the noisy max. %\xh{Are we reporting the indices of the $k$ largest noisy counts? or just 1}
 %\xh{I am not sure if we need the following discussion.}
  Thus the \textsf{NoisyMax} primitive of \system takes as input of encrypted vector $encV$ where each vector element is a count alonside privacy parameter $\epsilon$ and sensitivity $\Delta$. It then adds noise drawn from $Lap(\frac{\Delta}{\epsilon})$ to each vector element and computes the indices of the top k elements $\hat{P}$.
 
