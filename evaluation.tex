@@ -42,7 +42,7 @@ Program &  \multicolumn{3}{c}{Base} & \multicolumn{2}{c}{Optimized} \\
 \end{table}
 
 
-\begin{table}
+\eat{\begin{table}
 \caption{Execution Time Analysis for Crypt$\epsilon$ Programs}
 \centering
 \begin{tabular}{@{}c@{}c| @{}|c@{}|c@{}|c|@{}c|@{}c|@{}c|@{}c}
@@ -58,7 +58,7 @@ Program &  \multicolumn{3}{c}{Base} & \multicolumn{2}{c}{Optimized} \\
 \bottomrule
 \end{tabular}
 \label{c}
-\end{table}
+\end{table}}
 \subsubsection{Performance}
 \begin{figure}\includegraphics[width=5cm,height=3.1cm]{scalet.pdf} \caption{ Crypt$\epsilon$ Program Scalability} \end{figure}
 \textit{\textbf{\\Index}}-For Program 4, we observe that the base case implementation takes around 3.1 hours to run. However the  index optimization reduces the execution time to about $15$ minutes  giving us a $12.5\times $ speedup. It is so because, only 11\% of the data records satisfy $NativeCountry$=Mexico. Thus the index reduces the number of records to be considered for the dataset drastically thereby resulting in s huge performance boost. Similarly for Program 5 again the DP index optimization results in a $10\times$ speedup with the total running time being less than $4$ seconds. For Program 6 the DP index is constructed over attribute $Gender$. While the base case takes about 40 minutes to execute, the optimized code needs only 7 minutes to run thereby reducing the time  $5.7\times$.\\\\\textit{\textbf{Range Tree}}
