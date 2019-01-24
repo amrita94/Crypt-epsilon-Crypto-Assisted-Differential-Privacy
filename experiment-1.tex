@@ -1,0 +1,182 @@
+%!TEX root = paper_vldb.tex
+
+% % Please add the following required packages to your document preamble:
+% % \usepackage{multirow}
+\newcolumntype{g}{>{\columncolor{gray!17}}l}
+\newcolumntype{h}{>{\columncolor{gray!17}}c}
+
+\begin{figure*}[ht]
+  \begin{subfigure}[b]{0.25\linewidth}
+    \centering
+    \includegraphics[width=1\linewidth]
+    {figs/rel-err-boxplot_nc_only_household_full_policy-persons.pdf}
+    \caption{$W_1$, Person, \dataNC}
+    \label{fig:rel-error-nc-polpersons-w1}
+  \end{subfigure}%%
+  \begin{subfigure}[b]{0.25\linewidth}
+    \centering
+    \includegraphics[width=1\linewidth]{figs/rel-err-boxplot_nc_only_household_full_policy-households}
+    \caption{$W_1$, Household, \dataNC}
+    \label{fig:rel-error-nc-polhousing-w1}
+  \end{subfigure}%%
+\begin{subfigure}[b]{0.25\linewidth}
+	\centering
+	\includegraphics[width=1\linewidth]{figs/rel-err-boxplot_nc_full_full_policy-persons}
+	\caption{$W_2$, Person, \dataNC}
+	\label{fig:rel-error-nc-polpersons-w2}
+\end{subfigure}
+  \begin{subfigure}[b]{0.25\linewidth}
+    \centering
+    \includegraphics[width=1\linewidth]{figs/rel-err-boxplot_nc_full_full_policy-households}
+    \caption{$W_2$, Household, \dataNC}
+    \label{fig:rel-error-nc-polhousing-w2}
+  \end{subfigure}  \vspace{1mm}
+  \caption{Relative error rates on the \dataNCbf  datasets, for  $W_1$ (left) and $W_2$ (right) workloads and Person and Household policies. Error rates stratified by true query answer size.}
+  \label{fig:rel-error-nc}
+\vspace*{-.5cm}
+\end{figure*}
+
+
+
+\begin{figure}[ht]
+  \begin{subfigure}[b]{0.5\linewidth}
+\centering
+    \includegraphics[width=1\linewidth]
+    {figs/rel-err-boxplot_puma_only_household_full_policy-persons.pdf}
+    \caption{$W_1$ on \dataPUMA.}
+    \label{fig:rel-error-puma}
+  \end{subfigure}%%
+  \begin{subfigure}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[width=1\linewidth]{figs/rel-err-eps-boxplot_nc_only_household_full_policy-persons.pdf}
+    \caption{$W_1$ on \dataNC.}
+    \label{fig:rel-error-eps}
+  \end{subfigure}%%
+  \caption{\label{fig:rel-other} Relative error rates for \dataPUMAbf dataset (left), as well as for different $\bm{\epsilon}$ values (right), both under \personPolicy.}
+\vspace*{-.4cm}
+\end{figure}
+
+
+\begin{table}[]
+\small
+\centering
+\caption{\label{tab:view-sens} View Statistics for queries of $W_2$.}
+\begin{tabular}{cr|rr|rr}
+\toprule
+% \multicolumn{1}{c|}{\textbf{\begin{tabular}[c]{@{}c@{}}View \\ Group\end{tabular}}} & \multicolumn{1}{c|}{\textbf{\begin{tabular}[c]{@{}c@{}}View\\ sensitivity\end{tabular}}} & \multicolumn{1}{c|}{\textbf{\begin{tabular}[c]{@{}c@{}}Queries \\ in $W_1$\end{tabular}}} & \multicolumn{1}{c}{\textbf{\begin{tabular}[c]{@{}c@{}}Queries \\ in $W_2$\end{tabular}}} \\
+\multicolumn{1}{c}{} & \multicolumn{1}{c}{} & \multicolumn{2}{c}{\personPolicybf} & \multicolumn{2}{c}{\householdPolicybf}  \\ \midrule
+\multicolumn{1}{c}{\textbf{View}} & \multicolumn{1}{c}{\textbf{\# of }} & \multicolumn{1}{c}{\textbf{$\textsc{Sens}$}} & \multicolumn{1}{c}{\bf Median} & \multicolumn{1}{c}{\textbf{$\textsc{Sens}$}} & \multicolumn{1}{c}{\bf Median}  \\
+
+\multicolumn{1}{c}{\textbf{Group}} & \multicolumn{1}{c}{\textbf{Queries}} & \multicolumn{1}{c}{\textbf{Bound}} & \multicolumn{1}{c}{\bf $\bm{\textsc{Qerror}}$} & \multicolumn{1}{c}{\textbf{Bound}} & \multicolumn{1}{c}{\bf $\bm{\textsc{Qerror}}$}  \\
+
+\toprule
+\#1 & 23  & 0 & 0.0    &  1     & 948.1 \\
+\#2 & 3575  & 1 & 85.4   &    4   & 400.6 \\
+\#3 & 25  & 2 & 636.4    &    8   & 30,474.2 \\
+\#4 & 8   & 4 & 5,916.6  &   16   & 8,484.8 \\
+\#5 & 12  & 6 & 5,294.7  &   24   & 42,056.4 \\
+\#6 & 6   & 17  & 17,362.2 &   68   & 34,670.4 \\
+\#7 & 36  & 25  & 8,413.9  &  100   & 40,860.3 \\
+\bottomrule
+\end{tabular}
+\vspace*{-.2cm}
+\end{table}
+
+ % Actual numbers for tab:view-sens
+% \#1 & 23	&	0	&	0.0 & 	1   & 948.0844046516344 \\
+% \#2 & 3575	&	1	&	85.41265311176477 &    4   & 400.615488994808 \\
+% \#3 & 25	&	2	&	636.437423092837 &    8   & 30474.199706923937 \\
+% \#4 & 8		&	4	&	5916.546259549883 &   16   & 8484.804671953412 \\
+% \#5 & 12	&	6	&	5294.720264427257 &   24   & 42056.38246589607 \\
+% \#6 & 6		&	17	&	17362.175775394157 &   68   & 34670.38480700454 \\
+% \#7 & 36	&	25	&	8413.94493174138 &  100   & 40860.246645884436 \\
+
+
+
+% -- Experimentally evaluate PrivSQL on a real use case, explain what is the use case.
+% \textsf{Test Text} \textsf{\bfseries Test Text}
+We generate private estimates of the SQL queries that underlie the tabulations released by the U.S. Census as part of the SF-1. 
+We use \system to provide $(\epsilon, \privR)-$DP estimates for workloads $W_1$ and $W_2$, on the \dataPUMA and \dataNC datasets and both \persons and \housing policies.
+
+
+
+
+\myparagraph{Error Rates:}
+\cref{fig:rel-error-nc,fig:rel-other} summarize the $\algoname{RelError}$ distribution of \system across  different input configurations, stratified by the true query answer sizes. In each figure we draw  a horizontal solid black line at $y = 1$, denoting relative error of $100\%$. A mechanism that always outputs 0 achieves $100\%$ relative error. 
+
+\system achieves low error on a majority of the queries.  For the \personPolicy and \dataPUMA dataset (\cref{fig:rel-error-nc-polpersons-w1,fig:rel-error-nc-polpersons-w2}), \system achieves at most $2\%$ \algoname{RelError} on $75\%$ of the $W_1$ queries and at most $6\%$ \algoname{RelError} on $50\%$ of the $W_2$ queries. %Median error on $W_2$ is higher as this is a collection of high sensitivity queries. Moreover, as the true answer size increases, the error drops by an order of magintude; the median error is $<.1\%$ for queries with true answer $>10^4$ under the \personPolicy. 
+For the \householdPolicy (\cref{fig:rel-error-nc-polhousing-w1,fig:rel-error-nc-polhousing-w2}) all error rates are increased. The noise necessary to hide the presence of a household is much larger as removing one household from the dataset affects multiple rows in the \persons table. 
+
+% (\personPolicy, workload $W_1$, \dataPUMA)
+Error on the \dataPUMA dataset, $W_1$ workload and \personPolicy are shown in \cref{fig:rel-error-puma}. The \algoname{RelError} trends are similar to the \dataNC case, but the error is higher as query answers are significantly smaller on \dataPUMA than on \dataNC. 
+\cref{fig:rel-error-eps} shows the variation of error across different $\epsilon$ values. As expected, \system incurs smaller error higher values of $\epsilon$. We omit figures for other configurations due to space constraints.
+
+Queries with smaller true answer sizes and higher sensitivity incur high error. We discuss these effects next. 
+
+\myparagraph{Error vs Query Size:}
+% Now we discuss the effect of true query size in the relative error rates.
+\cref{fig:rel-error-nc} and \cref{fig:rel-error-puma} stratify \algoname{RelError} distribution across query groups with different true answer values: $<10^3$, $10^3-10^4$ and $>10^4$. The query groups of $W_1$ have sizes: $\{24, 73, 93\}$ and of $W_2$: $\{1869, 811, 742, 253\}$. Queries with size $<10^3$ have the highest error. As the true answer size increases, the error drops by an order of magintude. Under the \personPolicy, $95\%$ of queries in $W_1$ and $W_2$ with size $>10^3$ have error $<10\%$. The median error for queries in $W_1$ with true answer $>10^4$ is $<.1\%$. This further highlights the real-world utility of \system.
+
+%High error rates are mostly caused by queries with small true answer. Moreover, we observe a dramatic downwards error trend as the size increase for both $W_1$ and $W_2$. For instance, in the case of $W_1$, $95\%$ of queries with size $>1,000$ have error rate less than $10\%$ and $75\%$ of  queries with size $>100k$  have error less than $0.1\%$. These results further highlight the applicability of \system on an employment in a real world scenario.
+
+
+\myparagraph{View Sensitivities:}
+%
+% Describe what the table shows
+In  \cref{tab:view-sens} we show statistics about the views generated from \system for workload $W_2$, dataset \dataNC, and both \persons and \housing policies.
+Rows of the table correspond to \emph{groups of views} that have the same sensitivity. 
+The  second column shows the number of queries that are answerable from views in the group.
+The rest of the table summarizes the sensitivity of views in each group and the median absolute error (\algoname{QError}) across queries answerable from these views under \persons and \householdPolicy, resp. For instance, there are 3575 queries answerable by views with sensitivity $1$ under \personPolicy, and have a median absolute error of $85$.
+
+% Talk about connection of sensitivity and absolute error rates
+% proportionality of view sens and error rates
+We see that as the view sensitivity of a group increases so does the median $\algoname{QError}$ across queries. The connection is not necessarily linear due to choices in \algoname{PrivSynGen} and \algoname{BudgetAlloc}.
+ % This result further justifies the homogeneity requirement of $\algoname{VSelector}$.
+% Talk about policy stuff
+We also see that, for the same group, the \householdPolicy leads to higher sensitivity bounds and higher error rates. This is because the removal of a single row  in the \housing table affects multiple rows in \persons.
+
+
+% First, we see that \algoname{PrivSQL} achieves $0$ error on at least xx\% of the $W_1$, and xx\% on $W_2$ for the \dataPUMA dataset with slightly smaller numbers for the \dataNC dataset.
+% This happens for $2$ main reasons. First, there are $23$ queries with a  $0$ sensitivity view and on them $\algoname{PrivSQL}$ incurs $0$ error, since the $\algoname{SensCalc}$ correctly assigned $\algoname{Sens}(V_i) = 0$ on the view $V_i$ that contains them.
+% The second reason is more subtle and is a combination of data characteristics and the algorithmic choices.
+% Recall from earlier discussion that \algoname{Workload} is using a non-negative least squares subroutine to create the synopsis. This means that \algoname{Workload} will always return a synopsis with strictly non-negative elements. This fact in combination with a non-trivial fraction of queries of both workloads having $0$ true answers on both \dataPUMA and \dataNC datasets leads to achieving $0$ error on those queries.
+
+ % Why high errors -- due to high sensitivity
+
+% % Difference between training on repr and full
+% \myparagraph{Impact of Training Workload}
+% 	Table \cref{tab:error-stats-rel} also informs us that training on a representative workload has a noticeable impact on low-medium error percentiles, as it increases them. This is understandable, since our budget allocator now assigns the privacy budget differently (due to less queries assigned per view) and our  default \algoname{PrivSynGen}  (\algoname{Workload}) is highly dependent on the training workload.
+% 	Moreover, on results shown in \cref{sec:exp-sens} we can see that $\algoname{PrivSQL}_I$ and $\algoname{PrivSQL}_D$ have identical performance regardless on whether they were trained on the full or on the representative workload. This happens because both of those \algoname{PrivSynGen} are workload-agnostic -- i.e., their output does not change with changes in the training workload.
+
+% 	Lastly, we can see that the high error rates are actually improved. This happens mostly because when trained on the representative workload and with \algoname{PrivSynGen} set to \algoname{Workload} the system that \algoname{Workload} solves is undetermined which means it will incur multiple $0$ noisy answers, which in turn incur $\algoname{RelError} = 1$.
+
+
+
+\eat{
+\\
+  \begin{subfigure}[b]{0.25\linewidth}
+    \centering
+    \includegraphics[width=1\linewidth]
+    {figs/rel-err-boxplot_puma_only_household_full_policy-persons.pdf}
+    \caption{$W_1$, Person, \dataPUMA}
+    \label{fig:rel-error-puma-polpersons-w1}
+  \end{subfigure}%%
+  \begin{subfigure}[b]{0.25\linewidth}
+    \centering
+    \includegraphics[width=1\linewidth]{figs/rel-err-boxplot_puma_only_household_full_policy-households}
+    \caption{$W_1$, Household, \dataPUMA}
+    \label{fig:rel-error-puma-polhousing-w1}
+  \end{subfigure}%%
+\begin{subfigure}[b]{0.25\linewidth}
+	\centering
+	\includegraphics[width=1\linewidth]{figs/rel-err-boxplot_puma_full_full_policy-persons}
+	\caption{$W_2$, Person, \dataPUMA}
+	\label{fig:rel-error-puma-polpersons-w2}
+\end{subfigure}
+  \begin{subfigure}[b]{0.25\linewidth}
+    \centering
+    \includegraphics[width=1\linewidth]{figs/rel-err-boxplot_puma_full_full_policy-households}
+    \caption{$W_2$, Household, \dataPUMA}
+    \label{fig:rel-error-puma-polhousing-w2}
+  \end{subfigure}
+}

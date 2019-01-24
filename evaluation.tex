@@ -2,11 +2,11 @@
 \subsection{Evaluation Goals}
 In this section we experimentally evaluate  Crypt$\epsilon$ to assess its practical utility  based on two parameters, the accuracy and the performance of the Crypt$\epsilon$ programs. Specifically the experiments were designed to answer the following questions:
 \begin{enumerate}\item Does Crypt$\epsilon$ programs have constant error bounds depending only on the privacy parameter $\epsilon$  which is at least $O(\sqrt{m})$ times lower than that for the corresponding state-of-the-art LDP implementation? \item Is the program execution timings for Crypt$\epsilon$ practical? \item Does the proposed DP- optimizations provide substantial performance improvement over the base case Crypt$\epsilon$ implementation? \end{enumerate}
-\textit{Evaluation Highlights:}
-That the performnace arefaesble with the just taking while . the longest is 
+%\textit{Evaluation Highlights:}
+%That the performnace arefaesble with the just taking while . the longest is 
 \subsection{Methodology} 
 \textbf{Programs:}
-To answer the aforementioned questions we ran the experiments on the 7 Crypt$\epsilon$ programs previously outlined in section 5. Each program is compared with the corresponding state-of-the-art \textsf{LDP} implementations. We rename the examples 5.1,5.2,5.3,5.4,5.6 and 5.7 as P1,P2,P6,. The reason behind this grouping is to arrange the programs in their increasing order of complexity.  %\begin{itemize}\item \textbf{Program 1} - Count the number of records having age in range $[50,60]$ \\\textbf{\textsf{LDP} Competitor} - Frequency oracle of \cite{LDP1} constructed over attribute $Age$. \item \textbf{Program 2} - Report the top 5 most frequent age values. \\\textbf{\textsf{LDP} Competitor} - Frequency oracle of \cite{LDP1} constructed over attribute $Age$.  \item \textbf{Program 3 }- Report the marginal on attributes $Age$ and $Gender$. \\\textbf{\textsf{LDP} Competitor }- Frequency oracle of \cite{LDP1} constructed over attribute $Age \times Gender$. \item \textbf{Program 4 }- Report the marginal on attributes $Age$ and $Gender$ with $NativeCountry=Mexico$\\\textbf{\textsf{LDP} Competitor }- Frequency oracle of \cite{LDP1} constructed over attribute $Age\times Gender \times NativeCountry$. \item \textbf{Program 5 }- Count the number of natively Mexican male employees of age 30.\\\textbf{\textsf{LDP} Competitor }- Frequency oracle of \cite{LDP1} constructed over attribute $Age\times Gender \times NativeCountry$. \item \textbf{Program 6 }- Count the number of distinct age values for male employees. \\\textbf{\textsf{LDP} Competitor }-Frequency oracle of \cite{LDP1} constructed over attribute $Age\times Gender$.% and reports the number of non-zero counts after suitable adjustment for thresholding. 
+To answer the aforementioned questions we ran the experiments on the 7 Crypt$\epsilon$ programs previously outlined in section 5. Each program is compared with the corresponding state-of-the-art \textsf{LDP} implementations.% We rename the examples 5.1,5.2,5.3,5.4,5.6 and 5.7 as P1,P2,P6,. The reason behind this grouping is to arrange the programs in their increasing order of complexity.  %\begin{itemize}\item \textbf{Program 1} - Count the number of records having age in range $[50,60]$ \\\textbf{\textsf{LDP} Competitor} - Frequency oracle of \cite{LDP1} constructed over attribute $Age$. \item \textbf{Program 2} - Report the top 5 most frequent age values. \\\textbf{\textsf{LDP} Competitor} - Frequency oracle of \cite{LDP1} constructed over attribute $Age$.  \item \textbf{Program 3 }- Report the marginal on attributes $Age$ and $Gender$. \\\textbf{\textsf{LDP} Competitor }- Frequency oracle of \cite{LDP1} constructed over attribute $Age \times Gender$. \item \textbf{Program 4 }- Report the marginal on attributes $Age$ and $Gender$ with $NativeCountry=Mexico$\\\textbf{\textsf{LDP} Competitor }- Frequency oracle of \cite{LDP1} constructed over attribute $Age\times Gender \times NativeCountry$. \item \textbf{Program 5 }- Count the number of natively Mexican male employees of age 30.\\\textbf{\textsf{LDP} Competitor }- Frequency oracle of \cite{LDP1} constructed over attribute $Age\times Gender \times NativeCountry$. \item \textbf{Program 6 }- Count the number of distinct age values for male employees. \\\textbf{\textsf{LDP} Competitor }-Frequency oracle of \cite{LDP1} constructed over attribute $Age\times Gender$.% and reports the number of non-zero counts after suitable adjustment for thresholding. 
 %\item \textbf{Program 7 }- Count the number of age values with at least 10 records. \\\textbf{\textsf{LDP} Competitor }- Frequency oracle of \cite{LDP1} constructed over attribute $Age$. \end{itemize}
 \\\textbf{Datasets:}
 We ran our experiments on the full UCI dataset \cite{UCI} which is of size $32,651$. The experiment numbers are reported as the mean value after 10 repetitions.
@@ -64,53 +64,60 @@ Program &  \multicolumn{3}{c}{Base} & \multicolumn{2}{c}{Optimized} \\
 \begin{figure}\includegraphics[width=5cm,height=3.1cm]{scalet.pdf} \caption{ Crypt$\epsilon$ Program Scalability} \end{figure}
 \textit{\textbf{\\Index}}-For Program 4, we observe that the base case implementation takes around 3.1 hours to run. However the  index optimization reduces the execution time to about $15$ minutes  giving us a $12.5\times $ speedup. It is so because, only 11\% of the data records satisfy $NativeCountry$=Mexico. Thus the index reduces the number of records to be considered for the dataset drastically thereby resulting in s huge performance boost. Similarly for Program 5 again the DP index optimization results in a $10\times$ speedup with the total running time being less than $4$ seconds. For Program 6 the DP index is constructed over attribute $Gender$. While the base case takes about 40 minutes to execute, the optimized code needs only 7 minutes to run thereby reducing the time  $5.7\times$.\\\\\textit{\textbf{Range Tree}}
  For Program 1 we see that the total time taken for execution for the base case Crypt$\epsilon$ implementation is about 0.5 seconds while using the range tree optimization we get a $138\times$ speed up in timings. Note that the time required by the \textsf{AS} becomes almost negligible because it just simply needs to do a memory fetch to read of the answer from the pre-computed range tree instead of computing it from the entire encrypted database. The time for the \textsf{CSP} remains the same in both the cases, it is the decryption cost. For Program 2, we observe a $7\times$ performance improvement with the range tree optimization. Again, the reason is even in this case the \textsf{AS} can simply read off the leaf nodes of the range tree instead of computing their counts from the database. 
-\begin{figure*}
-    \centering
-    \begin{subfigure}[b]{0.2\textwidth}
-        \includegraphics[width=5cm,height=3.1cm]{t1.pdf}
+ 
+ 
+\begin{figure*}[ht]
+
+    \begin{subfigure}[b]{0.25\linewidth}
+        \centering
+        %\includegraphics[width=5cm,height=3.1cm]{t1.pdf}
+         \includegraphics[width=1\linewidth]{t1.pdf}
         \caption{ Program 1}
         \label{fig:gull}
-    \end{subfigure}\quad \qquad\quad 
+    \end{subfigure}%%
     ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
       %(or a blank line to force the subfigure onto a new line)
-    \begin{subfigure}[b]{0.3\textwidth}
-       \qquad \includegraphics[width=5cm,height=3.1cm]{t22.pdf}
+    \begin{subfigure}[b]{0.25\linewidth}
+       \centering %\includegraphics[width=5cm,height=3.1cm]{t22.pdf}
+       \includegraphics[width=1\linewidth]{t22.pdf}
         \caption{ Program 2}
         \label{fig:tiger}
-    \end{subfigure}
+    \end{subfigure}%%
     ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
       %(or a blank line to force the subfigure onto a new line)
-    \begin{subfigure}[b]{0.3\textwidth}
-    \qquad    \includegraphics[width=5cm,height=3.1cm]{t3.pdf}
+    \begin{subfigure}[b]{0.25\linewidth}
+    \centering \includegraphics[width=1\linewidth]{t3.pdf}
         \caption{Program 3}
-        \label{fig:mouse}\end{subfigure}
-          \begin{subfigure}[b]{0.3\textwidth}
-    \qquad    \includegraphics[width=5cm,height=3.1cm]{t4.pdf}
+        \label{fig:mouse}\end{subfigure}%%
+          \begin{subfigure}[b]{0.25\linewidth}
+    \centering  \includegraphics[width=1\linewidth]{t4.pdf}
         \caption{Program 4}
-        \label{fig:mouse}\end{subfigure}
-          \begin{subfigure}[b]{0.3\textwidth}
-    \qquad    \includegraphics[width=5cm,height=3.1cm]{t5.pdf}
+        \label{fig:mouse}\end{subfigure}%%
+        
+          \begin{subfigure}[b]{0.25\linewidth}
+    \centering    \includegraphics[width=1\linewidth]{t5.pdf}
         \caption{Program 5}
-        \label{fig:mouse}\end{subfigure}
-          \begin{subfigure}[b]{0.3\textwidth}
-    \qquad    \includegraphics[width=5cm,height=3.1cm]{t6.pdf}
+        \label{fig:mouse}\end{subfigure}%%
+          \begin{subfigure}[b]{0.25\linewidth}
+    \centering  \includegraphics[width=1\linewidth]{t6.pdf}
         \caption{Program 6}
-        \label{fig:mouse}\end{subfigure}
-          \begin{subfigure}[b]{0.3\textwidth}
-    \qquad    \includegraphics[width=5cm,height=3.1cm]{test7.pdf}
+        \label{fig:mouse}\end{subfigure}%%
+          \begin{subfigure}[b]{0.25\linewidth}
+    \centering    \includegraphics[width=1\linewidth]{test7.pdf}
         \caption{Program 7}
         \label{fig:mouse}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.3\textwidth}
-    \qquad    \includegraphics[width=5cm,height=3.1cm]{range.pdf}
+    \end{subfigure}%%
+    \begin{subfigure}[b]{0.25\linewidth}
+    \centering   \includegraphics[width=1\linewidth]{range.pdf}
         \caption{100 random range query evaluation}
         \label{rangetree}
-        \end{subfigure}
-        \begin{subfigure}[b]{0.3\textwidth}
-       \qquad \includegraphics[width=5cm,height=3.1cm]{index.pdf}
+        \end{subfigure}%%  
+        
+        \begin{subfigure}[b]{0.25\linewidth}
+       \centering \includegraphics[width=1\linewidth]{index.pdf}
         \caption{Privacy Budget analysis for Index Optimization}
         \label{rangetree}
-    \end{subfigure}
+    \end{subfigure}%%
 %    \caption{a) External alignment is the neighborhood of read $X$ in the full genome and $\lambda$ is the \% of $X$ that correctly identifies it. (b) Internal alignment is the index-to-index alignment within the neighborhood of $X$ and $\sigma=avg_i\frac{TBScore_{opt}-TBScore_i}{TBScore_{opt}}$ where $TBScore_{i}=\sum_{[i,j] \in \textit{Traceback path}}\mathbf{M}[i,j]$. 
 %   (c) $\rho$ is the number of reads required to cover a single index such that Pr( SNPs are aligned correctly in $Y) > 0.95$}
    \caption{Accuracy Analysis of Crypt$\epsilon$ Programs}
