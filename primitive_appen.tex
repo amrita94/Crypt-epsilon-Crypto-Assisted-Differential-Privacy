@@ -1,4 +1,5 @@
-\section{Crypt$\epsilon$ Primitive Implementation }
+\section{Crypt$\epsilon$ Implementation }
+\subsection{\system Primitives Implementation}
 1) \textbf{\textsf{CrossProduct}}($\tilde{\mathbf{T}}, A_i, A_j$): Let $D_1$ and $D_2$  be the encrypted one-hot-coding corresponding to two  values $v_1$ and $v_2$ (integral representation) for attributes $A_1$ and $A_2$ respectively. The corresponding encrypted one-hot-encoding for the two-dimensional attribute $A_1\times A_2$ is given by  \begin{gather} D_{1\times 2}[(i-1)\cdot s_{A_2}+j] = labMult(D_1[i], D_2[j])\\ i \in [s_{A_1}], j \in [s_{A_2}]\end{gather} For this particular case, only $D_{1 \times 2}[(v_1-1)\cdot s_{A_2}+v_2]=Enc(1)$ while all other indices will equate to $Enc(0)$. Note that when computing the one-hot-encoding for a t-dimensional attribute $t > 2$,  for the actual implementation, instead of calling $t$ iterative instances of \textsf{CrossProduct}() we use the $genLabMult()$ operator of labeled homomorphic encryption to speed up the computation. 
 
 2) \textbf{\textsf{Project}}($\tilde{\mathbf{T}}, A^*$)- The implementation of the \textsf{Project} transformation is very straightforward, it simply drops off all the attributes from $\tilde{\mathbf{T}}$ and returns the truncated table.
@@ -30,4 +31,6 @@ When the \textsf{Filter} transformation is applied for the very first time in a 
     \begin{enumerate}[label=\roman*]\item takes noisy masked  vector $\mathcal{V}$ as an input from the \textsf{CSP} \item takes mask $M$ as the input from \textsf{AS}  \item removes the mask from  $\mathcal{V}$  as \begin{gather*} \hat{V}[i]=\mathcal{V}[i]-M[i], i \in [|V|]\end{gather*}  \item computes the top $k$ element over  $\hat{V}$ and returns $arg_{\textit{top k}}\max{\hat{V}[i])}$
     \end{enumerate}
     \end{enumerate}
- 
+ \subsection{DP Index Optimization Implementation}\label{index-imp}
+ The DP index optimization can be implemented via a garbled circuit that \begin{enumerate}\item takes the entire database $\boldsymbol{\mathcal{\tilde{D}}}$ as an input and the attribute $A$ as an input from the \textsf{AS}.
+\item takes the secret key $sk$ as an input from  the \textsf{CSP} \item Decrypts $\boldsymbol{\mathcal{\tilde{D}}}$ \item Sorts the decrypted database on $A$, i.e., the first $ct_{A,v_1}$ rows are the ones with value $v_1$ for attribute $A$, the next $ct_{A,v_2}$ are  the records with value $v_2$ for attribute $A$ and so on. \item  re-encrypts the sorted database \item Divide the domain of $A$ into $k$ bins such that each bin contains $s_A/k$ consecutive domain values. \item Construct a $k$ lengthed vector $\hat{V}$ such that $\hat{V}[i]=\sum_jct_{A,j}+\eta_i, i \in [k], j \in [\frac{s_A}{k}(i-1)+1,\frac{s_A}{k}i]$ where $\eta_i$ is a random laplace noise drawn from the distribution $Lap(\frac{k}{\epsilon})$ \item Return $\hat{V}$ and sorted $\boldsymbol{\mathcal{\tilde{D}}}_{sort}$\end{enumerate}
