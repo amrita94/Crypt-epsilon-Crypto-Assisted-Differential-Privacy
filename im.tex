@@ -28,10 +28,39 @@ For a generic $n-way$ multiplication the order of multiplication can be, in fact
 
 \subsection{Primitive Implementation}
 %Now let us explain the implementation details of the aforementioned Crypt$\epsilon$ primitives.  
-In this section we explain the implementation details of two of the aforementioned \system primitives, the rest are covered in appendix section B.\\ \textbf{\textsf{GroupByCount }}$\groupbystar_A(\mathbf{\tilde{T}})$- The \textsf{GroupByCount} primitive is implemented  goes as follows   \begin{enumerate}[label=\alph*)]\item $\mathbf{V}=\groupbystar_{A}(\boldsymbol{\tilde{\mathcal{D}}})$ \\
- Note that since each entry of $\mathbf{V}$ is a count of records, its value ranges from $\{0,...,m\}$. \item \textsf{AS} creates a mask vector $M$ drawn uniformly at random from $[m]^{s_A}$, i.e.,  \begin{gather*} M[i] \in_R [m], i \in [|V|]\end{gather*} \item \textsf{AS} masks the encrypted true count vector $\mathbf{V}$ for attribute $A$ as follows \begin{gather*}\boldsymbol{\mathcal{V}}[i]= \mathbf{V}[i] \oplus labEnc_{pk}(M[i])\end{gather*} and sends $\boldsymbol{\mathcal{V}}$ to \textsf{CSP}.\item \textsf{CSP} decrypts $\boldsymbol{\mathcal{V}}$, converts each entry to its corresponding one-hot-coding and encrypts it. \begin{gather*}\mathcal{V}[i]=labDec_{sk}(\boldsymbol{\mathcal{V}})\\\tilde{\mathcal{V}[i]}=\mathcal{E}(\mathcal{V}[i])[\text{Generates one-hot-coding  }]\\\boldsymbol{\tilde{\mathcal{V}}}[i]=labEnc_{pk}(\tilde{\mathcal{V}[i]})\end{gather*}\item Notice that each entry of $\boldsymbol{\tilde{\mathcal{V}}}$ is a $m$ -lengthed one-hot-coding vector. \textsf{AS} now simply rotates every entry by its corresponding mask value to obtain the desired  encrypted one-hot-coding $\boldsymbol{\tilde{V}}[i]$. \begin{gather*}\boldsymbol{\tilde{V}}[i]=RightRotate(\boldsymbol{\tilde{\mathcal{V}}},M[i])\end{gather*}  \end{enumerate} Note that the \textsf{GroupByCount} primitive could have an alternative implementation using a Yao's garbled circuit that takes an input the encrypted vector and outputs the corresponding one-hot-coding representation. However this would require the circuit to decrypt and re-encrypt $O(m)$ data inside it which would be computationally heavy for larger values of $m$. 
- \\ \textbf{\textsf{Laplace }}$\lap_{\epsilon,\Delta}(\mathbf{V})$ - Recall that both \textsf{AS} and \textsf{CSP} have to add Laplace noise to the output in Crypt$\epsilon$. Hence the \textsf{Laplace} primitive has two components. The first component is executed by the \textsf{AS} wherein,
-\begin{enumerate} \item \textsf{AS} generates a noisy vector $\eta$ such that $\eta \in [Lap(\frac{1}{\epsilon})]^{|V|}$ \item encrypts $\eta$ and adds it to the input vector as \begin{gather*}\boldsymbol{\eta}=labEnc_{pk}(\eta)\\\mathbf{\hat{V}}[i]=\mathbf{V}[i]\oplus \boldsymbol{\eta}[i], i \in [|V|]\end{gather*} \end{enumerate} This encrypted noisy vector $\mathbf{\hat{V}}$ is the input for the second phase of the \textsf{Laplace} primitive which is executed by the \textsf{CSP} as follows \begin{enumerate}\item Decrypts $\mathbf{\hat{V}}$ \begin{gather*}\hat{V}=labDec_{sk}(\mathbf{\hat{V}})\end{gather*}  \item Generates a noisy vector $\eta'$ such that $\eta' \in [Lap(\frac{1}{\epsilon})]^{|\hat{V}|}$ \item Finally adds the noise $\eta'$ to $\hat{V}$ \begin{gather*}\hat{\mathcal{V}}[i]=\hat{V}[i]+\eta'[i], i \in [|\hat{V}|]\end{gather*} \item Returns $\hat{\mathcal{V}}$ to \textsf{AS} \end{enumerate} The implementation when the input is an encrypted scalar $\encC$ instead, is similar to the one presented above.
+In this section we explain the implementation details of two of the aforementioned \system primitives, the rest are covered in appendix section B.\\ \textbf{\textsf{GroupByCount }}$\groupbystar_A(\mathbf{\tilde{T}})$- The \textsf{GroupByCount} primitive is implemented by Algorithm ~\ref{groupby-imp}. \begin{algorithm}
+\caption{\textsf{GroupByCount }$\groupbystar_A(\mathbf{\tilde{T}})$}
+\begin{algorithmic}[1]
+\STATEx
+\textbf{Input}: $\mathbf{\tilde{T}}$
+\STATEx \textbf{Output}: $tilde{\encV}$
+\STATEx \textbf{\textsf{AS}:} \STATE Computes $\mathbf{V}=\groupbystar_{A}(\boldsymbol{\tilde{\mathcal{D}}})$. Note that since each entry of $\mathbf{V}$ is a count of records, its value ranges from $\{0,...,m\}$ \STATE Creates a mask vector $M$ drawn uniformly at random from $[m]^{s_A}$, i.e.,  \begin{gather*} M[i] \in_R [m], i \in [|V|]\end{gather*} 
+\STATE Masks the encrypted true count vector $\mathbf{V}$ for attribute $A$ as follows \begin{gather*}\boldsymbol{\mathcal{V}}[i]= \mathbf{V}[i] \oplus labEnc_{pk}(M[i])\end{gather*}
+\STATE Sends $\boldsymbol{\mathcal{V}}$ to \textsf{CSP}.
+\STATEx \textbf{\textsf{CSP}:}
+\STATE Decrypts  $\boldsymbol{\mathcal{V}}$ as $\mathcal{V}[i]=labDec_{sk}(\boldsymbol{\mathcal{V}})$.\STATE Converts each entry of $\mathcal{V}$ to its corresponding one-hot-coding and encrypts it. \begin{gather*}\boldsymbol{\tilde{\mathcal{V}}}[i]=labEnc_{pk}(\tilde{\mathcal{V}[i]})\end{gather*} Notice that each entry of $\boldsymbol{\tilde{\mathcal{V}}}$ is a $m$ -lengthed one-hot-coding vector.
+\STATE Sends $\boldsymbol{\tilde{\mathcal{V}}}$ to \textsf{AS}.
+\STATEx \textbf{\textsf{AS}}:
+\STATE  Rotates every entry by its corresponding mask value to obtain the desired  encrypted one-hot-coding $\boldsymbol{\tilde{V}}[i]$. \begin{gather*}\boldsymbol{\tilde{V}}[i]=RightRotate(\boldsymbol{\tilde{\mathcal{V}}},M[i])\end{gather*} 
+ \end{algorithmic} \label{groupby-imp}
+\end{algorithm} 
+Note that the \textsf{GroupByCount} primitive could have an alternative implementation using a Yao's garbled circuit that takes an input the encrypted vector and outputs the corresponding one-hot-coding representation. However this would require the circuit to decrypt and re-encrypt $O(m)$ data inside it which would be computationally heavy for larger values of $m$. 
+ \\ (2)\textbf{ \textsf{Laplace }}$\lap_{\epsilon,\Delta}(\mathbf{V})$ -  
+\begin{algorithm}
+\caption{\textsf{Laplace }$\lap_{\epsilon,\Delta}(\mathbf{V})$}
+\begin{algorithmic}[1]
+\STATEx
+\textbf{Input}: $\encV$
+\STATEx \textbf{Output}: $\hat{V}$
+\STATEx \textbf{\textsf{AS}:} \STATE Generates a noisy vector $\eta \sim [Lap(\frac{1}{\epsilon})]^{|V|}$ \STATE Encrypts $\eta$ and adds it to the input vector as \begin{gather*}\boldsymbol{\eta}=labEnc_{pk}(\eta)\\
+\mathbf{\hat{\mathcal{V}}}[i]=\mathbf{V}[i]\oplus \boldsymbol{\eta}[i], i \in [|V|]\end{gather*}
+\STATE Sends $\hat{\mathbb{\mathcal{V}}}$  to \textsf{CSP}
+\STATEx \textbf{\textsf{CSP}:}
+\STATE Decrypts $\mathbf{\hat{\mathcal{V}}}$ \begin{gather*}\hat{\mathcal{V}}=labDec_{sk}(\mathbf{\hat{\mathcal{V}}})\end{gather*}
+\STATE Generates a noisy vector $\eta'$ such that $\eta' \in [Lap(\frac{1}{\epsilon})]^{|\hat{V}|}$ \item Finally adds the noise $\eta'$ to $\hat{V}$ \begin{gather*}\hat{V}[i]=\hat{\mathcal{V}}[i]+\eta'[i], i \in [|V|]\end{gather*}
+\STATE Returns $\hat{V}$ to \textsf{AS}
+ \end{algorithmic} \label{lap}
+\end{algorithm} The implementation for the \textsf{Laplace} primitive is given by Algorithm ~\ref{lap}. The implementation when the input is an encrypted scalar $\encC$ instead, is similar to the one presented.
 
 \subsection{Classification of \system Programs}
 Crypt$\epsilon$ programs can be classified into three classes based on the number and type of interaction required between the \textsf{AS} and the \textsf{CSP}.  \\
