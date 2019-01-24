@@ -4,6 +4,11 @@
 In this section we describe the implementation of Crypt$\epsilon$. First we discuss our novel proposed technique for extending the $labMult$ operation of \textsf{labHE} to support $n > 0$ multiplicands. Then we describe the implementations for each primitive. Last, we use the example programs from the previous section to illustrate the performance of \system.
 
 \subsection{\textbf{General n-way multiplication for \textsf{labHE}- $genLabMult()$}}\label{genlab}
+In addition to the operations supported by a \textsf{LHE}  scheme, \textsf{labHE} supports multiplication of two labeled ciphers. 
+\\ $\bullet \textbf{labMult}(\mathbf{c}_1,\mathbf{c}_2)$ -
+On input two labeled ciphers $\mathbf{c}_1=(a_1,c_1)$ and $\mathbf{c}_2=(a_2,c_2)$, it computes a "multiplication" ciphertext $\mathbf{d}=labMult(\mathbf{c_1,c_2})=Enc_{pk}(a_1,a_2)\oplus cMult(c_1,a_2) \oplus cMult(c_2,a_1)$. Observe that $Dec_{sk}(\mathbf{d})=m_1\cdot m_2 -b_1 \cdot b_2$.\\
+ $\bullet \textbf{labMultDec}_{sk}(c_1,c_2,\mathbf{d})$ - On input two labels $c_1,c_2$ of two labHE ciphers $\mathbf{c_1},\mathbf{c_2}$ and the output $\mathbf{d}$ of $labMult(\mathbf{c_1},\mathbf{c_2})$, it decrypts the product as $m_3=Dec_{sk}(\mathbf{d})+Dec_{sk}(c_1)\cdot Dec_{sk}(c_2) = m_1\cdot m_2$ .   \\
+In this paper we propose an efficient way of extending the $labMult$ operation for a $n$-way multiplication.
 \begin{algorithm}
 \caption{$genLabMult$ - generate label for $labMult$}
 \begin{algorithmic}[1]
@@ -24,17 +29,16 @@ In this section we describe the implementation of Crypt$\epsilon$. First we disc
 Consider the case where we want to multiply the respective ciphers of  $n$ messages $\{m_1,...m_n\} \in \mathcal{M}^n$. Note that the reason why we can't simply use $labMult$ for a generic $n-$ way multiplication is because, the "multiplication" cipher $\mathbf{d}=labMult(\mathbf{c_1},\mathbf{c_2})$ does not have  a corresponding label. Thus for generalizing the $labMult$ operation for $n$ multiplicands what we have to do is to generate a label and a seed for every intermediary product of two multiplicands. This can be done as shown by Algorithm 1. Note that the mask $r$ protects the value of $m_1\cdot m_2$ from the \textsf{CSP} in step 5. Similarly since $b'$ is not known to the \textsf{AS}, $m_1\cdot m_2$ remains hidden from the \textsf{AS} in step 9. Now with the true \textsf{labHE} cipher $\mathbf{c}=(a',c')$ for the product the \textsf{AS} can compute further multiplications on it.
 For a generic $n-way$ multiplication the order of multiplication can be, in fact, parallelized as  shown in Figure ~\ref{genlab-fig} to require a total of $\lceil \log n\rceil$ rounds of communication with the \textsf{CSP}.
 \begin{figure}\includegraphics[height=4cm,width=8cm]{kk.png} \caption{ $genLabMult()$ - Batching of multiplicands for \textsf{labHE}} \label{genlab-fig}\end{figure}\\
-
-
 \subsection{Primitive Implementation}
 %Now let us explain the implementation details of the aforementioned Crypt$\epsilon$ primitives.  
-In this section we explain the implementation details of two of the aforementioned \system primitives, the rest are covered in appendix section B.\\ \textbf{\textsf{GroupByCount }}$\groupbystar_A(\mathbf{\tilde{T}})$- The \textsf{GroupByCount} primitive is implemented by Algorithm ~\ref{groupby-imp}. \begin{algorithm}
+In this section we explain the implementation details of two of the aforementioned \system primitives, the rest are covered in appendix section B.\\ (1)\textbf{ \textsf{GroupByCount }}$\groupbystar_A(\mathbf{\tilde{T}})$- The \textsf{GroupByCount} primitive is implemented by Algorithm ~\ref{groupby-imp}. \begin{algorithm}
+\small
 \caption{\textsf{GroupByCount }$\groupbystar_A(\mathbf{\tilde{T}})$}
 \begin{algorithmic}[1]
 \STATEx
 \textbf{Input}: $\mathbf{\tilde{T}}$
-\STATEx \textbf{Output}: $tilde{\encV}$
-\STATEx \textbf{\textsf{AS}:} \STATE Computes $\mathbf{V}=\groupbystar_{A}(\boldsymbol{\tilde{\mathcal{D}}})$. Note that since each entry of $\mathbf{V}$ is a count of records, its value ranges from $\{0,...,m\}$ \STATE Creates a mask vector $M$ drawn uniformly at random from $[m]^{s_A}$, i.e.,  \begin{gather*} M[i] \in_R [m], i \in [|V|]\end{gather*} 
+\STATEx \textbf{Output}: $\tilde{\encV}$
+\STATEx \textbf{\textsf{AS}:} \STATE Computes $\mathbf{V}=\groupbystar_{A}(\encT)$. Note that since each entry of $\mathbf{V}$ is a count of records, its value ranges from $\{0,...,m\}$ \STATE Creates a mask vector $M$ drawn uniformly at random from $[m]^{s_A}$, i.e.,  \begin{gather*} M[i] \in_R [m], i \in [|V|]\end{gather*} 
 \STATE Masks the encrypted true count vector $\mathbf{V}$ for attribute $A$ as follows \begin{gather*}\boldsymbol{\mathcal{V}}[i]= \mathbf{V}[i] \oplus labEnc_{pk}(M[i])\end{gather*}
 \STATE Sends $\boldsymbol{\mathcal{V}}$ to \textsf{CSP}.
 \STATEx \textbf{\textsf{CSP}:}
@@ -47,6 +51,7 @@ In this section we explain the implementation details of two of the aforemention
 Note that the \textsf{GroupByCount} primitive could have an alternative implementation using a Yao's garbled circuit that takes an input the encrypted vector and outputs the corresponding one-hot-coding representation. However this would require the circuit to decrypt and re-encrypt $O(m)$ data inside it which would be computationally heavy for larger values of $m$. 
  \\ (2)\textbf{ \textsf{Laplace }}$\lap_{\epsilon,\Delta}(\mathbf{V})$ -  
 \begin{algorithm}
+\small
 \caption{\textsf{Laplace }$\lap_{\epsilon,\Delta}(\mathbf{V})$}
 \begin{algorithmic}[1]
 \STATEx

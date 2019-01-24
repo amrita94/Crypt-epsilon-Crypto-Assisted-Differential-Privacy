@@ -33,15 +33,7 @@ Let $(Gen,Enc,Dec)$ be an \textsf{LHE} scheme with security parameter $\kappa$ a
 \\$\bullet \textbf{localGen}(pk)$ -  For each user $i$ and with the public key as input, it samples a random seed $\sigma_i \in \{0,1\}^s$ and computes $pk_i = Enc_{pk}(\sigma_i')$ where $\sigma_i'$ is an  encoding of $\sigma_i$ as an  element of $\mathcal{M}$. It outputs $(\sigma_i,pk_i)$.\\
 $\bullet \textbf{labEnc}_{pk}(\sigma_i, m , \tau)$: On input a message $m \in \mathcal{M} $ with label $\tau \in \mathcal{L}$  from user $i$, it computes $b=\mathcal{F}(\sigma_i, \tau))$ and outputs the labeled ciphertext $\mathbf{c}=(a,c) \in \mathcal{M} \times \mathcal{C}$ with $ a= m- b$ in $\mathcal{M}$ and $c=Enc_{pk}(b)$.\\
 $\bullet \textbf{labDec}_{sk}(\mathbf{c})$ - This functions inputs a cipher $\mathbf{c}=(a,c) \in \mathcal{M} \times \mathcal{C}$ encrypted under the labHE scheme and decrypts it as $m=a-Dec_{sk}(c)$.
-\\
-In addition to the aforementioned operations supported by a \textsf{LHE}  scheme, \textsf{labHE} supports multiplication of two labeled ciphers as follows.
-\\ $\bullet \textbf{labMult}(\mathbf{c}_1,\mathbf{c}_2)$ -
-On input two labeled ciphers $\mathbf{c}_1=(a_1,c_1)$ and $\mathbf{c}_2=(a_2,c_2)$, it computes a "multiplication" ciphertext $\mathbf{d}=labMult(\mathbf{c_1,c_2})=Enc_{pk}(a_1,a_2)\oplus cMult(c_1,a_2) \oplus cMult(c_2,a_1)$. Observe that $Dec_{sk}(\mathbf{d})=m_1\cdot m_2 -b_1 \cdot b_2$.\\
- $\bullet \textbf{labMultDec}_{sk}(c_1,c_2,\mathbf{d})$ - On input two labels $c_1,c_2$ of two labHE ciphers $\mathbf{c_1},\mathbf{c_2}$ and the output $\mathbf{d}$ of $labMult(\mathbf{c_1},\mathbf{c_2})$, it decrypts the product as $m_3=Dec_{sk}(\mathbf{d})+Dec_{sk}(c_1)\cdot Dec_{sk}(c_2) = m_1\cdot m_2$ .   \\
-In this paper we propose an efficient way of extending the $labMult$ operation for a $n$-way multiplication in section \ref{implementation}.
-
-
-\stitle{Secure Computation.}
+\stitle{Secure Computation}
 %\arc{Not final:placeholder}
 Garbled circuit, also known as Yao's protocol \cite{Yao,yao2},  is a generic method for secure  computation that allows two-party evaluation of a function $f(x_1,x_2)$ in the presence of semi-honest adversaries. The protocol is run between two data owners with respective private inputs $x_1$ and $x_2$ such that at the end, no party learns more  
 than what is revealed from the output value $f(x_1,x_2)$.  \eat{In the protocol, one of the parties called
