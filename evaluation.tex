@@ -2,7 +2,8 @@
 \subsection{Evaluation Goals}
 In this section we experimentally evaluate  Crypt$\epsilon$ to assess its practical utility  based on two parameters, the accuracy and the performance of the Crypt$\epsilon$ programs. Specifically the experiments were designed to answer the following questions:
 \begin{enumerate}\item Does Crypt$\epsilon$ programs have constant error bounds depending only on the privacy parameter $\epsilon$  which is at least $O(\sqrt{m})$ times lower than that for the corresponding state-of-the-art LDP implementation? \item Is the program execution timings for Crypt$\epsilon$ practical? \item Does the proposed DP- optimizations provide substantial performance improvement over the base case Crypt$\epsilon$ implementation? \end{enumerate}
-%\textit{Evaluation Highlights:}
+\textit{Evaluation Highlights:}
+From table we see that can privide to while  spped up in execution time. Moreover 
 %That the performnace arefaesble with the just taking while . the longest is 
 \subsection{Methodology} 
 \textbf{Programs:}
@@ -108,15 +109,15 @@ Program &  \multicolumn{3}{c}{Base} & \multicolumn{2}{c}{Optimized} \\
         \label{fig:mouse}
     \end{subfigure}%%
     \begin{subfigure}[b]{0.25\linewidth}
-    \centering   \includegraphics[width=1\linewidth]{range.pdf}
+     \includegraphics[width=1\linewidth]{range.pdf}
         \caption{100 random range query evaluation}
-        \label{rangetree}
-        \end{subfigure}%%  
+        %\label{rangetree}
+        \end{subfigure}
         
         \begin{subfigure}[b]{0.25\linewidth}
-       \centering \includegraphics[width=1\linewidth]{index.pdf}
+     \includegraphics[width=1\linewidth]{index.pdf}
         \caption{Privacy Budget analysis for Index Optimization}
-        \label{rangetree}
+        \label{Index}
     \end{subfigure}%%
 %    \caption{a) External alignment is the neighborhood of read $X$ in the full genome and $\lambda$ is the \% of $X$ that correctly identifies it. (b) Internal alignment is the index-to-index alignment within the neighborhood of $X$ and $\sigma=avg_i\frac{TBScore_{opt}-TBScore_i}{TBScore_{opt}}$ where $TBScore_{i}=\sum_{[i,j] \in \textit{Traceback path}}\mathbf{M}[i,j]$. 
 %   (c) $\rho$ is the number of reads required to cover a single index such that Pr( SNPs are aligned correctly in $Y) > 0.95$}
