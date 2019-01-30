@@ -2,7 +2,7 @@
 % \usepackage{multirow}
 
 
-\begin{table*}[]
+\begin{table*}
 \small{
 \caption {\system Primitives}\label{tab:primitives}
 \begin{tabular}{|l|l|l|l|l|l|}
@@ -11,7 +11,7 @@
 \multirow{7}{*}{Transformation} & \multirow{2}{*}{\textsf{CrossProduct}} &  \multirow{2}{*}{$\crossproduct_{A_i,A_j\rightarrow A'}(\cdot)$} & 
 
 \multirow{2}{*}{$\encT$}   &  \multirow{2}{*}{$\encT'$}   & Generates a new attribute  $A'$ (in one-hot-coding) to represent\\ & & & & & the data for both the attributes $A_i$ and $A_j$   \\ \cline{2-6}
-                                & \textsf{Project}     & $\project_{A^*}(\cdot)$  &  $\encT$       &  $\encT'$       &  Discards all attributes but $A*$ \\ \cline{2-6}
+                                & \textsf{Project}     & $\project_{A^*}(\cdot)$  &  $\encT$       &  $\encT'$       &  Discards all attributes but $A^*$ \\ \cline{2-6}
                                 & \textsf{Filter}       & $\filter_{\phi}(\cdot)$   &  $\encT$      &   $\encB'$     &  Zeros out records not satisfying $\phi$    in $\encB$          \\ \cline{2-6}
                                 & \textsf{Count}             & $\countagg(\cdot)$         & $\encT$  &  $\encC$    &  Counts the number of 1s in $\encB$               \\ \cline{2-6}
                                 & \textsf{GroupByCount*}             & $\groupbystar_{A}(\cdot)$ &  $\encT$  & $\encV$    & Returns encrypted histogram of $A$                \\ \cline{2-6}

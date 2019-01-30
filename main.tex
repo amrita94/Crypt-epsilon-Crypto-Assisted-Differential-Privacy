@@ -22,7 +22,7 @@
 \acmDOI{10.1145/1122445.1122456}
 \acmISBN{978-1-4503-9999-9/18/06}
 %\usepackage{cite}
-\usepackage[bottom]{footmisc}
+%\usepackage[bottom]{footmisc}
 \usepackage{enumitem}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{algorithm}
@@ -48,10 +48,6 @@
 \newtheorem{definition}{Definition}
 \newtheorem{exmp}{Example}[section]
 \usepackage{mathtools}
-%\usepackage[noend]{algpseudocode}
-%\usepackage{enumerate}
-%\usepackage[demo]{graphicx}
-%\usepackage{subcaption}
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
 \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 \input{defs}
@@ -62,10 +58,10 @@
 \title{\system: Crypto-Assisted Differential Privacy For Achieving High Accuracy Without Trusted Servers}
 \author{}
 \begin{abstract}
-In the last decade, differential privacy has steadily become the de-facto standard for achieving strong privacy guarantees in data analysis. Depending on the implementation, differential privacy can be classified into two types: the "central" model where in a trusted centralized server collects the records from the data owners in the clear and outputs differentially private statistics; and the "local" model, in which the data owners do not necessarily trust the server and hence individually randomizes their inputs.  In the central model, differential privacy for the outputs can be achieved by adding only a single instance of random noise thereby resulting in constant error bounds. In contrast, the local model assures stronger privacy guarantees  albeit at a cost of strictly limited accuracy and restricted algorithmic expressibility due to the independent noise addition of each data owner. In this work, we propose a  two-server model of implementation for differential privacy, \system  that  \\
+In the last decade, differential privacy has steadily become the de-facto standard for achieving strong privacy guarantees in data analysis. It is typically implemented either in the "central" or "local" model. In the former, a trusted centralized server collects the records from the data owners in the clear and outputs differentially private statistics; while in the latter, the data owners do not necessarily trust the server and hence individually randomizes their inputs.  Thus the central model assumes the presence of a trusted server which is dispensed with in the local model. This increased privacy guarantee of the local model, however, comes at the cost of strictly lower accuracy and restricted algorithmic expressibility for differentially private programs. In this work, we propose a  two-server model for differential privacy, \system  that  \\
 1) achieves the accuracy guarantees of the central model without the need of any trusted server \\
 2) provides strictly greater expressibility than the local model. \\
-\system achieves this "best of both worlds" result with the assistance of two cryptographic primitives - linear homomorphic encryption and  Yao's garbled circuit. \system is equipped with a set of primitives which can be used by an data analyst to obtain differentially private answers for a useful class of programs. Further, we propose four optimization schemes to improve the efficiency of \system.  The  usability of \system for practical settings is demonstrated via extensive performance evaluation.
+\system achieves this "best of both worlds" result with the assistance of two cryptographic primitives - linear homomorphic encryption and  Yao's garbled circuit. \system is equipped with a set of primitives which can be used by an data analyst to obtain differentially private answers for a useful class of programs. Further, we propose four optimization schemes to improve the efficiency of \system.  We demonstrate the feasibility of \system in for practical differentially private analysis on untrusted servers with an extensive empirical evaluation on real datasets.
 \end{abstract}
 \begin{CCSXML}
 <ccs2012>
@@ -81,11 +77,12 @@ In the last decade, differential privacy has steadily become the de-facto standa
 </concept>
 </ccs2012>
 \end{CCSXML}
-%\ccsdesc[300]{Security and privacy~Public key encryption}
-%\ccsdesc[300]{Security and privacy~Privacy-preserving protocols}
+\ccsdesc[300]{Security and privacy~Public key encryption}
+\ccsdesc[300]{Security and privacy~Privacy-preserving protocols}
 %\begin{IEEEkeywords}
 
 \keywords{Differential Privacy, Crypto Service Provider, Linear Homomorphic Encryption}
+ \settopmatter{printfolios=true}
 \maketitle
 %\end{IEEEkeywords}
 \input{Introduction}
