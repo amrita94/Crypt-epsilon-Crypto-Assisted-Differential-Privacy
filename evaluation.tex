@@ -33,7 +33,7 @@
         \label{Index}
     \end{subfigure}
     \begin{subfigure}[b]{0.25\linewidth}
-     \includegraphics[width=1\linewidth]{scalet.pdf}
+     \includegraphics[width=1\linewidth]{scale_fin.pdf}
         \caption{\system Program Scalability}
         \label{Scale}
     \end{subfigure}
@@ -56,7 +56,7 @@ To answer the aforementioned questions we ran the experiments on 4 of the Crypt$
 We ran our experiments on the Adult dataset from the UCI repository \cite{UCI}  which has been extracted from the 1994 census data. The dataset is of size $32,651$ and the experiment numbers are reported as the mean value after 10 repetitions.
 \\\textbf{Metrics:}
 \\\textbf{\textit{Accuracy:}} For accuracy the following metrics are used
-\\$\bullet$ Programs A, B and C use absolute error $ =|c-\hat{c}|$ where $c$ is the true count and $\hat{c}$ is the noisy output.\\ $\bullet$ Programs D uses the $L1-Norm$ error metric given  by $Error=\sum_{i}|V[i]-\hat{C}[i]|, i \in [|V|]$.\\
+\\$\bullet$ Programs A, B and C use absolute error $ =|c-\hat{c}|$ where $c$ is the true count and $\hat{c}$ is the noisy output.\\ $\bullet$ Programs D uses the $L1-Norm$ error metric given  by $Error=\sum_{i}|V[i]-\hat{V}[i]|, i \in [|V|]$.\\
 \textbf{\textit{Performance:}} For measuring performance we report the total execution time in seconds for each program.
 
 
