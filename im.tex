@@ -4,10 +4,10 @@
 In this section we describe the implementation of Crypt$\epsilon$. First we discuss our novel proposed technique for extending the $labMult$ operation of \textsf{labHE} to support $n > 2$ multiplicands. Then we describe the implementations for each primitive. Last, we use the example programs from the previous section to illustrate the performance of \system.
 
 \subsection{\textbf{General $n$-way Multiplication for \textsf{labHE}}}\label{genlab}
-In addition to the operations supported by a \textsf{LHE}  scheme, \textsf{labHE} supports multiplication of two labeled ciphers. 
+In addition to the operations supported by a \textsf{LHE}  scheme, \textsf{labHE} supports multiplication of two \textsf{labHE} ciphers. 
 \\ $\bullet \textbf{labMult}(\mathbf{c}_1,\mathbf{c}_2)$ -
-On input two labeled ciphers $\mathbf{c}_1=(a_1,d_1)$ and $\mathbf{c}_2=(a_2,d_2)$, it computes a "multiplication" ciphertext $\mathbf{e}=labMult(\mathbf{c_1,c_2})=Enc_{pk}(a_1,a_2)\oplus cMult(d_1,a_2) \oplus cMult(d_2,a_1)$. Observe that $Dec_{sk}(\mathbf{e})=m_1\cdot m_2 -b_1 \cdot b_2$.\\
- $\bullet \textbf{labMultDec}_{sk}(d_1,d_2,\mathbf{e})$ - On input two encrypted masks $d_1,d_2$ of two labHE ciphers $\mathbf{c_1},\mathbf{c_2}$ and the output $\mathbf{e}$ of $labMult(\mathbf{c_1},\mathbf{c_2})$, it decrypts the product as $m_3=Dec_{sk}(\mathbf{e})+Dec_{sk}(d_1)\cdot Dec_{sk}(d_2) = m_1\cdot m_2$ .   \\
+On input two \textsf{labHE} ciphers $\mathbf{c}_1=(a_1,d_1)$ and $\mathbf{c}_2=(a_2,d_2)$, it computes a "multiplication" ciphertext  $\mathbf{e}=labMult(\mathbf{c_1,}$ $\mathbf{c_2})=Enc_{pk}(a_1,a_2)\oplus cMult(d_1,a_2) \oplus cMult(d_2,a_1)$. Observe that $Dec_{sk}(\mathbf{e})=m_1\cdot m_2 -b_1 \cdot b_2$.\\
+ $\bullet \textbf{labMultDec}_{sk}(d_1,d_2,\mathbf{e})$ - On input two encrypted masks $d_1,d_2$ of two \textsf{labHE} ciphers $\mathbf{c_1},\mathbf{c_2}$ and the output $\mathbf{e}$ of $labMult(\mathbf{c_1},\mathbf{c_2})$, it decrypts the product as $m_3=Dec_{sk}(\mathbf{e})+Dec_{sk}(d_1)\cdot Dec_{sk}(d_2) = m_1\cdot m_2$ .   \\
 In this paper we propose an efficient way of extending the $labMult$ operation for a $n$-way multiplication.
 \begin{algorithm}
 \caption{$genLabMult$ - generate label for $labMult$}
