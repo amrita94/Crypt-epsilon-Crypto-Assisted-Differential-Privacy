@@ -14,6 +14,7 @@
 % These commands are for a PROCEEDINGS abstract or paper.
 \copyrightyear{2018}
 \acmYear{2018}
+\settopmatter{printacmref=false}
 \setcopyright{acmlicensed}
 \acmConference[Woodstock '18]{Woodstock '18: ACM Symposium on Neural Gaze Detection}{June 03--05, 2018}{Woodstock, NY}
 \acmBooktitle{Woodstock '18: ACM Symposium on Neural Gaze Detection, June 03--05, 2018, Woodstock, NY}
@@ -42,6 +43,7 @@
 \usepackage{caption}
 \captionsetup[figure]{font=small,labelfont=small}
 \usepackage{subcaption}
+\captionsetup[subfigure]{font=scriptsize,labelfont=scriptsize}
 \newtheorem{theorem}{Theorem}
 \newtheorem{definition}{Definition}
 \newtheorem{exmp}{Example}[section]
@@ -53,20 +55,37 @@
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
 \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 \input{defs}
+\hypersetup{draft}
 
 
 \begin{document}
-\title{\system: Crypto-Assisted Differential Privacy}
+\title{\system: Crypto-Assisted Differential Privacy For Achieving High Accuracy Without Trusted Servers}
 \author{}
 \begin{abstract}
 In the last decade, differential privacy has steadily become the de-facto standard for achieving strong privacy guarantees in data analysis. Depending on the implementation, differential privacy can be classified into two types: the "central" model where in a trusted centralized server collects the records from the data owners in the clear and outputs differentially private statistics; and the "local" model, in which the data owners do not necessarily trust the server and hence individually randomizes their inputs.  In the central model, differential privacy for the outputs can be achieved by adding only a single instance of random noise thereby resulting in constant error bounds. In contrast, the local model assures stronger privacy guarantees  albeit at a cost of strictly limited accuracy and restricted algorithmic expressibility due to the independent noise addition of each data owner. In this work, we propose a  two-server model of implementation for differential privacy, \system  that  \\
 1) achieves the accuracy guarantees of the central model without the need of any trusted server \\
 2) provides strictly greater expressibility than the local model. \\
-\system achieves this "best of both worlds" result with the assistance of two cryptographic primitives - linear homomorphic encryption and two-party Yao's garbled circuit. \system is equipped with a set of primitives which can be used by an data analyst to obtain differentially private answers for a useful class of programs. Further, we propose two differentially private optimization schemes to improve the efficiency of \system.  The  usability of \system for practical settings is demonstrated via extensive performance evaluation.
+\system achieves this "best of both worlds" result with the assistance of two cryptographic primitives - linear homomorphic encryption and  Yao's garbled circuit. \system is equipped with a set of primitives which can be used by an data analyst to obtain differentially private answers for a useful class of programs. Further, we propose four optimization schemes to improve the efficiency of \system.  The  usability of \system for practical settings is demonstrated via extensive performance evaluation.
 \end{abstract}
-
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10002978.10002979.10002981.10011745</concept_id>
+<concept_desc>Security and privacy~Public key encryption</concept_desc>
+<concept_significance>300</concept_significance>
+</concept>
+<concept>
+<concept_id>10002978.10002991.10002995</concept_id>
+<concept_desc>Security and privacy~Privacy-preserving protocols</concept_desc>
+<concept_significance>300</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+%\ccsdesc[300]{Security and privacy~Public key encryption}
+%\ccsdesc[300]{Security and privacy~Privacy-preserving protocols}
 %\begin{IEEEkeywords}
-\keywords{Crypto-assisted Differential Privacy, Crypto Service Provider, Linear Homomorphic Encryption}
+
+\keywords{Differential Privacy, Crypto Service Provider, Linear Homomorphic Encryption}
 \maketitle
 %\end{IEEEkeywords}
 \input{Introduction}
@@ -80,7 +99,8 @@ In the last decade, differential privacy has steadily become the de-facto standa
 \input{evaluation}
 %%\input{relatedwork}
 \input{conclusion}
-\bibliographystyle{ACM-Reference-Format}
+%\bibliographystyle{ACM-Reference-Format}
+\bibliographystyle{abbrv}
 \bibliography{references.bib}
 \appendix
 \input{dp_seq}

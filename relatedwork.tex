@@ -1,9 +1,9 @@
 \section{Related Work}
 \subsection{Differential Privacy}
 Introduced by Dwork et al. in \cite{Dork}, differential privacy has enjoyed immense attention from both academia and industry in the last decade. In this section, we will discuss some of the most recent directions in differential privacy in both the \textsf{CDP} and \textsf{LDP} models. An interesting line of work in the \textsf{CDP} model has been towards proposing "derived" mechanisms \cite{MVG} or  "revised algorithms" \cite{Blocki} whose privacy guarantee can be deduced from basic mechanisms (like exponential mechanism, Laplace mechanism etc) via the composition theorems and
-the post-processing immunity property \cite{Dork}. Such mechanisms have the advantage of better utility as their design leverages on  specific properties of the query and the data.   One such technique is based on data partition and aggregation  \cite{AHP,DAWA,hist1,hist2,hist3,hist4,hist6,hist7,hist8} and is helpful in answering histogram queries. Another technique involves 
+the post-processing immunity property \cite{Dork}. Such mechanisms have the advantage of better utility as their design leverages on  specific properties of the query and the data.   One such technique is based on data partition and aggregation  \cite{AHP,hist1,hist2,hist3,hist4,hist6,hist7,hist8} and is helpful in answering histogram queries. Another technique involves 
 non-uniform data weighting where each data sample is weighed based on their query contribution. Research in this line of work include \cite{u1,u2,MWEM}. Yet another popular method is to utilize past/auxiliary information
-to improve the utility of the query answers. Examples are \cite{A1,A2,A3,A4,A5,A6,A7,A8}
+to improve the utility of the query answers. Examples are \cite{A1,A2,A3,A4,A6,A7,A8}
 %Another interesting line of work has been towards developing programming frameworks to enable non-experts to write easy differentially private programs. This line of work was started by the PINQ platform \cite{PINQ} and there has been a series of follow up work  \cite{FWPINQ,p2, airavat}. The most recent one is the Ektelo \cite{ektelo} framework where all existing algorithms for answering linear counting queries can be expressed as a composition of its operators. 
 \par
 The local differential privacy model was first introduced by Kasiviswanathan

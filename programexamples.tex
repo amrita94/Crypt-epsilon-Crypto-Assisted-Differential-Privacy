@@ -1,19 +1,19 @@
 \subsection{Program Examples}
-Consider a database scheme ($Age$, $Gender$, $NativeCountry$, $Department$, $Salary$). We show several \system program examples in Table~\ref{tab:programexamples} over this database.
+Consider a database schema $\langle Age$, $Gender$, $NativeCountry$, $Department$, $Salary\rangle$. We show several \system program examples in Table~\ref{tab:programexamples} over this database.
 \begin{table*}[t]
 \caption{Examples of \system Program}\label{tab:programexamples}
-\scalebox{0.75}{
+\scalebox{0.67}{
 \begin{tabular}{|l|l|}
 \hline
  {\bf \system Program} & {\bf Description} \\ \hline \hline
 P1:  $\lap_{\epsilon,1}(\countagg(\filter_{Age\in [50,60]}(\project_{Age}(\encD))))$ &  Counts the number of records satisfying $Age \in [50,60]$      \\ \hline
 P2: $\noisymax^5_{\epsilon,1}(\groupbystar_{Age}(\encD))$               &       Outputs the 5 most frequent age values. \\ \hline
-P3: $\lap_{\epsilon,1}(\groupbystar_{Age\times Gender}(\project_{Age \times Gender}(\crossproduct_{Age,Gender}(\encD))))$     &       Outputs the marginal over the attributes $Age$ and $Gender$. \\ \hline
-P4: $\lap_{\epsilon,1}(\groupbystar_{Age\times Gender}(\filter_{NativeCountry=Mexico}(\project_{Age\times Gender, NativeCountry}(\crossproduct_{Age,Gender}(\encD)))))$                          & Outputs the marginal over $Age$ and $Gender$ where $NativeCountry$ is Mexico.     \\ \hline
-P5: $\lap_{\epsilon,1}(\countagg(\filter_{Age=30 \wedge Gender=Male \wedge NativeCountry=Mexico}(\project_{Age,Gender,NativeCountry}(\encD))))$,                                       &   Counts the number of male employees of Mexico having age 30.    \\ \hline
-P6:   $\lap_{\epsilon,1}(\countdistinct(\groupbystar_{Age}(\filter_{Gender=Male}(\project_{Age \times Gender}(\encD)))))$ & Counts the number of distinct age values for the male employees.       \\ \hline
-P7:  $\lap_{\epsilon,1}(\countagg(\filter_{Count\in[10,m]}(\groupby_{Age}(\project_{Age}(\encD)))))$
-                                     & Counts   the number of  age values having at least 10 records in the database.    \\ \hline
+P3: $\lap_{\epsilon,2}(\groupbystar_{Age\times Gender}(\project_{Age \times Gender}(\crossproduct_{Age,Gender\rightarrow{Age \times Gender}}(\encD))))$     &       Outputs the marginal over the attributes $Age$ and $Gender$. \\ \hline
+P4: $\lap_{\epsilon,2}(\groupbystar_{Age\times Gender}(\filter_{NativeCountry=Mexico}(\project_{Age\times Gender, NativeCountry}(\crossproduct_{Age,Gender\rightarrow{Age \times Gender}}(\encD)))))$                          & Outputs the marginal over $Age$ and $Gender$ for Mexican employees.     \\ \hline
+P5: $\lap_{\epsilon,1}(\countagg(\filter_{Age=30 \wedge Gender=Male \wedge NativeCountry=Mexico}(\project_{Age,Gender,NativeCountry}(\encD))))$                                       &   Counts the number of male employees of Mexico having age 30.    \\ \hline
+P6:   $\lap_{\epsilon,2}(\countdistinct(\groupbystar_{Age}(\filter_{Gender=Male}(\project_{Age , Gender}(\encD)))))$ & Counts the number of distinct age values for the male employees.       \\ \hline
+P7:  $\lap_{\epsilon,2}(\countagg(\filter_{Count\in[10,m]}(\groupby_{Age}(\project_{Age}(\encD)))))$
+                                     & Counts   the number of  age values having at least 10 records.   \\ \hline
 \end{tabular}}
 \end{table*}
 

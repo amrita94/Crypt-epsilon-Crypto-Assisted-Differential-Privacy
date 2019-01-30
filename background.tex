@@ -4,7 +4,7 @@ In this section we give a brief introduction to definitions and primitives relev
 
 \subsection{Differential Privacy}
 \begin{definition} An algorithm $\mathcal{A}$
-satisfies $\epsilon$-differential privacy ($\epsilon$-DP), where $\epsilon \geq 0$ is a privacy parameter, iff
+satisfies $\epsilon$-differential privacy ($\epsilon$-DP), where $\epsilon > 0$ is a privacy parameter, iff
  for any two datasets $D$ and $D'$ that differ in a single record, we have
 \begin{gather}
 \forall t \in Range(\mathcal{A}), Pr \big[\mathcal{A}(D) = t\big] \leq e^{\epsilon}Pr\big[\mathcal{A}(D') = t\big]
@@ -12,16 +12,23 @@ satisfies $\epsilon$-differential privacy ($\epsilon$-DP), where $\epsilon \geq 
 where $Range(\mathcal{A})$ denotes the set of all possible outputs
 of the algorithm $\mathcal{A}$.
 \end{definition} 
-For basic properties of differential privacy we refer the readers to the brilliant book by Dwork et al. \cite{Dork}.
+When applied multiple times, the differential privacy guarantee degrades gracefully as follows.
+\begin{theorem}(Sequential Composition). If $\mathcal{A}_1$ and
+$\mathcal{A}_2$ are $\epsilon_1$-DP and $\epsilon_2$-DP algorithms that use independent randomness, then releasing the outputs $\mathcal{A}_1(D)$ and
+$\mathcal{A}_2(D)$ on database $D$ satisfies $\epsilon_1+\epsilon_2$-DP.\end{theorem} 
+There exist advanced composition theorems that give tighter privacy loss
+bounds, but we
+use Theorem 1 for our paper.
+%For other basic properties of differential privacy we refer the readers to the brilliant book by Dwork et al. \cite{Dork}.
 \subsection{Cryptographic Primitives}
 \stitle{Linearly Homomorphic Encryption (\textsf{LHE}).}
 Let $(\mathcal{M}, +)$ be a finite group. A \textsf{LHE} scheme
 for messages in $\mathcal{M}$ is defined  by three algorithms \\
-$\bullet$ \textbf{Key Generation }($Gen$) -The key generation algorithm $Gen$ takes the security parameter $\kappa$ as input and outputs
+$\bullet$ \textbf{Key Generation }($Gen$) -This  algorithm takes the security parameter $\kappa$ as input and outputs
 a pair of secret and public keys, $(s_k, p_k) \leftarrow Gen(\kappa)$.\\
 $\bullet$ \textbf{Encryption} ($Enc$) - This is a randomized algorithm that encrypts a message $m \in \mathcal{M}$ via the public key $p_k$, to generate ciphertext $\mathbf{c} \leftarrow Enc_{pk}(m)$.\\
-$\bullet$\textbf{Decryption} ($Dec$) - The decryption algorithm $Dec$ is a deterministic function that uses the secret key $s_k$ to
-recover the original plaintext $m$ from ciphertext $\mathbf{c}$.
+$\bullet$\textbf{Decryption} ($Dec$) - This is a deterministic function that uses the secret key $s_k$ to
+recover the plaintext $m$ from ciphertext $\mathbf{c}$.
 \\
 In addition, \textsf{LHE} supports the operator $\oplus$ that allows the summation of ciphers as follows:
 \\ \textbf{Operator} $\oplus$ - Let $c_1 \leftarrow Enc_{pk}(m1), \ldots, c_a \leftarrow Enc_{pk}(m_a), a \in \mathcal{Z}_{>0}$. Then we have  $Dec_{sk}(c_1\oplus c_2 ...\oplus c_a)=    m_1 + \ldots   + m_a$.  \\
@@ -35,9 +42,9 @@ $\bullet \textbf{labEnc}_{pk}(\sigma_i, m , \tau)$: On input a message $m \in \m
 $\bullet \textbf{labDec}_{sk}(\mathbf{c})$ - This functions inputs a cipher $\mathbf{c}=(a,d) \in \mathcal{M} \times \mathcal{C}$ encrypted under the labHE scheme and decrypts it as $m=a-Dec_{sk}(d)$.\\
 \stitle{Secure Computation}
 %\arc{Not final:placeholder}
-Garbled circuit, also known as Yao's protocol \cite{Yao,yao2},  is a generic method for secure  computation that allows two-party evaluation of a function $f(x_1,x_2)$ in the presence of semi-honest adversaries. The protocol is run between two data owners with respective private inputs $x_1$ and $x_2$ such that at the end, no party learns more  
-than what is revealed from the output value $f(x_1,x_2)$.  In the protocol, one of the parties called
+Garbled circuit, also known as Yao's protocol \cite{Yao,Yao2},  is a generic method for secure  computation that allows two-party evaluation of a function $f(x_1,x_2)$ in the presence of semi-honest adversaries. The protocol is run between two data owners with respective private inputs $x_1$ and $x_2$ such that at the end, no party learns more  
+than what is revealed from the output value $f(x_1,x_2)$.  \eat{In the protocol, one of the parties called
 generator, builds a "garbled" version of a circuit computing $f$ and sends it over to the second party, called evaluator, alongside the garbled input values 
 corresponding to $x_1$.  Upon receiving the circuit, the evaluator 
-engages in an oblivious transfer protocol with the generator to obliviously obtain the garbled input for $x_2$. Finally the evaluator can securely compute the  output $f(x_1, x_2)$ from the garbled circuit and the corresponding garbled inputs for $\{x_1,x_2\}$.
+engages in an oblivious transfer protocol with the generator to obliviously obtain the garbled input for $x_2$. Finally the evaluator can securely compute the  output $f(x_1, x_2)$ from the garbled circuit and the corresponding garbled inputs for $\{x_1,x_2\}$.}
 A more detailed discussion is presented in Appendix A.

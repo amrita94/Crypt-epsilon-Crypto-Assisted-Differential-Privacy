@@ -1,4 +1,4 @@
-\section{Security Analysis}\label{security}
+\section{Security Analysis}
 \subsection{Security Model}
 The involved parties in Crypt$\epsilon$ are m data owners $DO_1,\ldots, DO_m$ and two servers \textsf{AS} and the \textsf{CSP}. In this paper we consider a
 semi-honest adversary  $Adv$ who can corrupt any subset of the data owners and at most one of the two
@@ -69,9 +69,9 @@ views of the corrupted parties in $Adv_2$ in the protocol $\Pi$.
 \small
 \centering
 \caption {Comparative analysis of the different DP models}
- \begin{tabular}{l| c c c}  \toprule
-\multicolumn{1}{c}{\textbf{Features}} & \textbf{LDP}  & \textbf{CDP}  & \textbf{Crypt$\epsilon$}  \\ [0.5ex] 
- \midrule \midrule \# Servers & 1& 1 & 2\\\hline
+ \begin{tabular}{|l| c c c|}  \toprule
+\multicolumn{1}{|c}{\textbf{Features}} & \textbf{LDP}  & \textbf{CDP}  & \textbf{Crypt$\epsilon$}  \\ [0.5ex] 
+ \hline \hline\# Servers & 1& 1 & 2\\\hline
 Trust  & & & Untrusted \\  Assumption & Untrusted & Trusted & Semi Honest \\for Server &  &   &  Non-Colluding  \\ \hline
 Data Storage & \multirow{2}{*}{Noisy} & \multirow{2}{*}{Clear} & \multirow{2}{*}{Encrypted} \\in Server & &  &  \\\hline
 Adversary & Unbounded & Unbounded & Bounded \\\hline

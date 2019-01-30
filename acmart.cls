@@ -610,12 +610,11 @@ Computing Machinery]
 \or % sigchi-a
 \fi
 \setlength\normalparindent{\parindent}
-\def\copyrightpermissionfootnoterule{\kern-3\p@
-  \hrule \@width \columnwidth \kern 2.6\p@}
+\def\copyrightpermissionfootnoterule{\kern-3\p@\hrule \@width \columnwidth \kern 2.6\p@}
 \RequirePackage{manyfoot}
-\SelectFootnoteRule[2]{copyrightpermission}
+%\SelectFootnoteRule[2]{copyrightpermission}
 \DeclareNewFootnote{authorsaddresses}
-\SelectFootnoteRule[2]{copyrightpermission}
+%\SelectFootnoteRule[2]{copyrightpermission}
 \DeclareNewFootnote{copyrightpermission}
 \def\footnoterule{\kern-3\p@
   \hrule \@width 4pc \kern 2.6\p@}
