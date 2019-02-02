@@ -121,27 +121,14 @@ by the adversary, the second one behaves honestly. Thus the requisite security d
  \begin{figure}\noindent
 \framebox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\itshape \textbf{Parties}:- \textsf{AS}, \textsf{CSP} and $\textsf{DO}_i, \forall i \in \{1,...,m\}$ \\ \textbf{Input}:-  $D_i, \forall i \in \{1,...,m\} , \epsilon$-DP \textit{ Program P} \\
 \textbf{Output}:-  $\hat{c}$ which is result of executing  P on $\mathcal{D}=\cup_{i=1}^m D_i$ \\\\\textbf{Step 1:} \textsf{AS}, \textsf{CSP} and $\textsf{DO}_i$ jointly run protocol $\Pi_1$\\\textbf{Step 2:} \textsf{AS} and \textsf{CSP} run protocol $\Pi_2$ to generate $\hat{c}$ }}  \caption{Ideal functionality $\mathcal{F}$ of Crypt$\epsilon$} \label{ideal} \end{figure}
-More formally, use the standard simulation based definition \cite{Goldreich} we have 
-
-\begin{definition}  Let $S$ a subset of at most $n - 1$ players, the protocol $\Pi$ realizes $\phi$ with privacy against
-$S$ if it is correct and there exists a PPT algorithm $Sim$ such that $(ViewP_i)_{P_i\in S}$ and
-$Sim(\{x_i,P_i\in S\} , \phi(x_1, . . . , x_n))$ are computationally indistinguishable for all inputs.
- \end{definition}
-%Let us list the interactions of the cSP - the \textsf{CSP} has no interactions with the data owners ever. Moreover which prevents the . Always decrypt the nout is always a . Hence it 
-%From the For the it can thus $\delta$ comes from the  Next
-The evaluation of any Crypt$\epsilon$ program can  be seen as an MPC for m + 2 parties: $\textsf{DO}_1, . . . , \textsf{DO}_m$, \textsf{AS} and
-\textsf{CSP}.
-
-\begin{theorem}Let $S \subset \{1,...,m\}$ then $\Pi$ realizes $\psi$  with correctness and privacy against
-the adversaries $Adv_1=\textsf{AS} \cup \{\textsf{DO}_i, i \in S\}$  and $Adv_2=\textsf{CSP} \cup  \{ \textsf{DO}_i, i \in S\} $\end{theorem}
-
-
-
-
-
-
-
-
+More formally, using the standard simulation based definition \cite{Oded} we have 
+\begin{theorem}  Let $S \subset \{1,...,m\}$ then $\Pi$, (i.e. the protocol for an end-to-end program execution in \system) realizes $\mathcal{F}$ (Figure 2)  with correctness and privacy against
+the adversaries $Adv_1=\textsf{AS} \cup \{\textsf{DO}_i, i \in S\}$  and $Adv_2=\textsf{CSP} \cup  \{ \textsf{DO}_i, i \in S\} $
+$S$ if there exists  P.P.T algorithms $Sim_1$ and $Sim_2$ such that \begin{gather} \big\{Sim_1({D_i, i \in S},\hat{c}),\mathcal{F}(\mathcal{D})\big\} \stackrel{C}{\equiv} \big\{view^{\Pi}_{Adv1},\hat{c}\big\}
+\\\big\{Sim_2({D_i, i \in S},\hat{c}),\mathcal{F}(\mathcal{D})\big\} \stackrel{C}{\equiv}\big\{ View^{\Pi}_{Adv2},\hat{c}\big\}
+\end{gather} for all possible inputs  where $ \stackrel{C}{\equiv}$ denotes computational indistinguishability and $View^{\Pi}_i$ denotes the view of entity $i$ in protocol $\Pi$. 
+\end{theorem}
+The proof of this is presented in Appendix B.
 
 \eat{\begin{table}[h!]
 \small
