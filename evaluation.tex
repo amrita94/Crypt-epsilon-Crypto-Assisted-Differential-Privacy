@@ -1,6 +1,18 @@
 \section{Experimental Evaluation}
-\begin{figure*}[ht]
-
+\begin{figure*}
+    \begin{subfigure}[b]{0.25\linewidth}
+    \centering \includegraphics[width=1\linewidth]{t5_final.pdf}
+        \caption{Program 5}
+        \label{fig:mouse}\end{subfigure}%%
+    \begin{subfigure}[b]{0.25\linewidth}
+    \centering    \includegraphics[width=1\linewidth]{t7_final.pdf}
+        \caption{ Program 7}
+        \label{fig:P5}\end{subfigure}%%
+      \begin{subfigure}[b]{0.25\linewidth}
+    \centering    \includegraphics[width=1\linewidth]{t3_final.pdf}
+        \caption{Program 3}
+        \label{fig:P7}
+    \end{subfigure}%%
     \begin{subfigure}[b]{0.25\linewidth}
         \centering
         %\includegraphics[width=5cm,height=3.1cm]{t1.pdf}
@@ -8,55 +20,28 @@
         \caption{ Program 8 \xh{(update plot)}}
         \label{fig:P1}
     \end{subfigure}%%
-    \begin{subfigure}[b]{0.25\linewidth}
-    \centering \includegraphics[width=1\linewidth]{t5_final.pdf}
-        \caption{Program 5}
-        \label{fig:mouse}\end{subfigure}%%
-    \begin{subfigure}[b]{0.25\linewidth}
-    \centering    \includegraphics[width=1\linewidth]{t7_final.pdf}
-        \caption{ Program 5}
-        \label{fig:P5}\end{subfigure}%%
-      \begin{subfigure}[b]{0.25\linewidth}
-    \centering    \includegraphics[width=1\linewidth]{t3_final.pdf}
-        \caption{Program 3}
-        \label{fig:P7}
-    \end{subfigure}%%
-       \caption{Accuracy Evaluation of Crypt$\epsilon$ Programs}
+     \caption{Accuracy Evaluation of \system Programs}\label{fig:accuracy}
 \end{figure*}
 
 In this section, we experimentally evaluate \system to answer the following questions: i) Do \system programs have significantly lower error than that for the corresponding state-of-the-art LDP implementations? ii) Is the program execution timing for \system practical? iii) Do the proposed optimizations in \system provide substantial performance improvement over the unoptimized \system? Here are our highlighted results.
 \squishlist
-\item \system can achieve 2-3 orders accuracy improvements on the existing LDP implementations (Figure~\ref{}).
+\item \system can achieve 2-3 orders smaller error than the existing LDP implementations (Figure~\ref{fig:accuracy}).
 \item The performance cost of a large class of \system programs is less than 5 minutes for a data set of 32561 users. \AS shares more performance cost than \CPS.  (Table~\ref{tab:time})
-\item The optimization technique in \system can boost the performance of non-optimized \system up to \xh{xx} times (Table~\ref{tab:time}).
+\item The optimization techniques in \system can improve the performance of non-optimized \system up to \xh{xx} times (Table~\ref{tab:time}).
 \squishend
 
+\subsection{Methodology} \label{sec:methodology}
+\stitle{Dataset \& Program:} We evaluated our system and the state-of-the-art LDP implementations~\cite{LDP1} on the Adult dataset from the UCI repository \cite{UCI}  which has been extracted from the 1994 census data. The dataset is of size $32,651$. We considered the programs outlined in Table~\ref{tab:programexamples}. Due to space constraint, we focus on P3,P5,P7,P8, as they  cover all the three classes of interactions between \AS and \CPS described in Section~\ref{sec:interactions}.  Additional experimental results for programs P1, P2,P4 and P6 from Table 3 are presented in \xh{Appendix~\ref{}}.
 
-%to assess its practical utility  based on two parameters, the accuracy and the performance of the Crypt$\epsilon$ programs. Specifically\squishlist \item \textbf{Q1:} Does Crypt$\epsilon$ programs have significantly lower error than that for the corresponding state-of-the-art LDP implementations?\\ \textbf{Q2:} Is the program execution timings for Crypt$\epsilon$ practical?\\\textbf{Q3:} Does the proposed optimizations provide substantial performance improvement over the base case Crypt$\epsilon$ implementation? \squishend
-%For the rest of the section, we consider the optimized implementation to be the default implementation for \system.
+\stitle{Metrics:} For the accuracy of a program which outputs a vector, we measure the difference between the true answer $V$ before adding any noise and the noisy answer $\hat{V}$ using the $L_1$-norm, i.e. $\|V-\hat{V}\|_1 = \sum_{i} |V[i]-\hat{V}[i]|$. If the output is a scalar, we report the absolute difference between the noisy answer $\hat{c}$ and the true answer $c$. For the performance of \system programs, we measure the program processing time in seconds. Each program is repeated 10 times. We report the mean and the standard deviation for the error and the performance cost.
 
-\eat{\textbf{Evaluation Highlights:}
-As seen in figures the depend only on the orivacy parameter and hence are . Moreover the proposed optimizations, the DP range tree  are extremely helpful and pro a speed-up of respectively with a spped up of and respectively
-The with respectively. Finally \system programs run pretty fast.  on a dataset of 32561 records.  Whie progra finish ij just a few seconds an while minutes. As seen in figures the depend only on the orivacy parameter and hence are . Moreover The optimizations with a spped up of and respectively
-The with respectively. Finally \system programs run pretty fast.  on a dataset of 32561 records.  Whie progra finish ij just a few seconds an while minutes. As seen in figures the depend only on the orivacy parameter and hence are . Moreover The optimizations with a spped up of and respectively
-The with respectively. Finally \system programs run pretty fast.  on a dataset of 32561 records.  Whie progra finish ij just a few seconds an while minutes. }
-%The accuracy analysis in show case that for the are at least smaller . From table we see that can provide to while  speed up in execution time. Moreover 
-%%That the performnace arefaesble with the just taking while . the longest is 
-%We elaborate each of the above three obseravations in three separate sections as followed.
+\stitle{Configuration:} We implemented  \system in \xh{python, labHE package~\cite{}, MPC package~\cite{}}, with the optimization techniques described in Section~\ref{sec:optimization} including both DP based optimizations (DP range tree and DP index) and implementation based optimizations (pre-computation and off-line processing). For this dataset, \system will construct a DP index optimization over the attribute $NativeCountry$ for programs that use $NativeCountry$ in the filtering condition, such as P4 and P5. For our experiments, we use $20\%$ of the total privacy budget towards constructing the index, the remaining $80\%$ is reserved for the rest of the program execution. \system will also construct a DP range tree over the attribute $Age$ with the full privacy budget, $\epsilon$, when a cumulative histogram over $Age$ (e.g. P8) is queried. Besides these two DP-based optimizations,
+This is the default implementation for \system.  We refer the implementation without the optimization as the unoptimized \system.
 
-\subsection{Methodology} 
-\stitle{Dataset \& Program:} We evaluated our system and the state-of-the-art LDP implementations on the Adult dataset from the UCI repository \cite{UCI}  which has been extracted from the 1994 census data. The dataset is of size $32,651$. We considered the programs outlined in Table~\ref{tab:programexamples}. Due to space constraint, we focus on P3,P5,P7,P8, as they  cover all the three classes of interactions between \AS and \CPS described in Section~\ref{sec:interactions}.  Additional experimental results for programs P1, P2,P4 and P6 from Table 3 are presented in Appendix~\ref{}.
-
-\stitle{Metrics:} For the accuracy of the program answers, we measure the difference between the true answer $\hat{V}$ and the noisy answer $\hat{V}$ by the $L_1$-norm, i.e. $\|V-\hat{V}\|_1 = \sum_{i} |V[i]-\hat{V}[i]|$. If the output is a scalar, we report the absolute difference between the noisy answer $\hat{c}$ and the true answer $c$. For the performance of \system programs, we measure the program processing time in seconds. Each program is repeated 10 times. We report the mean and the standard deviation for the error and the performance cost in the results.
-
-
-\stitle{Configuration:} We implemented  \system in \xh{python language, labHE package, MPC package}, with the optimization techniques described in Section~\ref{sec:optimization}. This is the default implementation for \system. We refer the implementation without the optimization as the unoptimized \system.  For this dataset, \system will construct a DP index optimization over the attribute $NativeCountry$ for programs that use $NativeCountry$ in the filtering condition. For our experiments, we use $20\%$ of the total privacy budget towards constructing the index, the remaining $80\%$ is reserved for the rest of the program execution. The rational behind selecting the value $20\%$ will be discussed in section 6.2.3. \system will also construct a DP range tree over the attribute $Age$ with the full privacy budget, $\epsilon$, when a cumulative histogram over $Age$ (e.g. P8) is queried. \xh{May mention other optimizations as well.}
-
-
-
+All the programs run on \xh{Ubuntu Linux}. We evaluated our prototype on \xh{xx} servers. The servers each have \xh{xx GB} of memory, ... \xh{did we simulate the communication cost?}
 
 \eat{
-\stitle{Programs:}
+\\\textbf{Programs:}
 To answer the aforementioned questions we ran the experiments on 4 of the Crypt$\epsilon$ programs previously outlined in Table 3, namely P1,P3,P5 and P7. In this section we rename P1,P5,P7 and P3 as Program A, Program B, Program C and Program D respectively.  %Each program is compared with the corresponding state-of-the-art \textsf{LDP} implementation \cite{LDP1}.
 Additional experimental results for programs P2,P4 and P6 from Table 3 are presented in Appendix.% We rename the examples 5.1,5.2,5.3,5.4,5.6 and 5.7 as P1,P2,P6,. The reason behind this grouping is to arrange the programs in their increasing order of complexity.  %\begin{itemize}\item \textbf{Program 1} - Count the number of records having age in range $[50,60]$ \\\textbf{\textsf{LDP} Competitor} - Frequency oracle of \cite{LDP1} constructed over attribute $Age$. \item \textbf{Program 2} - Report the top 5 most frequent age values. \\\textbf{\textsf{LDP} Competitor} - Frequency oracle of \cite{LDP1} constructed over attribute $Age$.  \item \textbf{Program 3 }- Report the marginal on attributes $Age$ and $Gender$. \\\textbf{\textsf{LDP} Competitor }- Frequency oracle of \cite{LDP1} constructed over attribute $Age \times Gender$. \item \textbf{Program 4 }- Report the marginal on attributes $Age$ and $Gender$ with $NativeCountry=Mexico$\\\textbf{\textsf{LDP} Competitor }- Frequency oracle of \cite{LDP1} constructed over attribute $Age\times Gender \times NativeCountry$. \item \textbf{Program 5 }- Count the number of natively Mexican male employees of age 30.\\\textbf{\textsf{LDP} Competitor }- Frequency oracle of \cite{LDP1} constructed over attribute $Age\times Gender \times NativeCountry$. \item \textbf{Program 6 }- Count the number of distinct age values for male employees. \\\textbf{\textsf{LDP} Competitor }-Frequency oracle of \cite{LDP1} constructed over attribute $Age\times Gender$.% and reports the number of non-zero counts after suitable adjustment for thresholding. 
 %\item \textbf{Program 7 }- Count the number of age values with at least 10 records. \\\textbf{\textsf{LDP} Competitor }- Frequency oracle of \cite{LDP1} constructed over attribute $Age$. \end{itemize}
@@ -72,10 +57,10 @@ For each of the programs, we report the mean error values over 10 repetitions.\\
 %uses the error measure given by the fraction of age values returned in the top 5 that have value less than $ct_5-\alpha$  where  $ct_5$ is the count of the $5^{th}$ largest value and $\alpha=\frac{1}{\epsilon}\log\frac{1}{\delta}$ is a slack parameter. The slack parameter is required because with probability $1-\delta$ no differentially private algorithm can distinguish between any two counts that differ by less than $\alpha$. We use $\delta=0.05$ for our experiment. \item Programs 3, 4 and 5 \end{itemize}
 
 
-\subsection{Experimental Results}
+\subsection{Experimental Results}\label{sec:results}
 \stitle{Accuracy Gain:} We performed an accuracy analysis on \system programs and the corresponding state-of-the-art \textsf{LDP} implementations \cite{LDP1}. We report the mean errors of these programs on the full dataset at $\epsilon \in {0.1,\ldots,1.9}$. The errors introduced by \system for all programs are significantly lower than that by LDP. This accuracy improvements by \system are up to 2-3 orders for Program \xh{...}.
 
-For P3, as shown in Figure~\cite{}, when $\epsilon = 1.9$, the mean errors of \system and unoptimized \system are \xh{$16.10$} and  \xh{0.78} respectively  while LDP has an error near \xh{1000}. Hence, \system gives \xh{2} orders improvement than LDP. The same trends are observed for Program \xh{}. In P5, the improvements are less significant because…  In Program 7, the improvement is ….. In Program 8, ...
+For P3, as shown in Figure~\cite{fig:accuracy}, when $\epsilon = 1.9$, the mean errors of \system and unoptimized \system are \xh{$16.10$} and  \xh{0.78} respectively  while LDP has an error near \xh{1000}. Hence, \system gives \xh{2} orders improvement than LDP. The same trends are observed for Program \xh{}. In P5, the improvements are less significant because…  In Program 7, the improvement is ….. In Program 8, ...
 
 We also observe that \system has a poorer accuracy than unoptimized \system as shown in Figure 2(a).  Then, briefly explain why is so using Fig 2(a).
 
@@ -120,7 +105,7 @@ Program &  \multicolumn{3}{c}{Base} & \multicolumn{2}{c}{Optimized} \\
 \end{table}}
 
 \begin{table}
-\caption{Execution Time Analysis for Crypt$\epsilon$ Programs}\label{tab:time}
+\caption{Execution Time for \system Programs}\label{tab:time}
 \centering
 \scalebox{0.8}{
 \begin{tabular}{|c c|c|c|c|c|}
