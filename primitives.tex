@@ -5,7 +5,8 @@
 A sequence of these primitives forms a program which can be run by \system.
 In this section, we first define these primitives and then show how to use these primitives to write useful programs.
 The analyst is given a database schema $\langle A_1,\ldots,A_k \rangle$ and an encrypted instance of this database, represented by $\encD$.
-There are two types of Crypt$\epsilon$ primitives:  (i) transformations and (ii) measurements, which are summarized in Table~\ref{tab:primitives}.
+We introduce three types of Crypt$\epsilon$ primitives:  (i) transformations, (ii) measurements, and (iii) post-processing,
+which are summarized in Table~\ref{tab:primitives}.
 
 \input{table}
 
@@ -94,3 +95,7 @@ index corresponding to the maximum is made public.
 Secondly, the noise added is much smaller than that in the case of the naive implementation (it has sensitivity $\Delta f=m$). Thus the \textsf{NoisyMax} primitive takes as input of encrypted vector where each vector element is a count. It then adds noise drawn from $Lap(\frac{1}{\epsilon})$ to each vector element and computes the indices of the top k elements.
 \end{enumerate}
 }
+
+
+\subsection{Post-Processing Primitives}
+Unlike the first two types of primitives which operate on encrypted data, post-processing primitives operate on plaintext data. This step is usually applied on the noisy output of measurement primitives. The post-processing property~\cite{Dork} of differential privacy ensures that any post-processing step on the output of a differentially private mechanism does not cost any privacy loss. Currently, \system supports one popular post-processing primitive from the literature~\cite{hist1} which can boost the accuracy of an ordered counts. We denote this primitive by $\postorder_{\leq}(\hat{V})$. This primitive takes a noisy histogram vector $\hat{V}$ and outputs a vector $\hat{V}'$ such that the counts in $\hat{V}'$ are non-decreasing. As post-processing primitives work on plaintext, the time cost is negligible compared to the other primitives. All post-processing algorithms from the literature are realizable in \system with hurting the privacy guarantee.
