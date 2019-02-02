@@ -110,16 +110,34 @@ irrespective of the number of data owners. %Not only does this improve the effic
 \par %Keeping the efficiency of our implementation in mind, we used only two instances of simple two-party Yao's garbled circuits for Crypt$\epsilon$. In addition, we propose two optimizations that leverage on the fact that the \textsf{AS} is satisfied with differentially private outputs; this allows  us to expend some of the privacy budget in differentially private pre-processing of the encrypted data. 
 The class of programs supported by Crypt$\epsilon$ is any program that can be expressed as a composition of  Crypt$\epsilon$ primitives followed by arbitrary post-processing. Crypt$\epsilon$ supports 7 transformation primitives and 2 measurement primitives. The noisy measurements allowed are the Laplace mechanism and the Noisy max (see section 4.2), two of the most popular and standard differentially private algorithms. The main constraint behind the design of the transformation primitives is that their composition should allow seamless sensitivity analysis.  Sensitivity analysis of arbitrary relational algebraic queries is a hard problem, for e.g. sensitivity of conjunctive counting queries with join operator is unbounded \cite{sensitivity}. Hence all the transformations that Crypt$\epsilon$ supports have bounded stability \cite{PINQ} such that the sensitivity analysis of any program written using them is straightforward. In fact, we showcase that the proposed Crypt$\epsilon$ primitives are indeed very powerful, enabling us to answer practically useful queries, such as linear counting queries etc. 
 \\ Recall from our discussion in section 3.1, the architecture of \system imposes no fundamental restriction on its expressibility and in theory we can enjoy the same algorithmic power as that of \textsf{CDP}. However, from the discussion above, we restrict the expressibility in the current implementation of \system to ensure practical efficiency of \system programs. Nevertheless, there is a separation between \system and \textsf{LDP} as explained in Appendix E2. via \system's feasibility for an example set of three problems namely DNF queries, variable selection problem (Noisy-Max) and computing the number of distinct values for an attribute with a very large domain.
-\subsection{Crypt$\epsilon$ Security Sketch}
-Here we present a brief security sketch of  Crypt$\epsilon$.  There are two security requirements for \system - \\
-(1) Firstly, all the programs executed by \system  should produce differentially private outputs. \\
-(2) Secondly, the views of the two servers \textsf{AS} and {CSP} should be indistinguishable from that of a true \textsf{CDP} execution (modulo our assumption of a computationally bounded adversary). In other words the transcription of all the messages exchanged between the two servers can be simulated from just the differentialy private program outputs. 
-\\  For the first security requirement, recall that any measurement of the data in the clear can be performed only by the measurement primitives with at least one interaction with the \textsf{CSP}. As mentioned in the preceding section, the measurement primitives supported by \system implement the standard differentially private algorithms namely the Laplace mechanism and the Noisy-Max. Thus all \system outputs are noisy.
 
-The formal proof of the second security requirement is presented in the  Appendix B; in this section we give the readers an intuitive understanding of why \system is secure.  From the \textsf{AS}'s perspective, it has to interact with \textsf{CSP} for any measurement of the data. Recall that in \system  both the \textsf{AS} and the \textsf{CSP} are
-responsible for the noise addition. Hence, the \textsf{CSP} always adds
-noise of its own before releasing the decrypted data back to the
-\textsf{AS}.  Moreover, in addition to the \textit{Program Executor} module of the \textsf{AS}, the data analyst communicates the Crypt$\epsilon$ program and the privacy parameter $\epsilon$ to the \textit{Privacy Engine} module of the \textsf{CSP}. This enables the \textsf{CSP} to compute the sensitivity  of the program for itself (required while adding its own noise) thereby thwarting any privacy budget over expenditure attempts under the semi-honest assumption. As for the \textsf{CSP}, its interactions with the \textsf{AS} can be categorized as   \\$\bullet$ Yao's garbled circuits with differentially private outputs \\$\bullet $ decryption of ciphers for differentially private results \\$\bullet$ decryption of ciphers for masked data  \\ The garbled circuits are inherently semantically secure and the random masks in the third type of interactions hides the true plaintext  from the \textsf{CSP}. Thus even the \textsf{CSP} is just allowed only a differentially private view of the database.
+\subsection{\system Security Sketch}
+
+In this section we present the security sketch for \system. Recall that the involved parties in Crypt$\epsilon$ are m data owners $DO_1,\ldots, DO_m$ and two servers \textsf{AS} and the \textsf{CSP}. Let $\Pi$ represent the protocol for the end-to-end execution of a $\epsilon$-DP program in \system. As discussed above, $\Pi$ can be considered to be a two-step protocol. The first step consists of the Setup Phase and the Data Collection Phase. Let this step be represented by $\Pi_1$. The second step is the actual Program Execution Phase and we denote this as protocol $\Pi_2$. Using this the ideal functionality of Crypt$\epsilon$ can be represented by Figure \ref{ideal}.  In this paper we consider a
+semi-honest adversary  $Adv$ (see section 3.2) who can corrupt any subset of the data owners and at most one of the two
+servers. This captures our assumption that the two servers are non-colluding, i.e. if one is controlled
+by the adversary, the second one behaves honestly. Thus the requisite security definition should state that $Adv$ only learns the data of the corrupted data owners and the final differentially private output but nothing else about the honest data owners. In other words, the view of the adversary $Adv$ should be computationally indistinguishable from a truly differentially private protocol.
+
+ \begin{figure}\noindent
+\framebox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\itshape \textbf{Parties}:- \textsf{AS}, \textsf{CSP} and $\textsf{DO}_i, \forall i \in \{1,...,m\}$ \\ \textbf{Input}:-  $D_i, \forall i \in \{1,...,m\} , \epsilon$-DP \textit{ Program P} \\
+\textbf{Output}:-  $\hat{c}$ which is result of executing  P on $\mathcal{D}=\cup_{i=1}^m D_i$ \\\\\textbf{Step 1:} \textsf{AS}, \textsf{CSP} and $\textsf{DO}_i$ jointly run protocol $\Pi_1$\\\textbf{Step 2:} \textsf{AS} and \textsf{CSP} run protocol $\Pi_2$ to generate $\hat{c}$ }}  \caption{Ideal functionality $\mathcal{F}$ of Crypt$\epsilon$} \label{ideal} \end{figure}
+More formally, use the standard simulation based definition \cite{Goldreich} we have 
+
+\begin{definition}  Let $S$ a subset of at most $n - 1$ players, the protocol $\Pi$ realizes $\phi$ with privacy against
+$S$ if it is correct and there exists a PPT algorithm $Sim$ such that $(ViewP_i)_{P_i\in S}$ and
+$Sim(\{x_i,P_i\in S\} , \phi(x_1, . . . , x_n))$ are computationally indistinguishable for all inputs.
+ \end{definition}
+%Let us list the interactions of the cSP - the \textsf{CSP} has no interactions with the data owners ever. Moreover which prevents the . Always decrypt the nout is always a . Hence it 
+%From the For the it can thus $\delta$ comes from the  Next
+The evaluation of any Crypt$\epsilon$ program can  be seen as an MPC for m + 2 parties: $\textsf{DO}_1, . . . , \textsf{DO}_m$, \textsf{AS} and
+\textsf{CSP}.
+
+\begin{theorem}Let $S \subset \{1,...,m\}$ then $\Pi$ realizes $\psi$  with correctness and privacy against
+the adversaries $Adv_1=\textsf{AS} \cup \{\textsf{DO}_i, i \in S\}$  and $Adv_2=\textsf{CSP} \cup  \{ \textsf{DO}_i, i \in S\} $\end{theorem}
+
+
+
+
 
 
 

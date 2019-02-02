@@ -7,12 +7,12 @@ use sequential composition as defined above for our paper.
 
 \stitle{Secure Computation cntd}
 In this section we will be describing garbled circuits in more detail. The function $f$ is evaluated via a Boolean circuit.
- First the garbler associates  two random cryptographic keys $K_{wi}^0$ and $K^1_{wi}$ with each wire $w_i$ of the circuit such that they correspond to the bits $b_i=0$ and $b_i=1$ respectively. \eat{ Next for each binary gate with input wires $(w_i,w_j)$. Next, for each binary gate g (e.g., an OR-gate)
+ First the garbler associates  two random cryptographic keys $K_{wi}^0$ and $K^1_{wi}$ with each wire $w_i$ of the circuit such that they correspond to the bits $b_i=0$ and $b_i=1$ respectively. \eat{ Next for each binary gate with input wires $(w_i,w_j)$ and output wire $w_t$. Next, for each binary gate g (e.g., an OR-gate)
 with input wires (wi, wj ) and output wire wk, the garbler
 computes the four ciphertexts
 Enc(Kbi wi ,Kbj
 wj )
-(Kg(bi,bj ) wk ) for bi, bj ∈ {0, 1} .
+(Kg(bi,bj ) wk ) for bi, bj ∈ {0, 1} . This set of four 
 The set of these four randomly ordered ciphertexts defines
 the garbled gate.
 g bi
