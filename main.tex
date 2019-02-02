@@ -55,13 +55,17 @@
 
 
 \begin{document}
-\title{\system: Crypto-Assisted Differential Privacy On Untrusted Servers}
+\title{\system: Crypto-Assisted Differential Privacy on Untrusted Servers}
 \author{}
 \begin{abstract}
-In the last decade, differential privacy has steadily become the de-facto standard for achieving strong privacy guarantees in data analysis. It is typically implemented either in the "central" or "local" model. In the former, a trusted centralized server collects the records from the data owners in the clear and outputs differentially private statistics; while in the latter, the data owners do not necessarily trust the server and hence individually randomizes their inputs.  Thus the central model assumes the presence of a trusted server which is dispensed with in the local model. This increased privacy guarantee of the local model, however, comes at the cost of strictly lower accuracy and restricted algorithmic expressibility for differentially private programs. In this work, we propose a  two-server model for differential privacy, \system  that  \\
-1) achieves the accuracy guarantees of the central model without the need of any trusted server \\
-2) provides strictly greater expressibility than the local model. \\
-\system achieves this "best of both worlds" result with the assistance of two cryptographic primitives - linear homomorphic encryption and  Yao's garbled circuit. \system is equipped with a set of primitives which can be used by an data analyst to obtain differentially private answers for a useful class of programs. Further, we propose four optimization schemes to improve the efficiency of \system.  We demonstrate the feasibility of \system in for practical differentially private analysis on untrusted servers with an extensive empirical evaluation on real datasets.
+\am{para 1: problem} 
+Differential privacy has steadily become the de-facto standard for achieving strong privacy guarantees in data analysis. It is typically implemented either in the ``central" or ``local" model. In the former, a trusted centralized server collects the records \textit{in the clear} from the data owners in the clear and outputs differentially private statistics; while in the latter, the data owners individually randomize their inputs to ensure differential privacy.  The local model has been popular as it dispenses with the need for a trusted data collector. This increased security in the local model, however, comes at the cost of strictly lower accuracy and restricted algorithmic expressibility for differentially private programs compared to the central model. 
+
+\am{para 2: solution} 
+In this work, we propose, \system, a  system for differential privacy that (1) eliminates the need for a trusted data collector like in the local model, but yet (2) achieves the accuracy guarantees and algorithmic expressibility of DP programs of the central model.
+\am{Do no include linebreaks in the abstract. If you have a list, make it inline. }
+\system achieves this "best of both worlds" result by employing two non-colluding untrusted servers that run differentially private programs on encrypted data from data owners. \system 
+supports a rich class of differentially private programs that can be written in terms of a small set of primitives inspired by relational algebra. Further, we propose optimizations that speed up computation on encrypted data by leveraging the fact that the final output is differentially private. We demonstrate the feasibility of \system in for practical differentially private analysis on untrusted servers with an extensive empirical evaluation on real datasets.
 \end{abstract}
 \begin{CCSXML}
 <ccs2012>

@@ -1,4 +1,15 @@
 \section{Introduction}
+
+\am{Outline of the intro: 
+\begin{itemize}
+	\item Para 1: Consensus on DP/informal definition
+	\item Para 2 :Two models of implementation -- central vs local. Informally define the models. Not sure if you need to go into Laplace random variables or binomial random variables. 
+	\item Para 3: LDP is popular in some deployments due to security ... 
+	\item Para 4: Utility cost: use lower bounds rather than upper bound results for LDP. I see a $O()$ ... should use $\Omega()$. A better way to do this would be to first discuss the lower bounds, and then give an example of a simple count query and show how the separation works. In particular, you can answer a count query using Laplace mechanism in the central model with $O(1/\epsilon)$, but you need $\Omega(\sqrt{n}/\epsilon)$ noise for the LDP model. Read the Adam smith/Ulfar papers on the anonymous channels to see how this is written in other papers. 
+	\item Para 5: In this paper we present a system that uses cryptography to bring the gap ...: See how I wrote the abstract and rewrite this para. Say one line about how this is in line with a growing line of literature that is using crypto to address the trust assumptions in central model [citations] (see related work section for details). Also, when you first say two-server model, give a bunch of citations to the crypto-assisted model. 
+	\item Contributions: see comments later on.   
+\end{itemize}}
+
 %Thre has been a growing consensus to papers like Contributions of our work is three fold%$\begin{enumerate}\item we have by achieving the \end{enumerate}
 Differential privacy has steadily emerged as a compelling privacy definition that allows us to glean useful information about data alongside providing privacy at the granularity of individuals. %Formal privacy guarantees in tandem with quantifiable utility-privacy trade-offs have been instrumental in making it the de-facto standard for achieving data privacy.
 It is essentially a property of a function such that its output  should disallow any inference about the
@@ -21,19 +32,34 @@ In Crypt$\epsilon$ the differentially private computations are outsourced to two
 the two servers under the assumption of  non-collusion (this condition, for example, can be enforced by law). 
 %Our solution is  based on linearly-homomorphic
 %encryption (LHE) scheme and two instances of two-party Yao's garbled circuit; both these primitives can be implemented in practice via very efficient constructions. Additionally we propose two differentially private optimizations for Crypt$\epsilon$ that provide substantial performance gain over the base case implementation.
+\am{Start a new paragraph for contributions. Make this a real itemized list. I think the contributions are as follows: 
+%\begin{itemize}
+\squishlist
+	\item We present the design and implemenation of \system, a novel system for executing differentially private programs over encrypted data on two non-colluding untrusted servers eliminating the need for a trusted data collector. 
+	\item \system supports a rich class of differentially private programs that can be written in terms of a small set of primitives inspired by relational algebra. \system programs automatically compiled down to linear homomorphic and garbled circuit computations and then executed on encrypted data. 
+	\item generalized multiplication
+	\item We present optimizations that speed up computations on encrypted data by leveraging the fact that final output is differentially private. 
+	\item In an experimental evaluation, we demonstrate the accuracy and practical efficiency of \system. For the same tasks, \system programs achieve accuracy comparable to the central DP model and orders of magnitude (XX) more accuracy than the local DP model. Moreover, \system is efficient and runs in (YY seconds) for ZZ class of programs on a dataset of size WW,000. 
+\squishend}
+
+%\end{itemize}}
 The main contributions of this work are\\
 $\bullet$\textbf{New approach-} We propose a new two-server model for implementing differential privacy which integrates the constant error bounds of \textsf{CDP}  with the low trust assumption of  \textsf{LDP}. \\
 $\bullet$ \textbf{Expressive Language} - \system supports a set of $9$ primitives which can be used to compose differentially private programs to answer a large class useful queries. \\
 $\bullet$ \textbf{Optimizations} - We propose four optimizations (two of them are differentially private) for Crypt$\epsilon$ that provide substantial performance gain over the base case implementation. \\
 $\bullet $\textbf{Generalized multiplication using linear homomorphic encryption}- We propose a very efficient way of performing $n-$ way multiplications using linear homomorphic encryptions.\\
-$\bullet $\textbf{Practical for real-world usage} -  We showcase the practicality of \system via extensive evaluation on real datasets.\\ \\\stitle{Related Work }\\\textit{Differential Privacy }- Introduced by Dwork et al. in \cite{Dork}, differential privacy has enjoyed immense attention from both academia and industry in the last decade. Some of the most recent directions in the \textsf{CDP} model include \cite{MVG,Blocki,AHP,DAWA,hist1,hist2,hist3,hist4,hist6,hist7,hist8,A1,A2,A3,A4,A5,A6,A7,A8,u1,u2,MWEM}. The most prominent work in \textsf{LDP} include \cite{LDP1, LDP2, Rappor1,HH,Rappor2,HH2,Cormode, CALM,15,itemset}.
+$\bullet $\textbf{Practical for real-world usage} -  We showcase the practicality of \system via extensive evaluation on real datasets.\\ 
+
+
+\am{Move this to a section of its own, and move it to the end of the paper (after experiments and before conclusions).}
+stitle{Related Work }\\\textit{Differential Privacy }- Introduced by Dwork et al. in \cite{Dork}, differential privacy has enjoyed immense attention from both academia and industry in the last decade. Some of the most recent directions in the \textsf{CDP} model include \cite{MVG,Blocki,AHP,DAWA,hist1,hist2,hist3,hist4,hist6,hist7,hist8,A1,A2,A3,A4,A5,A6,A7,A8,u1,u2,MWEM}. The most prominent work in \textsf{LDP} include \cite{LDP1, LDP2, Rappor1,HH,Rappor2,HH2,Cormode, CALM,15,itemset}.
 Recently it has been showed that augmenting the local differential privacy setting by an additional layer of anonymity can improve the privacy
 guarantees (or decrease error bound equivalently) \cite{mixnets,Prochlo,amplification}.  An important point to be noted here is that the power of this new model (known as shuffler/mixnet model) lies strictly between that of traditional \textsf{LDP} and \textsf{CDP}. The two-server model of Crypt$\epsilon$ differs from this line of work in three major ways. Firstly, Crypt$\epsilon$ results in no reduction in expressibility as compared to that of the \textsf{CDP} model (see Appendix E). Secondly, the shuffler/mixnet model results in an approximate DP guarantee $(\epsilon\sqrt{\frac{\log\frac{1}{\delta}}{n}},\delta)$ which incurs an expected error of $O(\epsilon\sqrt{\log\frac{1}{\delta}})$.  In practice, $\delta$ has to be at least $\frac{1}{n}$ in order to get some meaningful privacy. In contrast Crypt$\epsilon$ achieves the the same order of accuracy guarantees as that of the \textsf{CDP} model. Finally, the shuffler/mixnet model and \system have certain differences in their respective trust assumptions. A more detailed discussion is presented in Appendix E. %Google's implementation relies on a trusted intermediary shuffler which they implement via trusted hardware enclaves. However truly secure hardware enclaves are notoriously difficult to achieve in practice \cite{Foreshadow}. The mixnet model on the other hand requires a  mix network or mixnet which is a protocol involving several computers that inputs a sequenceof encrypted messages, and outputs a uniformly random permutation of those messages' plaintexts.  Their trust assumption is that at least one of the servers needs to behave honestly. For Crypt$\epsilon$ both the servers are completely untrusted under the constraint that they are non-colluding and follow the protocols semi-honestly.
 \\\textit{Two-Server Model} - The two-server model is a popular choice especially for privacy preserving machine learning approaches where typically one of the servers manages the cryptographic primitives while the other handles computation. Examples of this include \cite{Boneh1,Boneh2,Ridge2,Matrix2,secureML,LReg,Ver}. \\\textit{Homomorphic Encryption } - There has been a surge in practical privacy preserving solutions employing homomorphic encryptions in the recent past enabled by improved constructs. A lot of the aforementioned two-server models employ homomorphic encryption \cite{Boneh1,Boneh2,LReg,Matrix2}.  Additionally it is used in \cite{CryptoDL,CryptoNet,NN, Irene2, grid}.
 A more detailed discussion on related work is presented in Appendix D.
-%\xh{The pargraph above should summarize our solution \system (a summary of Section 3) and then follows by our contributions in designing this system.}
 
-%\xh{Add contributions in bullet points: e.g. (1) our system design; (2) support for language; (3) opimization; (4) novel cryptoprimitives on labHE; (5) emprical evaluation to show practicality of the solution on real data sets }
+
+
 %\par The rest of the paper is organized as follows. The next section provides a brief discourse on the necessary background followed by the description of the Crypt$\epsilon$ system in section 3. In section 4 we talk about the functionality and implementation of Crypt$\epsilon$ primitives. Section 5 includes running examples of Crypt$\epsilon$ programs while section 6 proposes two optimizations. We empirically evaluate \system and  review the existing literature in sections 7 and 8 respectively. In section 9 we discuss about some interesting aspects of Crypt$\epsilon$ and finally conclude with future research directions in section 10. 
 
 
