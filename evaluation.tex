@@ -5,42 +5,36 @@
         \centering
         %\includegraphics[width=5cm,height=3.1cm]{t1.pdf}
          \includegraphics[width=1\linewidth]{t1_final.pdf}
-        \caption{ Accuracy Analysis of Program A}
+        \caption{ Program 8 \xh{(update plot)}}
         \label{fig:P1}
     \end{subfigure}%%
     \begin{subfigure}[b]{0.25\linewidth}
     \centering \includegraphics[width=1\linewidth]{t5_final.pdf}
-        \caption{Accuracy Analysis Program B}
+        \caption{Program 5}
         \label{fig:mouse}\end{subfigure}%%
     \begin{subfigure}[b]{0.25\linewidth}
     \centering    \includegraphics[width=1\linewidth]{t7_final.pdf}
-        \caption{Accuracy Analysis of Program C}
+        \caption{ Program 5}
         \label{fig:P5}\end{subfigure}%%
       \begin{subfigure}[b]{0.25\linewidth}
     \centering    \includegraphics[width=1\linewidth]{t3_final.pdf}
-        \caption{Accuracy Analysis of Program D}
+        \caption{Program 3}
         \label{fig:P7}
     \end{subfigure}%%
-    
-    \begin{subfigure}[b]{0.25\linewidth}
-     \includegraphics[width=1\linewidth]{cdf_final.pdf}
-        \caption{DP Range Tree Evaluation}
-        %\label{rangetree}
-        \end{subfigure}
-        \begin{subfigure}[b]{0.25\linewidth}
-     \includegraphics[width=1\linewidth]{index_new.pdf}
-        \caption{Privacy Budget Analysis for DP Index}
-        \label{Index}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.25\linewidth}
-     \includegraphics[width=1\linewidth]{scale_final.pdf}
-        \caption{\system Program Scalability}
-        \label{Scale}
-    \end{subfigure}
-   \caption{Empirical Evaluation of Crypt$\epsilon$ Programs}
+       \caption{Accuracy Evaluation of Crypt$\epsilon$ Programs}
 \end{figure*}
-In this section we experimentally evaluate  Crypt$\epsilon$ to assess its practical utility  based on two parameters, the accuracy and the performance of the Crypt$\epsilon$ programs. Specifically\squishlist \item \textbf{Q1:} Does Crypt$\epsilon$ programs have significantly lower error than that for the corresponding state-of-the-art LDP implementations?\\ \textbf{Q2:} Is the program execution timings for Crypt$\epsilon$ practical?\\\textbf{Q3:} Does the proposed optimizations provide substantial performance improvement over the base case Crypt$\epsilon$ implementation? \squishend
-For the rest of the section, we consider the optimized implementation to be the default implementation for \system.
+
+In this section, we experimentally evaluate \system to answer the following questions: i) Do \system programs have significantly lower error than that for the corresponding state-of-the-art LDP implementations? ii) Is the program execution timing for \system practical? iii) Do the proposed optimizations in \system provide substantial performance improvement over the unoptimized \system? Here are our highlighted results.
+\squishlist
+\item \system can achieve 2-3 orders accuracy improvements on the existing LDP implementations (Figure~\ref{}).
+\item The performance cost of a large class of \system programs is less than 5 minutes for a data set of 32561 users. \AS shares more performance cost than \CPS.  (Table~\ref{tab:time})
+\item The optimization technique in \system can boost the performance of non-optimized \system up to \xh{xx} times (Table~\ref{tab:time}).
+\squishend
+
+
+%to assess its practical utility  based on two parameters, the accuracy and the performance of the Crypt$\epsilon$ programs. Specifically\squishlist \item \textbf{Q1:} Does Crypt$\epsilon$ programs have significantly lower error than that for the corresponding state-of-the-art LDP implementations?\\ \textbf{Q2:} Is the program execution timings for Crypt$\epsilon$ practical?\\\textbf{Q3:} Does the proposed optimizations provide substantial performance improvement over the base case Crypt$\epsilon$ implementation? \squishend
+%For the rest of the section, we consider the optimized implementation to be the default implementation for \system.
+
 \eat{\textbf{Evaluation Highlights:}
 As seen in figures the depend only on the orivacy parameter and hence are . Moreover the proposed optimizations, the DP range tree  are extremely helpful and pro a speed-up of respectively with a spped up of and respectively
 The with respectively. Finally \system programs run pretty fast.  on a dataset of 32561 records.  Whie progra finish ij just a few seconds an while minutes. As seen in figures the depend only on the orivacy parameter and hence are . Moreover The optimizations with a spped up of and respectively
@@ -49,8 +43,20 @@ The with respectively. Finally \system programs run pretty fast.  on a dataset o
 %The accuracy analysis in show case that for the are at least smaller . From table we see that can provide to while  speed up in execution time. Moreover 
 %%That the performnace arefaesble with the just taking while . the longest is 
 %We elaborate each of the above three obseravations in three separate sections as followed.
+
 \subsection{Methodology} 
-\textbf{Programs:}
+\stitle{Dataset \& Program:} We evaluated our system and the state-of-the-art LDP implementations on the Adult dataset from the UCI repository \cite{UCI}  which has been extracted from the 1994 census data. The dataset is of size $32,651$. We considered the programs outlined in Table~\ref{tab:programexamples}. Due to space constraint, we focus on P3,P5,P7,P8, as they  cover all the three classes of interactions between \AS and \CPS described in Section~\ref{sec:interactions}.  Additional experimental results for programs P1, P2,P4 and P6 from Table 3 are presented in Appendix~\ref{}.
+
+\stitle{Metrics:} For the accuracy of the program answers, we measure the difference between the true answer $\hat{V}$ and the noisy answer $\hat{V}$ by the $L_1$-norm, i.e. $\|V-\hat{V}\|_1 = \sum_{i} |V[i]-\hat{V}[i]|$. If the output is a scalar, we report the absolute difference between the noisy answer $\hat{c}$ and the true answer $c$. For the performance of \system programs, we measure the program processing time in seconds. Each program is repeated 10 times. We report the mean and the standard deviation for the error and the performance cost in the results.
+
+
+\stitle{Configuration:} We implemented  \system in \xh{python language, labHE package, MPC package}, with the optimization techniques described in Section~\ref{sec:optimization}. This is the default implementation for \system. We refer the implementation without the optimization as the unoptimized \system.  For this dataset, \system will construct a DP index optimization over the attribute $NativeCountry$ for programs that use $NativeCountry$ in the filtering condition. For our experiments, we use $20\%$ of the total privacy budget towards constructing the index, the remaining $80\%$ is reserved for the rest of the program execution. The rational behind selecting the value $20\%$ will be discussed in section 6.2.3. \system will also construct a DP range tree over the attribute $Age$ with the full privacy budget, $\epsilon$, when a cumulative histogram over $Age$ (e.g. P8) is queried. \xh{May mention other optimizations as well.}
+
+
+
+
+\eat{
+\stitle{Programs:}
 To answer the aforementioned questions we ran the experiments on 4 of the Crypt$\epsilon$ programs previously outlined in Table 3, namely P1,P3,P5 and P7. In this section we rename P1,P5,P7 and P3 as Program A, Program B, Program C and Program D respectively.  %Each program is compared with the corresponding state-of-the-art \textsf{LDP} implementation \cite{LDP1}.
 Additional experimental results for programs P2,P4 and P6 from Table 3 are presented in Appendix.% We rename the examples 5.1,5.2,5.3,5.4,5.6 and 5.7 as P1,P2,P6,. The reason behind this grouping is to arrange the programs in their increasing order of complexity.  %\begin{itemize}\item \textbf{Program 1} - Count the number of records having age in range $[50,60]$ \\\textbf{\textsf{LDP} Competitor} - Frequency oracle of \cite{LDP1} constructed over attribute $Age$. \item \textbf{Program 2} - Report the top 5 most frequent age values. \\\textbf{\textsf{LDP} Competitor} - Frequency oracle of \cite{LDP1} constructed over attribute $Age$.  \item \textbf{Program 3 }- Report the marginal on attributes $Age$ and $Gender$. \\\textbf{\textsf{LDP} Competitor }- Frequency oracle of \cite{LDP1} constructed over attribute $Age \times Gender$. \item \textbf{Program 4 }- Report the marginal on attributes $Age$ and $Gender$ with $NativeCountry=Mexico$\\\textbf{\textsf{LDP} Competitor }- Frequency oracle of \cite{LDP1} constructed over attribute $Age\times Gender \times NativeCountry$. \item \textbf{Program 5 }- Count the number of natively Mexican male employees of age 30.\\\textbf{\textsf{LDP} Competitor }- Frequency oracle of \cite{LDP1} constructed over attribute $Age\times Gender \times NativeCountry$. \item \textbf{Program 6 }- Count the number of distinct age values for male employees. \\\textbf{\textsf{LDP} Competitor }-Frequency oracle of \cite{LDP1} constructed over attribute $Age\times Gender$.% and reports the number of non-zero counts after suitable adjustment for thresholding. 
 %\item \textbf{Program 7 }- Count the number of age values with at least 10 records. \\\textbf{\textsf{LDP} Competitor }- Frequency oracle of \cite{LDP1} constructed over attribute $Age$. \end{itemize}
@@ -61,14 +67,22 @@ We ran our experiments on the Adult dataset from the UCI repository \cite{UCI}  
 \\$\bullet$ Programs A, B and C use absolute error $ =|c-\hat{c}|$ where $c$ is the true count and $\hat{c}$ is the noisy output.\\ $\bullet$ Programs D uses the $L1-Norm$ error metric given  by $Error=\sum_{i}|V[i]-\hat{V}[i]|, i \in [|V|]$.\\
 For each of the programs, we report the mean error values over 10 repetitions.\\
 \textbf{\textit{Performance:}} For measuring performance we report the mean total execution time in seconds of each program, over 10 repetitions. 
+}
 
 %uses the error measure given by the fraction of age values returned in the top 5 that have value less than $ct_5-\alpha$  where  $ct_5$ is the count of the $5^{th}$ largest value and $\alpha=\frac{1}{\epsilon}\log\frac{1}{\delta}$ is a slack parameter. The slack parameter is required because with probability $1-\delta$ no differentially private algorithm can distinguish between any two counts that differ by less than $\alpha$. We use $\delta=0.05$ for our experiment. \item Programs 3, 4 and 5 \end{itemize}
 
 
 \subsection{Experimental Results}
-\subsection*{Accuracy}
-In this section we evaluate \textbf{Q1} by performing a comparative analysis between the empirical accuracy of the aforementioned four \system programs (both optimized and unoptimized) and that of the corresponding state-of-the-art \textsf{LDP} implementations \cite{LDP1}. %All the experiments are evaluated on the full dataset and we report our results for 
+\stitle{Accuracy Gain:} We performed an accuracy analysis on \system programs and the corresponding state-of-the-art \textsf{LDP} implementations \cite{LDP1}. We report the mean errors of these programs on the full dataset at $\epsilon \in {0.1,\ldots,1.9}$. The errors introduced by \system for all programs are significantly lower than that by LDP. This accuracy improvements by \system are up to 2-3 orders for Program \xh{...}.
 
+For P3, as shown in Figure~\cite{}, when $\epsilon = 1.9$, the mean errors of \system and unoptimized \system are \xh{$16.10$} and  \xh{0.78} respectively  while LDP has an error near \xh{1000}. Hence, \system gives \xh{2} orders improvement than LDP. The same trends are observed for Program \xh{}. In P5, the improvements are less significant because…  In Program 7, the improvement is ….. In Program 8, ...
+
+We also observe that \system has a poorer accuracy than unoptimized \system as shown in Figure 2(a).  Then, briefly explain why is so using Fig 2(a).
+
+Though these optimization techniques suffered a small accuracy loss, they brought a significant gain in efficiency up to \xh{}. We will illustrate the performance gain in the following results.
+
+
+\eat{
 For Program A, \system constructs a DP range tree over the attribute $Age$ with the full privacy budget, $\epsilon$. Program B is optimized by constructing a DP index over the attribute $NativeCountry$. For our experiments, we use $20\%$ of the total privacy budget towards constructing the index, the remaining $80\%$ is reserved for the rest of the program execution. The rational behind selecting the value $20\%$ will be discussed in section 6.2.3.\\
 \textbf{Observations:} The main observation with respect to accuracy is that the mean error for a single frequency count for Crypt$\epsilon$ is of the order $O(\frac{1}{\epsilon})$. In fact quantitatively it is close to $\frac{2}{\epsilon}$. This conforms to our expectation as we add two instances of Laplace noise at the \textsf{AS} and the \textsf{CSP}.  In contrast, the mean error of the corresponding \textsf{LDP} implementation is of the order $O(\frac{\sqrt{m}}{\epsilon})$. For e.g., in Figure 2a which shows our error analysis for Program A, we observe that the mean error of base case \system is $16.10$ for $\epsilon=0.1$ and $0.78$ for $\epsilon=1.9$. The mean error values with the DP range tree optimization are slightly poorer (at most 6 $\times$ worse)  as compared to that of the base case. For e.g., for $\epsilon=0.1$, the mean error for the optimized implementation is $63.5$ while that for the base case is $16.1$. This is so because the sensitivity of the range tree is $\log k$ where $k$ is the number of leaves (100 in this case) and a range query can take up to $2 \log k$ nodes for answering. Thus for a single query, programs executed on the DP range tree has an expected error of $O(\frac{logk}{\epsilon})$. The accuracy gain for the range tree kicks in for answering multiple range queries as showcased in Figure 2e (see section 6.2.3).  In contrast, the corresponding \textsf{LDP} implementation has at least $1000 \approx \frac{11}{2}\cdot \sqrt{m}=  \frac{11}{2}\cdot \sqrt{323561}$ times worse error values.  This observation is intuitive as for answering Program A we need to read $11$ noisy counts from the frequency oracle (for the range [50,60]) and the factor of $\frac{1}{2}$ comes from the fact that the errors in base case Crypt$\epsilon$ are roughly $\frac{2}{\epsilon}$. For e.g., the mean error for $\textsf{LDP}$ is $1747 \times$  higher than that of base case Crypt$\epsilon$ for $\epsilon=0.1$. 
 
@@ -79,8 +93,15 @@ We make similar observations for Program D whose results are showed in Figure 2d
 Recall Program C outputs the number of age values with at least 100 records. Thus Program C does not directly report counts of records in the database but some statistic on an attribute based on the counts. Even here we observe that the accuracy of Crypt$\epsilon$ is significantly higher than that of the corresponding \textsf{LDP} implementations. For e.g., Figure 2c shows that for $\epsilon=0.1$ the mean error for Crypt$\epsilon$ is $23.6$ while that for the \textsf{LDP} implementation is $40.3$. 
 
 In this paragraph we list some additional observations about the accuracy of the aforementioned \system programs and their corresponding \textsf{LDP} implementations.  For Program B, from Figure 2b, we observe that the \textsf{LDP} implementation errors  are roughly $\frac{1}{11}\times$ that of the corresponding \textsf{LDP} errors for Program A. It is so because Program B outputs a single noisy count only as opposed to requiring $11$ noisy counts for Program A. Additionally from Figure 2d we observe that the mean error values for Crypt$\epsilon$ (both base case and optimized) are approximately $200\cdot 2 \times $ larger than the corresponding values for that for Programs A and B. For e.g., the mean error for Program B is $5862.4$ and $292.9$ for $\epsilon=0.1$ and $\epsilon=1.9$ respectively. It is so because, the attribute $Age$ has domain size $100$ while attribute $Gender$ is of size $2$. Hence $Age\times Gender$ is of domain size $200$. The additional factor of $2$ comes from the 2-stability of Program D. Similarly, the mean errors for the \textsf{LDP} implementation of Program D are around $18 = 200/11$ times that of the corresponding values for Program A and $200\times$ that of the corresponding values for Program B.
-\subsection*{Optimizations}
-In this section we evaluate \textbf{Q2} by analysing the speed-up in execution time 
+}
+
+
+\stitle{Performance Gain:} We evaluate the execution time of \system and unoptimized \system and show the speed up due to the optimization techniques.
+\xh{Summarize the performance results, e.g. all programs ran less than 5 mins, etc.}
+
+There are four types of optimizations. The four programs P3, P5, P7, P8 show the performance gain brought by each optimization respectively.
+
+
  \eat{\begin{table}[ht]
 \caption{Execution Time Analysis for Crypt$\epsilon$ Programs}
 \small
@@ -97,8 +118,9 @@ Program &  \multicolumn{3}{c}{Base} & \multicolumn{2}{c}{Optimized} \\
 \end{tabular}
 \label{c}
 \end{table}}
+
 \begin{table}
-\caption{Execution Time Analysis for Crypt$\epsilon$ Programs}
+\caption{Execution Time Analysis for Crypt$\epsilon$ Programs}\label{tab:time}
 \centering
 \scalebox{0.8}{
 \begin{tabular}{|c c|c|c|c|c|}
@@ -117,26 +139,62 @@ Program &  \multicolumn{3}{c}{Base} & \multicolumn{2}{c}{Optimized} \\
 \end{tabular}}
 \label{c}
 \end{table}
-\textbf{DP Range Tree}
- For Program A we see that the total time taken for execution for the base case Crypt$\epsilon$ implementation is about 19 seconds while using the range tree optimization we get a $6514\times$ speed up in timings. It is so because the time required by the \textsf{AS} in the optimized implementation becomes almost negligible because it simply needs to do a memory fetch to read off the answer from the pre-computed range tree instead of computing it from the entire encrypted database. 
- 
- In addition  to a performance boost, the DP range tree optimization also increases the accuracy of \system over multiple range queries as shown in Figure 2e. For this experiment, we construct the c.d.f over the attribute $Age$ (with domain size 100) by first executing 100 range queries, where the $i$-th query outputs the noisy count for age values in $[1,i], i \in [100]$. %For the optimized implementation, we use the DP range tree for the queries while the base case implementation
- This is followed by a isotonic regression post-processing to get a proper c.d.f. We use a total privacy budget of $\epsilon=1$ for all the 100 queries. Thus in the base case each query gets privacy parameter $\frac{\epsilon}{100}$ while the DP range tree is constructed with privacy parameter $\epsilon$ and sensitivity $\rceil\log 100\lceil$. From a visual analysis of the plots in Figure 2e, we observe that the plots for the true c.d.f and the one obtained from optimized \system are almost indistinguishable. In fact the mean L1-Norm error of the c.d.f for the optimized \system is just $0.0045$. Although the plot for the unoptimized implementation \system captures the overall shape of the c.d.f correctly, it shows slight aberrations in some points and has a mean L1-Norm error of $1.211$. On the other hand, the c.d.f obtained from the \textsf{LDP} implementation is way off and results in a mean L1-Norm error of $12.93$.
- %The time for the \textsf{CSP} remains the same in both the cases, it is the decryption cost. For Program 2, we observe a $7\times$ performance improvement with the range tree optimization. Again, the reason is even in this case the \textsf{AS} can simply read off the leaf nodes of the range tree instead of computing their counts from the database. 
-\\\textbf{DP Index}- For Program B, we observe that the base case implementation takes around $20$ minutes to run. However  a DP index over the attribute $NativeCountry$  reduces the execution time to about $2s$ giving us a $40\times $ speedup. It is so because, only about 2\% of the data records satisfy $NativeCountry$=Mexico. Thus the index reduces the number of records to be considered for the program execution drastically thereby resulting in a huge performance boost. %The is because only the cost for the \textsf{Filter} primitive decreases, not all the primitives scale 10 drop is due to the 
-Let $\rho$ represent the fraction of the privay parameter used towards constructing the DP index. As mentioned before, $\rho=0.2$ in this experimental setup.  In Figure 2f we study how the expected speed up in execution time and the accuracy of the final result vary as a function of $\rho$ for Program B for a total privacy parameter of $\epsilon=1$. We measure the expected speed up as $\frac{\text{Total dataset size=32561}}{\text{\# of records to be considered as indicated by the DP index}}$. From Figure 2f we observe that the error reduces till $\rho=0.2$ and stabilises until $\rho=0.65$ after which it starts rising again. This rise in error is because, as we keep increasing $\rho$, the amount of privacy parameter left for the measurement primitive keeps decreasing and after a certain point ($\rho=0.65$ in our experimental setup), starts dominating the total error. Also we observe that at about $\rho=0.2$, the index is able to approximately identify the correct set of records and hence increasing $\rho$ further does not affect the speed up or its contribution to the total error by much. Hence we choose $\rho=0.2$ for our experiments. A formal accuracy vs speed up trade-off analysis would be very helpful in this regard and is part of our future work.
- \\\textbf{Pre-computation}- For Program D the unoptimized execution time on the dataset of $32561$ records is around 2 days. This is so because the $\textsf{CrossProduct}$ primitive used in the program needs to perform $200\cdot 32561$ $labMult()$ operations which is very time consuming. Hence from Table 4 we see that, pre-computing the 2-dimensional attribute over $Age$ and $Gender$ is a very useful optimization as now the execution reduces to just about 4 minutes giving us a $717.6\times$ speed up. \\ %The un-optimized implementation for  Program D takes . It is because of the \textsf{CrossProduct} Primitiev because ot needs to compute . Pre-computaion f thsi saves a lot of time and cuts down the executioj tiem by.
-\textbf{Off-line Processing}
-The most costliest primitive for Program C is the specifically since the \textsf{CSP} has to generate for the one-hotcodings. In the base case this takes about . But with the off-line geneates then the execution time cuts down to just which gives us a speed uo of 
- \subsection*{Performance}
- Figure 2g showcases how well the \system programs scale. All the reported execution times are for optimized implementations. For Program A we see that the the execution time remains unchanged for all the dataset sizes. It is so because once the range tree is constructed, irrespective of the dataset size, the program execution just involves reading the answer directly from the modes of the tree followed by a decryption by the \textsf{CSP}. For Program B, the execution time basically depends on the \% of the records in the given dataset that satisfy the condition $NativeCountry=Mexico$ (as this is roughly the number of records that will be retrieved from the noisy index). From the figure, we observe that Program B scales almost linearly with the dataset size. whch is a of 
- For Program C clearly, the cost is dominated by the  is . Thus we conclude that the optimized implementations \system program running times are practical and only takes about a few minutes to run. The execution time for the optimized Program D is dominated by the cost of $\oplus$ operations for the \textsf{GroupBy} primitive which scales linearly with the number of data records. Another important observation from Table 4 is that the time taken by the \textsf{AS} is significantly larger than that  (except Program A due to the DP range tree optimization). This indicates that the \textsf{AS} performs conforms to our second requirement in section. %\subsection{Threats to Validity}- 
+
+
+
+First, P8 applies a range tree. \xh{Add discussion based on new results.}
+
+\eat{
+For Program A we see that the total time taken for execution for the base case Crypt$\epsilon$ implementation is about 19 seconds while using the range tree optimization we get a $6514\times$ speed up in timings. It is so because the time required by the \textsf{AS} in the optimized implementation becomes almost negligible because it simply needs to do a memory fetch to read off the answer from the pre-computed range tree instead of computing it from the entire encrypted database.  In addition  to a performance boost, the DP range tree optimization also increases the accuracy of \system over multiple range queries as shown in Figure 2e.
+For this experiment, we construct the c.d.f over the attribute $Age$ (with domain size 100) by first executing 100 range queries, where the $i$-th query outputs the noisy count for age values in $[1,i], i \in [100]$. %For the optimized implementation, we use the DP range tree for the queries while the base case implementation
+
+This is followed by a isotonic regression post-processing to get a proper c.d.f. We use a total privacy budget of $\epsilon=1$ for all the 100 queries. Thus in the base case each query gets privacy parameter $\frac{\epsilon}{100}$ while the DP range tree is constructed with privacy parameter $\epsilon$ and sensitivity $\rceil\log 100\lceil$. From a visual analysis of the plots in Figure 2e, we observe that the plots for the true c.d.f and the one obtained from optimized \system are almost indistinguishable. In fact the mean L1-Norm error of the c.d.f for the optimized \system is just $0.0045$. Although the plot for the unoptimized implementation \system captures the overall shape of the c.d.f correctly, it shows slight aberrations in some points and has a mean L1-Norm error of $1.211$. On the other hand, the c.d.f obtained from the \textsf{LDP} implementation is way off and results in a mean L1-Norm error of $12.93$.
+ %The time for the \textsf{CSP} remains the same in both the cases, it is the decryption cost. For Program 2, we observe a $7\times$ performance improvement with the range tree optimization. Again, the reason is even in this case the \textsf{AS} can simply read off the leaf nodes of the range tree instead of computing their counts from the database.
+}
+
+The second optimization technique was used by P3. \xh{Update: we observe that the base case implementation takes around $20$ minutes to run. However  a DP index over the attribute $NativeCountry$  reduces the execution time to about $2s$ giving us a $40\times $ speedup. It is so because, only about 2\% of the data records satisfy $NativeCountry$=Mexico. Thus the index reduces the number of records to be considered for the program execution drastically thereby resulting in a huge performance boost.} %The is because only the cost for the \textsf{Filter} primitive decreases, not all the primitives scale 10 drop is due to the
+
+%\xh{this moves to later:
+%Let $\rho$ represent the fraction of the privay parameter used towards constructing the DP index. As mentioned before, $\rho=0.2$ in this experimental setup.  In Figure 2f we study how the expected speed up in execution time and the accuracy of the final result vary as a function of $\rho$ for Program B for a total privacy parameter of $\epsilon=1$. We measure the expected speed up as $\frac{\text{Total dataset size=32561}}{\text{\# of records to be considered as indicated by the DP index}}$. From Figure 2f we observe that the error reduces till $\rho=0.2$ and stabilises until $\rho=0.65$ after which it starts rising again. This rise in error is because, as we keep increasing $\rho$, the amount of privacy parameter left for the measurement primitive keeps decreasing and after a certain point ($\rho=0.65$ in our experimental setup), starts dominating the total error. Also we observe that at about $\rho=0.2$, the index is able to approximately identify the correct set of records and hence increasing $\rho$ further does not affect the speed up or its contribution to the total error by much. Hence we choose $\rho=0.2$ for our experiments. A formal accuracy vs speed up trade-off analysis would be very helpful in this regard and is part of our future work.}
+
+The third optimization is pre-computation. \xh{For Program D}, the unoptimized execution time on the dataset of $32561$ records is around 2 days. This is so because the $\textsf{CrossProduct}$ primitive used in the program needs to perform $200\cdot 32561$ $labMult()$ operations which is very time consuming. Hence from Table 4 we see that, pre-computing the 2-dimensional attribute over $Age$ and $Gender$ is a very useful optimization as now the execution reduces to just about 4 minutes giving us a $717.6\times$ speed up. %The un-optimized implementation for  Program D takes . It is because of the \textsf{CrossProduct} Primitiev because ot needs to compute . Pre-computaion f thsi saves a lot of time and cuts down the executioj tiem by
+
+Last, off-line processing is applied by P7. \xh{Update: The most costliest primitive for Program C is the specifically since the \textsf{CSP} has to generate for the one-hotcodings. In the base case this takes about . But with the off-line geneates then the execution time cuts down to just which gives us a speed uo of }
+
+
+Another important observation from Table 4 is that the time taken by the \textsf{AS} is significantly larger than that  (except Program A due to the DP range tree optimization). This indicates that the \textsf{AS} performs conforms to our second requirement in section.
+
+
+
+\stitle{Scalability:} Figure~\ref{fig:scale} shows how well the \system programs scale. \xh{Update: All the reported execution times are for optimized implementations. For Program A we see that the the execution time remains unchanged for all the dataset sizes. It is so because once the range tree is constructed, irrespective of the dataset size, the program execution just involves reading the answer directly from the modes of the tree followed by a decryption by the \textsf{CSP}. For Program B, the execution time basically depends on the \% of the records in the given dataset that satisfy the condition $NativeCountry=Mexico$ (as this is roughly the number of records that will be retrieved from the noisy index). From the figure, we observe that Program B scales almost linearly with the dataset size. whch is
+ For Program C clearly, the cost is dominated by the  is . Thus we conclude that the optimized implementations \system program running times are practical and only takes about a few minutes to run. The execution time for the optimized Program D is dominated by the cost of $\oplus$ operations for the \textsf{GroupBy} primitive which scales linearly with the number of data records.}
+
+
+\stitle{Accuracy-Efficiency Trade-off:}  \xh{update writeup based on new plot} Let $\rho$ represent the fraction of the privay parameter used towards constructing the DP index. As mentioned before, $\rho=0.2$ in this experimental setup....
+
+%In Figure 2f we study how the expected speed up in execution time and the accuracy of the final result vary as a function of $\rho$ for Program B for a total privacy parameter of $\epsilon=1$. We measure the expected speed up as $\frac{\text{Total dataset size=32561}}{\text{\# of records to be considered as indicated by the DP index}}$. From Figure 2f we observe that the error reduces till $\rho=0.2$ and stabilises until $\rho=0.65$ after which it starts rising again. This rise in error is because, as we keep increasing $\rho$, the amount of privacy parameter left for the measurement primitive keeps decreasing and after a certain point ($\rho=0.65$ in our experimental setup), starts dominating the total error. Also we observe that at about $\rho=0.2$, the index is able to approximately identify the correct set of records and hence increasing $\rho$ further does not affect the speed up or its contribution to the total error by much. Hence we choose $\rho=0.2$ for our experiments. A formal accuracy vs speed up trade-off analysis would be very helpful in this regard and is part of our future work.
+
+\begin{figure}[b]
+     \includegraphics[width=0.6\columnwidth]{scale_final.pdf}
+        \caption{\system Program Scalability}\label{fig:scale}
+\end{figure}
+
+\begin{figure}[b]
+  \includegraphics[width=0.6\columnwidth]{index_new.pdf}
+  \caption{Accuracy-Efficiency Trade-off \xh{update}} \label{fig:Index}
+\end{figure}
+
+\eat{
+\begin{subfigure}[b]{0.25\linewidth}
+     \includegraphics[width=1\linewidth]{cdf_final.pdf}
+        \caption{DP Range Tree Evaluation}
+        %\label{rangetree}
+        \end{subfigure}
+}
+
+ %\subsection{Threats to Validity}- 
  %In Table 2 we report the execution time of  the aforementioned $7$ Crypt$\epsilon$ programs. For Program 1 we see that the total time taken for execution for the base case Crypt$\epsilon$ implementation is about 0.5 seconds; the cost is mainly dominated by the \textsf{AS} which has to make a pass through the entire encrypted database. The \textsf{CSP} on the other hand is just needed for decryption in the last step. Program 2 needs to compute the encrypted $Age$ histogram via $GroupBy*$ primitive which takes about $6$ seconds. The \textsf{CSP} time is also more than the previous case because of the garbled circuit in the $NoisyMax$ primitive. The total execution time for the base case implementation for Program 3 is roughly 2 hours.  The reason behind this comparatively higher timing as compared to that of the previous two programs is that the \textsf{CrossProduct} primitive requires  multiplication of the ciphers  which is costlier than the addition operator $\bigoplus$. For Program 4, we observe that the base case implementation takes around 3.1 hours to run. The timing is greater than that for Program 3 because, in this case the additional condition $NativeCountry=Mexico$ results in extra interactions with the \textsf{CSP}. Program 5 requires about $35$ seconds to execute in the base case while Program 6 runs for $41$ minutes. For Program 7 we see that the majority of the time is required by the \textsf{CSP} for generating the encrypted one-hot-codings for the $GroupBy$ primitive and takes $24$ minutes to execute.  An important observation throughout the experiments is that the time taken by the \textsf{AS} is significantly greater than that for the \textsf{CSP} for all the programs except for Program 7. This is a desirable trait for Crypt$\epsilon$ as discussed in section 3.6.
 
 
 
-
-
-
-
-
+\xh{Remember to add discussion when these optimizations do not help and leave it to future work.}
