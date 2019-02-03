@@ -1,5 +1,5 @@
 \subsection{Program Examples}
-\system supports all programs that can be expressed as a sequence of \system primitives followed by arbitrary post-processing. Consider a database schema $\langle Age$, $Gender$, $NativeCountry$, $Department$, $Salary\rangle$. We show several \system program examples in Table~\ref{tab:programexamples} over this database. In this table, P2 showcases a post processing step over the noisy plaintext output. We denote this operator by $post_{c.d.f}(\hat{V} )$. This operator input a noisy histogram $\hat{V}$
+\system supports all programs that can be expressed as a sequence of \system primitives followed by arbitrary post-processing. Consider a database schema $\langle Age$, $Gender$, $NativeCountry$, $Department$, $Salary\rangle$. We show several \system program examples in Table~\ref{tab:programexamples} over this database. In this table, P1 showcases a post processing step over the noisy plaintext output. We denote this operator by $post_{c.d.f}(\hat{V} )$. This operator input a noisy histogram $\hat{V}$
 for an attribute $A$  and computes its c.d.f $\hat{V}'$ via isotonic regression. 
 \begin{table*}[t]
 \caption{Examples of \system Program}\label{tab:programexamples} \vspace{-3mm}
