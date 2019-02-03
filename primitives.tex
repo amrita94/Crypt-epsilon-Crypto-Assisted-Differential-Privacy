@@ -5,8 +5,7 @@
 A sequence of these primitives forms a program which can be run by \system.
 In this section, we first define these primitives and then show how to use these primitives to write useful programs.
 The analyst is given a database schema $\langle A_1,\ldots,A_k \rangle$ and an encrypted instance of this database, represented by $\encD$.
-We introduce three types of Crypt$\epsilon$ primitives:  (i) transformations, (ii) measurements, and (iii) post-processing,
-which are summarized in Table~\ref{tab:primitives}.
+There are two types of Crypt$\epsilon$ primitives:  (i) transformations and (ii) measurements, which are summarized in Table~\ref{tab:primitives}.
 
 \input{table}
 
@@ -60,7 +59,7 @@ For each record of the database $\boldsymbol{\tilde{\mathcal{D}}}$ (i.e., data c
 The measurement primitives take encrypted vector of counts $\encV$ (or a single count $\encC$) as input and return noisy measurements on it in the clear. These implement two of the most popular differentially private mechanisms: Laplace mechanism and Noisy-Max mechanism.
 Both mechanisms add noise $\eta$ drawn from Laplace distribution, denoted by $Lap(b)$, where $\Pr[\eta =x]\propto e^{-{\frac{|x|}{b}}}$. The scale of the noise depends on the transformations applied on the base database $D$. Let the sequence of transformations ($\bar{\mathcal{T}}=(\mathcal{T}_l,\ldots,\mathcal{T}_1)$) applied on $D$ to get $V$ be $\bar{\mathcal{T}}(D) = \mathcal{T}_l(\cdots \mathcal{T}_2((\mathcal{T}_1(D))))$. We define the \emph{sensitivity} of a sequence of transformations as  the maximum change to the output of this sequence of transformations when changing a row in the input database, i.e.,
 $\Delta_{\bar{\mathcal{T}}} = \max_{D,D'} \|\bar{\mathcal{T}}(D)-\bar{\mathcal{T}}(D')\|_1$ where $D$ and $D'$ differ but a single record.
-The sensitivity of $\bar{\mathcal{T}}$ can be upper bounded by the product of the stability (definition in Appendix A2) of these transformation primitives, i.e. $\Delta_{\bar{\mathcal{T}}=(\mathcal{T}_l,\ldots,\mathcal{T}_1)} = \prod_{i=1}^l \Delta \mathcal{T}_i$. The transformation operators in Table~\ref{tab:primitives} have a stability of 1, except for \textsf{GroupByCount} and \textsf{GroupByCount*} which have a stability of 2. \\
+The sensitivity of $\bar{\mathcal{T}}$ can be upper bounded by the product of the stability (definition in Appendix A2) of these transformation primitives, i.e. $\Delta_{\bar{\mathcal{T}}=(\mathcal{T}_l,\ldots,\mathcal{T}_1)} = \prod_{i=1}^l \Delta \mathcal{T}_i$. The transformation operators in Table~\ref{tab:primitives} have a stability of 1, except for \textsf{GroupByCount} and \textsf{GroupByCount*} which are 2-stable. \\
 (1)\stitle{ \textsf{Laplace}} $\lap_{\epsilon,\Delta}(\mathbf{V}/\encC)$:  This primitive implements the classic Laplace mechanism \cite{Dork}.
 Given an encrypted vector $\encV$ or an encrypted scalar $\encC$, a privacy parameter $\epsilon$ and sensitivity $\Delta$ of the preceding transformations, the primitive adds a noise vector (scalar) from $Lap(\frac{\Delta}{\epsilon})$. This primitive ensures $\epsilon$-differential privacy when data analyst views the plaintext answer.\\
 %The \textsf{Laplace} primitive  denoted by  $\lap_{\epsilon,\Delta}(\cdot)$ takes a vector of encrypted counts $\bf{V}$ and privacy paramters $\epsilon,\Delta$ as input, and outputs a noisy plaintext vector $\hat{V}$, where $\epsilon$ is the privacy budget and $\Delta$ is defined as the maximum change to the count vector  $\bf{V}$ if changing one user's input (sensitivity). The noise to be added is drawn from the distribution $Lap(\frac{\Delta f}{\epsilon})$
@@ -95,7 +94,3 @@ index corresponding to the maximum is made public.
 Secondly, the noise added is much smaller than that in the case of the naive implementation (it has sensitivity $\Delta f=m$). Thus the \textsf{NoisyMax} primitive takes as input of encrypted vector where each vector element is a count. It then adds noise drawn from $Lap(\frac{1}{\epsilon})$ to each vector element and computes the indices of the top k elements.
 \end{enumerate}
 }
-
-
-\subsection{Post-Processing Primitives}
-Unlike the first two types of primitives which operate on encrypted data, post-processing primitives operate on plaintext data. This step is usually applied on the noisy output of measurement primitives. The post-processing property~\cite{Dork} of differential privacy ensures that any post-processing step on the output of a differentially private mechanism does not cost any privacy loss. Currently, \system supports one popular post-processing primitive from the literature~\cite{hist1} which can boost the accuracy of an ordered counts. We denote this primitive by $\postorder_{\leq}(\hat{V})$. This primitive takes a noisy histogram vector $\hat{V}$ and outputs a vector $\hat{V}'$ such that the counts in $\hat{V}'$ are non-decreasing. As post-processing primitives work on plaintext, the time cost is negligible compared to the other primitives. All post-processing algorithms from the literature are realizable in \system with hurting the privacy guarantee.
