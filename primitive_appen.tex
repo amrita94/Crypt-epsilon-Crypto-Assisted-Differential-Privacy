@@ -92,7 +92,26 @@ Finally, the \AS evaluates the circuit above and returns the indices as the outp
 }
 
 
-\subsection{DP Index Optimization Implementation}\label{index-imp}
- The DP index optimization can be implemented via a garbled circuit that \begin{enumerate}\item takes the entire database $\boldsymbol{\mathcal{\tilde{D}}}$ as an input and the attribute $A$ as an input from the \textsf{AS}.
+\subsection{DP Index Optimization Implementation}\label{app:index-imp}
+
+The DP index optimization can be implemented via a garbled circuit which aims to compute two pieces of information: a sorted encrypted database based on $A$ and a $\epsilon$-differentially private index on $A$. This circuit takes (i) the secret key $sk$ from the \CPS, and (ii) the entire database $\encD$ and the attribute $A$ from the \AS. The attribute $A$ has a domain of size $s_A$ and is uniformly partitioned into $k$ ranges $\{R_1,\ldots, R_i, \ldots, R_{s_A/k}\}$, where $R_i = [\frac{s_A}{k}i, \frac{s_A}{k}(i+1))$.
+
+This circuit first decrypts $\encD$ using the secret key and sorts the decrypted database on attribute $A$ in ascending order. The sorted database is then encrypted again. Then the circuit computes a histogram $V$ on the $k$ ranges of $A$, denoted by $[c_1,\ldots,c_k]$  and perturbs each count with Laplace noise, i.e., $\hat{c}_i = c_i + \eta_i$, where $\eta_i\sim Lap(1/\epsilon)$. The noisy counts $\encV$ are then used to construct a cumulative histogram over $A$, where $\hat{cdf}[i] = \sum_{j=0}^i \hat{c}_i$ and post-processed such that they are in non-decreasing order and non-negative, and $\hat{cdf}[k] = |\encD|$~\cite{cdf}.
+
+Given the differentially private cdf and the sorted database, when a program would like to select rows with $A\in [v_i, v_j]$, we find the ranges that contain $v_i$ and $v_j$ respectively, denoted by $R_i$ and $R_j$. Then we return all records in the sorted database which cover all ranges from $R_i$ and $R_j$. This corresponds to row $(\hat{cdf}[i-1]+1)$ to row $(\hat{cdf}[j])$.
+
+
+
+
+\xh{@chenghong, double check if the writeup reflects what you implemented.}
+
+
+\eat{
+\begin{enumerate}\item takes the entire database $\boldsymbol{\mathcal{\tilde{D}}}$ as an input and the attribute $A$ as an input from the \textsf{AS}.
 \item takes the secret key $sk$ as an input from  the \textsf{CSP} \item Decrypts $\boldsymbol{\mathcal{\tilde{D}}}$ \item Sorts the decrypted database on $A$, i.e., the first $ct_{A,v_1}$ rows are the ones with value $v_1$ for attribute $A$, the next $ct_{A,v_2}$ are  the records with value $v_2$ for attribute $A$ and so on. \item  re-encrypts the sorted database \item Divide the domain of $A$ into $k$ bins such that each bin contains $s_A/k$ consecutive domain values. \item Construct a $k$ lengthed vector $\hat{V}$ such that $\hat{V}[i]=\sum_jct_{A,j}+\eta_i, i \in [k], j \in [\frac{s_A}{k}(i-1)+1,\frac{s_A}{k}i]$ where $\eta_i$ is a random laplace noise drawn from the distribution $Lap(\frac{k}{\epsilon})$ \item Return $\hat{V}$ and sorted $\boldsymbol{\mathcal{\tilde{D}}}_{sort}$\end{enumerate}
-\begin{figure}\includegraphics[height=4cm,width=8cm]{kk.png} \caption{ $genLabMult()$ - Batching of multiplicands for \textsf{labHE}} \label{genlab-fig}\end{figure}
+}
+
+\subsection{Illustration genLabMult}\label{app:genlabhe}
+Figure~\ref{genlab-fig} illustrates how a $n$-way multiplication described in Section~\ref{genlab} can be parallelized. This approach requires a total of $\lceil \log n\rceil$ rounds of communication between \AS and \CPS.
+
+\begin{figure}\includegraphics[width=\columnwidth]{kk.png} \caption{ $genLabMult()$ - Batching of multiplicands for \textsf{labHE}} \label{genlab-fig}\end{figure}
