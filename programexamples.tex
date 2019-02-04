@@ -1,19 +1,28 @@
 \subsection{Program Examples}
-Consider a database schema $\langle Age$, $Gender$, $NativeCountry$, $Department$, $Salary\rangle$. We show several \system program examples in Table~\ref{tab:programexamples} over this database.
+A \system program is a sequence of transformation primitives followed by a measurement primitive and arbitrary post-processing. Consider a database schema $\langle Age$, $Gender$, $NativeCountry$, $Salary\rangle$. We show 7 \system program examples in Table~\ref{tab:programexamples} over this database.
+We also show how privacy parameter allocation and sensitivity analysis is done in \system via one of the programs, P1 as follows. \\
+\textbf{Query} - Compute the c.d.f over the attribute $Age$\\
+\textbf{\system Program }- \\
+$\forall i\in [1,100],\hat{c}_i \leftarrow \lap_{\epsilon_i,1}(\countagg(\filter_{Age \in (0, c_i]}(\project_{Age}(\encD))))$;\\ $post_{c.d.f}([\hat{c}_1,\ldots,\hat{c}_{100}])$\\
+Now we provide a step-by-step breakdown of the program
+\squishlistnum \item The first step is to compute 100 range queries, where the $i$-th query computes the the number of records in with age in $[1,i]$. Thus, if the total privacy budget is $\epsilon$, each individual range query gets a privacy budget of $\frac{\epsilon}{100}$. 
+\item  The sequence of transformation primitives for each such query is $count(\sigma(\pi(\encD))$. Thus the sensitivity of each range query is upper bounded by the product of the stabilities of these three primitives which is $1$. \item Thus the input to the measurement primitive $Lap$ is privacy parameter $\frac{\epsilon}{100}$ and sensitivity 1. \item Finally, the program performs post processing over the noisy plaintext output $\hat{V}=[\hat{c}_1,...,\hat{c}_{100}]$. We denote this operator by $post_{c.d.f}(\hat{V})$. This operator input a noisy histogram $\hat{V}$
+for an attribute $A$ and computes its c.d.f $\hat{V}'$ via isotonic regression. Since differential privacy is post-processing immune \cite{Dork}, this step does not amount to any privacy loss.\item Thus by Theorem 1, the above program is $\epsilon$-DP. \squishendnum 
 \begin{table*}[t]
-\caption{Examples of \system Program}\label{tab:programexamples}
-\scalebox{0.67}{
+\caption{Examples of \system Program}\label{tab:programexamples} \vspace{-3mm}
+\scalebox{0.7}{
 \begin{tabular}{|l|l|}
 \hline
  {\bf \system Program} & {\bf Description} \\ \hline \hline
-P1:  $\lap_{\epsilon,1}(\countagg(\filter_{Age\in [50,60]}(\project_{Age}(\encD))))$ &  Counts the number of records satisfying $Age \in [50,60]$      \\ \hline
-P2: $\noisymax^5_{\epsilon,1}(\groupbystar_{Age}(\encD))$               &       Outputs the 5 most frequent age values. \\ \hline
-P3: $\lap_{\epsilon,2}(\groupbystar_{Age\times Gender}(\project_{Age \times Gender}(\crossproduct_{Age,Gender\rightarrow{Age \times Gender}}(\encD))))$     &       Outputs the marginal over the attributes $Age$ and $Gender$. \\ \hline
-P4: $\lap_{\epsilon,2}(\groupbystar_{Age\times Gender}(\filter_{NativeCountry=Mexico}(\project_{Age\times Gender, NativeCountry}(\crossproduct_{Age,Gender\rightarrow{Age \times Gender}}(\encD)))))$                          & Outputs the marginal over $Age$ and $Gender$ for Mexican employees.     \\ \hline
-P5: $\lap_{\epsilon,1}(\countagg(\filter_{Age=30 \wedge Gender=Male \wedge NativeCountry=Mexico}(\project_{Age,Gender,NativeCountry}(\encD))))$                                       &   Counts the number of male employees of Mexico having age 30.    \\ \hline
-P6:   $\lap_{\epsilon,2}(\countdistinct(\groupbystar_{Age}(\filter_{Gender=Male}(\project_{Age , Gender}(\encD)))))$ & Counts the number of distinct age values for the male employees.       \\ \hline
-P7:  $\lap_{\epsilon,2}(\countagg(\filter_{Count\in[10,m]}(\groupby_{Age}(\project_{Age}(\encD)))))$
-                                     & Counts   the number of  age values having at least 10 records.   \\ \hline
+%P1:  $\hat{c} \leftarrow \lap_{\epsilon,1}(\countagg(\filter_{Age\in [50,60]}(\project_{Age}(\encD))))$ &  Counts the number of records satisfying $Age \in [50,60]$.      \\ \hline
+P1:  $\forall i\in [1,100],v_i \leftarrow \lap_{\epsilon_i,1}(\countagg(\filter_{Age \in (0, c_i]}(\project_{Age}(\encD))))$; $post_{c.d.f}([c_1,\ldots,c_{100}])$ &  Outputs the c.d.f of $Age$ with domain $[1,100]$.  \\ \hline
+P2: $\hat{P} \leftarrow \noisymax^5_{\epsilon,1}(\groupbystar_{Age}(\encD))$               &       Outputs the 5 most frequent age values. \\ \hline
+P3: $\hat{V} \leftarrow \lap_{\epsilon,2}(\groupbystar_{Age\times Gender}(\project_{Age \times Gender}(\crossproduct_{Age,Gender\rightarrow{Age \times Gender}}(\encD))))$     &       Outputs the marginal over the attributes $Age$ and $Gender$. \\ \hline
+P4: $\hat{V} \leftarrow \lap_{\epsilon,2}(\groupbystar_{Age\times Gender}(\filter_{NativeCountry=Mexico}(\project_{Age\times Gender, NativeCountry}(\crossproduct_{Age,Gender\rightarrow{Age \times Gender}}(\encD)))))$                          & Outputs the marginal over $Age$ and $Gender$ for Mexican employees.     \\ \hline
+P5: $\hat{c} \leftarrow \lap_{\epsilon,1}(\countagg(\filter_{Age=30 \wedge Gender=Male \wedge NativeCountry=Mexico}(\project_{Age,Gender,NativeCountry}(\encD))))$                                       &   Counts the number of male employees of Mexico having age 30.    \\ \hline
+P6:   $\hat{c} \leftarrow \lap_{\epsilon,2}(\countdistinct(\groupbystar_{Age}(\filter_{Gender=Male}(\project_{Age , Gender}(\encD)))))$ & Counts the number of distinct age values for the male employees.       \\ \hline
+P7:  $\hat{c} \leftarrow \lap_{\epsilon,2}(\countagg(\filter_{Count\in[100,m]}(\groupby_{Age}(\project_{Age}(\encD)))))$
+                                     & Counts   the number of  age values having at least 100 records.   \\ \hline
+
 \end{tabular}}
 \end{table*}
-

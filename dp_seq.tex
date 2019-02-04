@@ -1,5 +1,5 @@
 \section{Background cntd}
-\stitle{Differential Privacy Cntd}\begin{theorem}(Sequential Composition). If $\mu_1$ and
+\eat{\stitle{Differential Privacy Cntd}\begin{theorem}(Sequential Composition). If $\mu_1$ and
 $\mu_2$ are $\epsilon_1$-DP and $\epsilon_2$-DP algorithms that use independent randomness, then releasing the outputs $\mu_1(D)$ and
 $\mu_2(D)$ on database $D$ satisfies $\epsilon_1+\epsilon_2$-DP.\end{theorem} There exist advanced composition theorems that give tighter
 bounds on privacy loss, but we
@@ -40,7 +40,7 @@ wj ) yields
 only the value of Kg(bi,bj ) wk and that no other output values
 can be recovered for this gate. So the evaluator can evaluate
 the entire garbled circuit gate-by-gate so that no additional
-information leaks about intermediate computations.}
+information leaks about intermediate computations.}}
 
 
 \stitle{Stability of a transformation}
@@ -49,9 +49,9 @@ Transformations with bounded stability scale the differential privacy guarantee 
 \begin{theorem}
 Let $\mu$ provide $\epsilon$-differential privacy, and let $\mathcal{T}$
 be an arbitrary $t$-stable transformation. The composite computation $\mu \circ \mathcal{T}$ provides $(\epsilon \cdot t)$-differential privacy.\end{theorem}
-\stitle{Noisy Max Cntd}
+\eat{\stitle{Noisy Max Cntd}
 The Noisy Max algorithm has two fold advantage over the naive implementation of finding the maximum count.
 Firstly, noisy-max applies "information minimization" as rather than releasing all the noisy counts
 and allowing the analyst to find the max and its index, only the
 index corresponding to the maximum is made public.
-Secondly, the noise added is much smaller than that in the case of the naive implementation (it has sensitivity $m\cdot \Delta$).
+Secondly, the noise added is much smaller than that in the case of the naive implementation (it has sensitivity $m\cdot \Delta$).}

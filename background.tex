@@ -23,28 +23,28 @@ use Theorem 1 for our paper.
 \subsection{Cryptographic Primitives}
 \stitle{Linearly Homomorphic Encryption (\textsf{LHE}).}
 Let $(\mathcal{M}, +)$ be a finite group. A \textsf{LHE} scheme
-for messages in $\mathcal{M}$ is defined  by three algorithms \\
-$\bullet$ \textbf{Key Generation }($Gen$) -This  algorithm takes the security parameter $\kappa$ as input and outputs
-a pair of secret and public keys, $(s_k, p_k) \leftarrow Gen(\kappa)$.\\
-$\bullet$ \textbf{Encryption} ($Enc$) - This is a randomized algorithm that encrypts a message $m \in \mathcal{M}$ via the public key $p_k$, to generate ciphertext $\mathbf{c} \leftarrow Enc_{pk}(m)$.\\
-$\bullet$\textbf{Decryption} ($Dec$) - This is a deterministic function that uses the secret key $s_k$ to
+for messages in $\mathcal{M}$ is defined  as \squishlist
+\item \textbf{Key Generation }($Gen$) -This  algorithm takes the security parameter $\kappa$ as input and outputs
+a pair of secret and public keys, $(s_k, p_k) \leftarrow Gen(\kappa)$.
+\item \textbf{Encryption} ($Enc$) - This is a randomized algorithm that encrypts a message $m \in \mathcal{M}$ via the public key $p_k$, to generate ciphertext $\mathbf{c} \leftarrow Enc_{pk}(m)$.
+\item \textbf{Decryption} ($Dec$) - This is a deterministic function that uses the secret key $s_k$ to
 recover the plaintext $m$ from ciphertext $\mathbf{c}$.
-\\
+\squishend
 In addition, \textsf{LHE} supports the operator $\oplus$ that allows the summation of ciphers as follows:
 \\ \textbf{Operator} $\oplus$ - Let $c_1 \leftarrow Enc_{pk}(m1), \ldots, c_a \leftarrow Enc_{pk}(m_a), a \in \mathcal{Z}_{>0}$. Then we have  $Dec_{sk}(c_1\oplus c_2 ...\oplus c_a)=    m_1 + \ldots   + m_a$.  \\
 One can multiply a cipher $c\leftarrow  Enc_{sk}(m)$ by a plaintext positive integer $a$ by $a$ repetitions of $\oplus$. We denote this operation by $cMult(a,c)$ such that $Dec_{sk}\big(cMult(a,c)\big)=a\cdot m$.\\
 \stitle{Labeled Homomorphic Encryption(\textsf{labHE}).}
-Let $(Gen,Enc,Dec)$ be an \textsf{LHE} scheme with security parameter $\kappa$ and message space $\mathcal{M}$. Assume that a multiplication operation is given in $\mathcal{M}$, i.e., is a finite ring. Let also $\mathcal{F}:\{0,1\}^s \times \mathcal{L}\rightarrow \mathcal{M}$ be a pseudo-random function with seed space $\{0,1\}^s$( s= poly($\kappa $)) and the label space $\mathcal{L}$. Define
-\\
- $\bullet \textbf{labGen}(\kappa)$ - On input $\kappa$, it runs $Gen(\kappa)$ and outputs $(sk,pk)$
-\\$\bullet \textbf{localGen}(pk)$ -  For each user $i$ and with the public key as input, it samples a random seed $\sigma_i \in \{0,1\}^s$ and computes $pk_i = Enc_{pk}(\underline{\sigma_i})$ where $\underline{\sigma_i}$ is an  encoding of $\sigma_i$ as an  element of $\mathcal{M}$. It outputs $(\sigma_i,pk_i)$.\\
-$\bullet \textbf{labEnc}_{pk}(\sigma_i, m , \tau)$: On input a message $m \in \mathcal{M} $ with label $\tau \in \mathcal{L}$  from user $i$, it computes $b=\mathcal{F}(\sigma_i, \tau)$ (known as the mask) and outputs the labeled ciphertext $\mathbf{c}=(a,d) \in \mathcal{M} \times \mathcal{C}$ with $ a= m- b$  (known as the hidden message) in $\mathcal{M}$ and $d=Enc_{pk}(b)$. For brevity we just use notation $\textbf{labEnc}_{pk}(m)$ to denote the above functionality, in the rest of paper. \\
-$\bullet \textbf{labDec}_{sk}(\mathbf{c})$ - This functions inputs a cipher $\mathbf{c}=(a,d) \in \mathcal{M} \times \mathcal{C}$ encrypted under the labHE scheme and decrypts it as $m=a-Dec_{sk}(d)$.\\
+Let $(Gen,Enc,Dec)$ be an \textsf{LHE} scheme with security parameter $\kappa$ and message space $\mathcal{M}$. Assume that a multiplication operation is given in $\mathcal{M}$, i.e., is a finite ring. Let also $\mathcal{F}:\{0,1\}^s \times \mathcal{L}\rightarrow \mathcal{M}$ be a pseudo-random function with seed space $\{0,1\}^s$( s= poly($\kappa $)) and the label space $\mathcal{L}$. A \textbf{labHE} scheme is defined as
+\squishlist
+ \item $\textbf{labGen}(\kappa)$ - On input $\kappa$, it runs $Gen(\kappa)$ and outputs $(sk,pk)$
+\item $\textbf{localGen}(pk)$ -  For each user $i$ and with the public key as input, it samples a random seed $\sigma_i \in \{0,1\}^s$ and computes $pk_i = Enc_{pk}(\underline{\sigma_i})$ where $\underline{\sigma_i}$ is an  encoding of $\sigma_i$ as an  element of $\mathcal{M}$. It outputs $(\sigma_i,pk_i)$.
+\item $\textbf{labEnc}_{pk}(\sigma_i, m , \tau)$: On input a message $m \in \mathcal{M} $ with label $\tau \in \mathcal{L}$  from user $i$, it computes $b=\mathcal{F}(\sigma_i, \tau)$ (known as the mask) and outputs the labeled ciphertext $\mathbf{c}=(a,d) \in \mathcal{M} \times \mathcal{C}$ with $ a= m- b$  (known as the hidden message) in $\mathcal{M}$ and $d=Enc_{pk}(b)$. For brevity we just use notation $\textbf{labEnc}_{pk}(m)$ to denote the above functionality, in the rest of paper. 
+\item $\textbf{labDec}_{sk}(\mathbf{c})$ - This functions inputs a cipher $\mathbf{c}=(a,d) \in \mathcal{M} \times \mathcal{C}$ encrypted under  \textsf{labHE} and decrypts it as $m=a-Dec_{sk}(d)$.\squishend
+Both \textsf{LHE} and \textsf{labHE} provides semantic security guarantee \cite{Katz}.
 \stitle{Secure Computation}
 %\arc{Not final:placeholder}
-Garbled circuit, also known as Yao's protocol \cite{Yao,Yao2},  is a generic method for secure  computation that allows two-party evaluation of a function $f(x_1,x_2)$ in the presence of semi-honest adversaries. The protocol is run between two data owners with respective private inputs $x_1$ and $x_2$ such that at the end, no party learns more  
-than what is revealed from the output value $f(x_1,x_2)$.  \eat{In the protocol, one of the parties called
-generator, builds a "garbled" version of a circuit computing $f$ and sends it over to the second party, called evaluator, alongside the garbled input values 
-corresponding to $x_1$.  Upon receiving the circuit, the evaluator 
-engages in an oblivious transfer protocol with the generator to obliviously obtain the garbled input for $x_2$. Finally the evaluator can securely compute the  output $f(x_1, x_2)$ from the garbled circuit and the corresponding garbled inputs for $\{x_1,x_2\}$.}
-A more detailed discussion is presented in Appendix A.
+Garbled circuit, also known as Yao's protocol \cite{Yao,Yao2},  is a generic method for secure computation. Two data owners with respective private inputs $x_1$ and $x_2$ run the protocol such that, no party learns more  
+than what is revealed from the output value $f(x_1,x_2)$ for a function $f$.  One of the data owners, called
+generator, builds a "garbled" version of a circuit computing $f$ and sends it over to the other data owner, called evaluator, alongside the garbled input values for $x_1$.  Upon receiving the circuit, the evaluator 
+engages in an oblivious transfer protocol with the generator to obliviously obtain the garbled input for $x_2$ and subsequently computes the  output $f(x_1, x_2)$.
+%A more detailed discussion is presented in Appendix A.
