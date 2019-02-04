@@ -15,7 +15,7 @@ for an attribute $A$ and computes its c.d.f $\hat{V}'$ via isotonic regression. 
 \hline
  {\bf \system Program} & {\bf Description} \\ \hline \hline
 %P1:  $\hat{c} \leftarrow \lap_{\epsilon,1}(\countagg(\filter_{Age\in [50,60]}(\project_{Age}(\encD))))$ &  Counts the number of records satisfying $Age \in [50,60]$.      \\ \hline
-P1:  $\forall i\in [1,100],v_i \leftarrow \lap_{\epsilon_i,1}(\countagg(\filter_{Age \in (0, c_i]}(\project_{Age}(\encD))))$; $post_{c.d.f}([c_1,\ldots,c_{100}])$ &  Outputs the c.d.f of $Age$ with domain $[1,100]$.  \\ \hline
+P1:  $\forall i\in [1,100],\hat{c}_i \leftarrow \lap_{\epsilon_i,1}(\countagg(\filter_{Age \in (0, c_i]}(\project_{Age}(\encD))))$; $post_{c.d.f}([\hat{c}_1,\ldots,\hat{c}_{100}])$ &  Outputs the c.d.f of $Age$ with domain $[1,100]$.  \\ \hline
 P2: $\hat{P} \leftarrow \noisymax^5_{\epsilon,1}(\groupbystar_{Age}(\encD))$               &       Outputs the 5 most frequent age values. \\ \hline
 P3: $\hat{V} \leftarrow \lap_{\epsilon,2}(\groupbystar_{Age\times Gender}(\project_{Age \times Gender}(\crossproduct_{Age,Gender\rightarrow{Age \times Gender}}(\encD))))$     &       Outputs the marginal over the attributes $Age$ and $Gender$. \\ \hline
 P4: $\hat{V} \leftarrow \lap_{\epsilon,2}(\groupbystar_{Age\times Gender}(\filter_{NativeCountry=Mexico}(\project_{Age\times Gender, NativeCountry}(\crossproduct_{Age,Gender\rightarrow{Age \times Gender}}(\encD)))))$                          & Outputs the marginal over $Age$ and $Gender$ for Mexican employees.     \\ \hline
