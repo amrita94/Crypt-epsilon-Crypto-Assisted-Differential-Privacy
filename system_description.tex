@@ -66,9 +66,9 @@ If $P$ uses NoisyMax mechanism \cite{Dork}, then
 Formally, using the standard simulation based definition \cite{Oded} 
 \begin{theorem}  Let $S \subset \{1,...,m\}$ then $\Pi$, (i.e. the protocol for an end-to-end program execution in \system) realizes $\mathcal{F}$ (eq 2-6)  with correctness and privacy against
 the adversaries $Adv_1=\textsf{AS} \cup \{\textsf{DO}_i, i \in S\}$  and $Adv_2=\textsf{CSP} \cup  \{ \textsf{DO}_i, i \in S\} $
-$S$ if there exists  P.P.T algorithms $Sim_1$ and $Sim_2$ such that \begin{gather} \big\{Sim_1({D_i, i \in S},\mathcal{F}_1(P,\mathcal{D},\Delta,\epsilon)),\mathcal{F}(P,\mathcal{D},\Delta,\epsilon)\big\} \stackrel{C}{\equiv} \big\{view^{\Pi}_{Adv1},output^{\Pi}\big\} \label{adv1}
-\\\big\{Sim_2({D_i, i \in S},\mathcal{F}_2(P,\mathcal{D},\Delta,\epsilon)),\mathcal{F}(P,\mathcal{D},\Delta,\epsilon))\big\} \stackrel{C}{\equiv}\big\{ view^{\Pi}_{Adv2},output^{\Pi}\big\}\label{adv2}
-\end{gather} for all possible inputs  where $ \stackrel{C}{\equiv}$ denotes computational indistinguishability and $View^{\Pi}_i$ denotes the view of entity $i$ in protocol $\Pi$. 
+$S$ if there exists  P.P.T algorithms $Sim_1$ and $Sim_2$ such that \begin{gather*} \big\{Sim_1({D_i, i \in S},\mathcal{F}_1(P,\mathcal{D},\Delta,\epsilon)),\mathcal{F}(P,\mathcal{D},\Delta,\epsilon)\big\} \\\stackrel{C}{\equiv} \big\{view^{\Pi}_{Adv1},output^{\Pi}\big\}  \numberthis\label{adv1}
+\\ \big\{Sim_2({D_i, i \in S},\mathcal{F}_2(P,\mathcal{D},\Delta,\epsilon)),\mathcal{F}(P,\mathcal{D},\Delta,\epsilon))\big\} \\\stackrel{C}{\equiv}\big\{ view^{\Pi}_{Adv2},output^{\Pi}\big\}  \numberthis\label{adv2}
+\end{gather*} for all possible inputs  where $ \stackrel{C}{\equiv}$ denotes computational indistinguishability and $view^{\Pi}_i$ denotes the view of entity $i$ in protocol $\Pi$. 
 \end{theorem}
 The proof of this is presented in Appendix A. \eat{Here we just present an intuitive understanding of it. The interactions between the \textsf{AS} and the \textsf{CSP} can be categorised as \\(1) \textsf{CSP} generates garbled circuits with noisy outputs that are evaluated by the \textsf{AS}\\(2) \textsf{AS} sends encrypted masked data to the \textsf{CSP} and gets a transformed encrypted data in response \\(3)\textsf{AS} sends encrypted noisy data and gets back the data in the cleat with additional noise from the \textsf{CSP}\\
 The garbled circuits are inherently semantically secure. For the second type of interaction, the random
