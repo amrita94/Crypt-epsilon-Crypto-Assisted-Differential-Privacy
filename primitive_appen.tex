@@ -43,7 +43,7 @@ Note that when the \textsf{Filter} transformation is applied for the very first 
 \end{enumerate}
 }
 
-\stitle{\textsf{GroupByCount}} $\groupbystar_A(\cdot)$: The implementation detail of this primitive is given in the main text (\xh{Section}).
+\stitle{\textsf{GroupByCount}} $\groupbystar_A(\cdot)$: The implementation detail of this primitive is given in the main text (section 5.2).
 
 \stitle{\textsf{CountDistinct}}  $\countdistinct(\cdot)$: The implementation of this primitive involves both \AS and \CPS. Given the input encrypted vector of counts $\encV$ of length $s$, the AS first masks $\encV$ to form a new encrypted vector ${\bf \mathcal{V}}$ with a vector of random numbers $M$, i.e., for $i\in \{0,1,\ldots, s-1\}$,
 ${\bf \mathcal{V}}[i] = {\encV}[i] \oplus labEnc_{pk}(M[i]).$
@@ -103,7 +103,6 @@ Given the differentially private cdf and the sorted database, when a program wou
 
 
 
-\xh{@chenghong, double check if the writeup reflects what you implemented.}
 
 
 \eat{

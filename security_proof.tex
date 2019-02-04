@@ -1,0 +1,26 @@
+\subsection{Security Proof}
+\begin{proof}
+Let simulators $Sim_1$ and $Sim_2$ simulate the view of ${Adv}_1$ and $Adv_2$ respectively. 
+Let $l$ be the bit-length of each data record represented in per-attribute one-hot-coding. \\
+First we prove for the case when $P$ uses Laplace mechanism.
+$\mathcal{S}_1=Sim_1(\{D_i, i \in S\}, P,\Delta=1,\epsilon, P(\mathcal{D})+\eta_2,P(\mathcal{D})+\eta_1)$
+\begin{enumerate}\item Run $Gen(\kappa)\mapsto (pk,sk)$ 
+\item Draw $\eta' \in Lap(\frac{1}{\epsilon})$
+\item For all $i \in \{1,...,m\}$ if $i \in S$ then encrypt $D_i$. 
+Otherwise compute $labEnc_{pk}(D_i)$ as a random $l$-lengthed vector $r_i \in \mathcal{C}^l$. [We abuse the notation slightly here, $labEnc_pk(D_i)$ denotes component wise encryption of the record represented in per-attribute one-hot-coding]
+\item Output $\Big(\{D_i, i \in S\},P,\Delta=1,\epsilon,\eta',\encD',P(\mathcal{D})+\eta_2+\eta'\Big)$ where $\encD'=\{labEnc_{pk}(D_i)\},i \in \{1,...,m\} i \not \in S$ as computed in step 3.
+\end{enumerate}
+The R.H.S of eq \ref{adv1}  is given by 
+\begin{gather}\Big(\{D_i, i \in S\},P,\Delta=1,\epsilon, \eta_1,\encD,P(\mathcal{D})+\eta_2+\eta_1\Big)\end{gather}
+It follows from the semantic security of the encryption scheme that $\encD'$ and $\encD'$ are computationally indistinguishable.
+Since, $\eta'$ is drawn from the same distribution as $\eta_1$, $P(\mathcal{D})+\eta'+\eta_2$ and $P(\mathcal{D})+\eta_1+\eta_2$ have the exact same distribution. This proves that the distribution of simulation output is computationally indistinguishable from that of the views of the corrupted parties in $Adv_2$
+output has the same distribution as that of the views of the corrupted parties in $Adv_1$ in the
+protocol $\Pi$.\\
+$\mathcal{S}_2=Sim_2(\{D_i, i \in S\},P,\Delta=1,\epsilon,P(\mathcal{D})+\eta_1,P(\mathcal{D})+\eta_2)$
+\begin{enumerate}\item Run $Gen(\kappa)\mapsto (pk,sk)$ \item Generate $\eta'' \in Lap(\frac{1}{\epsilon})$ \item Output $\Big\{D_i, i \in S\},P,\Delta=1,\epsilon, \eta'', labEnc_{pk}(P(\mathcal{D})+\eta_1), P(\mathcal{D})+\eta_1+\eta''\Big)$
+\end{enumerate}
+The R.H.S of eq \ref{adv2} is given by \begin{gather}\Big(\{D_i, i \in S\},P,\Delta=1,\epsilon,\eta_2,labEnc_{pk}(P(\mathcal{D})+\eta_1),P(\mathcal{D})+\eta_1+\eta_2\Big)\end{gather}
+Again, clearly the simulation output has the same distribution of the
+views of the corrupted parties in $Adv_2$ in the protocol $\Pi$. 
+The proof for the case of NoisyMax is inherent from the semantic security of the garbled circuit used (section B.1).
+\end{proof}
