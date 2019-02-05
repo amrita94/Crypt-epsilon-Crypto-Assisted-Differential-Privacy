@@ -58,11 +58,11 @@ Last, the \AS evaluates this circuit to the masked count $c'$ and obtains the fi
 }
 
 
-\stitle{\textsf{Laplace}} $\lap_{\epsilon,\Delta}(\mathbf{V})$: Given an encrypted vector counts $\encV$ of size $s$, both \AS and \CPS have to add Laplace noise in this primitive. Hence, this implementation involves two steps.
+\stitle{\textsf{Laplace}}  $\lap_{\epsilon,\Delta}(\mathbf{V})$:  The implementation of this primitive is presented in the main paper in sec 5.2.\eat{Given an encrypted vector counts $\encV$ of size $s$, both \AS and \CPS have to add Laplace noise in this primitive. Hence, this implementation involves two steps.
 
 First, the \AS adds encrypted Laplace noise vector to $\encV$, i.e., for $i\in \{0,1,\ldots,s\}$, $\hat{\encV}[i]  = \encV[i] \oplus labEnc_{pk}(\eta_i),$ where $\eta_i\sim Lap(\Delta/\epsilon)$. This encrypted noisy vector $\hat{\encV}$ is then sent to the \CPS.
 
-Next, the \CPS decrypts $\hat{\encV}$ using the secret key and add another Laplace noise vector, i.e., for  $i\in \{0,1,\ldots,s\}$, $\hat{V}[i] = labDec_{sk}(\hat{\encV}[i]) +\eta'_i$, where $\eta'~\sim Lap(\Delta/\epsilon)$. This plaintext noisy vector is returned as the final output of this primitive.
+Next, the \CPS decrypts $\hat{\encV}$ using the secret key and add another Laplace noise vector, i.e., for  $i\in \{0,1,\ldots,s\}$, $\hat{V}[i] = labDec_{sk}(\hat{\encV}[i]) +\eta'_i$, where $\eta'~\sim Lap(\Delta/\epsilon)$. This plaintext noisy vector is returned as the final output of this primitive.}
 
 
 

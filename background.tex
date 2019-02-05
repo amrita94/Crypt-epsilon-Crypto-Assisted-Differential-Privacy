@@ -22,7 +22,7 @@ Another important result for differential privacy is that any post-processing co
 algorithm that is $\epsilon$-DP. Let $f : R \mapsto R'$ be an
 arbitrary randomized mapping. Then $f \circ \mathcal{A} : D \mapsto R'$ is $\epsilon$-
 DP. \label{post}\end{theorem}
-We also define the \emph{stability} of a data transformation operation as follows.
+We also define the \emph{stability} of a data transformation operation.
 \begin{definition}A transformation $\mathcal{T}$ is defined to be $t$-stable if for two datasets $D$ and $D'$, we have\begin{gather}|\mathcal{T}(D)\ominus \mathcal{T}(D')| \leq t \cdot |D\ominus D'|  \end{gather} where  (i.e.,  $D \ominus D' = (D-D') \cup (D'-D)$. \end{definition}
 Transformations with bounded stability scale the differential privacy guarantee of their outputs, by their stability constant \cite{PINQ}.
 \begin{theorem}
