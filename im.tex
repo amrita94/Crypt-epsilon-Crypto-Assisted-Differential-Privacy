@@ -2,16 +2,18 @@
 %To demonstrate the use of Crypt$\epsilon$ primitives let us look at the following example.
 \label{implementation}
 In this section we describe the implementation of Crypt$\epsilon$. First we discuss our proposed technique for extending the $labMult$ operation of \textsf{labHE} to support $n > 2$ multiplicands. Then we describe the implementations of \system primitive. Last, we present a  classification of the \system programs. 
-
-\begin{algorithm}
-
+\begin{frame}{}
+  \begin{center}
+    \scalebox{0.75}{
+    \begin{minipage}{1\linewidth}
+\begin{algorithm}[H]
 \caption{$genLabMult$ - generate label for $labMult$}
-
+\small
 \begin{algorithmic}[1]
 \STATEx
 \textbf{Input}: $\mathbf{c_1}=labEnc_{pk}(m_1)=(a_1,d_1)$  where\STATEx $\hspace{0.9cm} a_1= m_1-b_1, d_1=Enc_{pk}(b_1)$\STATEx $\hspace{0.9cm} \mathbf{c_2}=labEnc_{pk}(m_2)$
 \STATEx$\hspace{0.9cm} a_2= m_2-b_2, d_2=Enc_{pk}(b_2)$
-\STATEx \textbf{Output}: $\mathbf{e}=labEnc_{pk}(m_1\cdot m_2)$ 
+\STATEx \textbf{Output}: $\mathbf{e}=labEnc_{pk}(m_1\cdot m_2)$
 \STATEx \textbf{\textsf{AS}:} \STATE Computes $\textbf{e}'=labMult(\mathbf{c_1,c_2}) \oplus Enc_{pk}(r)$ where $r$ is a random mask \STATE Sends $\mathbf{e'},d_1,d_2$ to \textsf{CSP}
 \STATEx \textbf{\textsf{CSP}:}
 \STATE Decrypts $\mathbf{e'}$, to get $Dec_{sk}(\mathbf{e}')=m_1\cdot m_2 -b_2\cdot b_1 + r$
@@ -23,14 +25,21 @@ In this section we describe the implementation of Crypt$\epsilon$. First we disc
 \STATE Computes true cipher $\mathbf{e}=(a',d')$ where $a'=\bar{a}-r=m_1\cdot m_2 - b'$
  \end{algorithmic}
 \end{algorithm}
+ \end{minipage}}
+  \end{center}
+\end{frame}
 \subsection{\textbf{General $n$-way Multiplication for \textsf{labHE}}}\label{genlab}
 In addition to the operations supported by a \textsf{LHE}  scheme, \textsf{labHE} supports multiplication of two \textsf{labHE} ciphers. 
 \\ $\bullet \textbf{labMult}(\mathbf{c}_1,\mathbf{c}_2)$ -
 On input two \textsf{labHE} ciphers $\mathbf{c}_1=(a_1,d_1)$ and $\mathbf{c}_2=(a_2,d_2)$, it computes a "multiplication" ciphertext  $\mathbf{e}=labMult(\mathbf{c_1,}$ $\mathbf{c_2})=Enc_{pk}(a_1,a_2)\oplus cMult(d_1,a_2) \oplus cMult(d_2,a_1)$. Observe that $Dec_{sk}(\mathbf{e})=m_1\cdot m_2 -b_1 \cdot b_2$.\\
  $\bullet \textbf{labMultDec}_{sk}(d_1,d_2,\mathbf{e})$ - On input two encrypted masks $d_1,d_2$ of two \textsf{labHE} ciphers $\mathbf{c_1},\mathbf{c_2}$ and the output $\mathbf{e}$ of $labMult(\mathbf{c_1},\mathbf{c_2})$, it decrypts the product as $m_3=Dec_{sk}(\mathbf{e})+Dec_{sk}(d_1)\cdot Dec_{sk}(d_2) = m_1\cdot m_2$ .   \\
 In this paper we propose an efficient way of extending the $labMult$ operation for a $n$-way multiplication.
-\begin{algorithm}
-\small
+Let's consider an example case where we want to multiply the respective ciphers of  $4$ messages $\{m_1,m_2,m_3,m_4\} \in \mathcal{M}^4$ and obtain $\mathbf{e}=labEnc_{pk}(m_1\cdot m_2\cdot m_3 \cdot m_4)$. Note that the reason why we can't directly use  $labMult$ for a $4-$ way multiplication is because, the "multiplication" cipher $\mathbf{e}=labMult(\mathbf{c_1},\mathbf{c_2})$ does not have  a corresponding label, i.e., it is not in the correct \textsf{labHE} cipher representation. Thus for generalizing the $labMult$ operation for $n>2$ multiplicands what we have to do is to generate a label and a seed for every intermediary product of two multiplicands. This can be done as shown by Algorithm 1. Note that the mask $r$ protects the value of $m_1\cdot m_2$ from the \textsf{CSP} in step 5. Similarly since $b'$ is not known to the \textsf{AS}, $m_1\cdot m_2$ remains hidden from the \textsf{AS} in step 9.
+\begin{frame}{}
+  \begin{center}
+    \scalebox{0.75}{
+    \begin{minipage}{1\linewidth}
+\begin{algorithm}[H]
 \caption{\textsf{GroupByCount }$\groupby_A(\mathbf{\tilde{T}})$}
 \begin{algorithmic}[1]
 \STATEx
@@ -46,7 +55,10 @@ In this paper we propose an efficient way of extending the $labMult$ operation f
 \STATE  Rotates every entry by its corresponding mask value to obtain the desired  encrypted one-hot-coding $\boldsymbol{\tilde{V}}[i]$. \begin{gather*}\boldsymbol{\tilde{V}}[i]=RightRotate(\boldsymbol{\tilde{\mathcal{V}}},M[i]), i \in [|V|]\end{gather*} 
  \end{algorithmic} \label{groupby-imp}
 \end{algorithm} 
-Let's consider an example case where we want to multiply the respective ciphers of  $4$ messages $\{m_1,m_2,m_3,m_4\} \in \mathcal{M}^4$ and obtain $\mathbf{e}=labEnc_{pk}(m_1\cdot m_2\cdot m_3 \cdot m_4)$. Note that the reason why we can't directly use  $labMult$ for a $4-$ way multiplication is because, the "multiplication" cipher $\mathbf{e}=labMult(\mathbf{c_1},\mathbf{c_2})$ does not have  a corresponding label, i.e., it is not in the correct \textsf{labHE} cipher representation. Thus for generalizing the $labMult$ operation for $n>2$ multiplicands what we have to do is to generate a label and a seed for every intermediary product of two multiplicands. This can be done as shown by Algorithm 1. Note that the mask $r$ protects the value of $m_1\cdot m_2$ from the \textsf{CSP} in step 5. Similarly since $b'$ is not known to the \textsf{AS}, $m_1\cdot m_2$ remains hidden from the \textsf{AS} in step 9. In the aforementioned example, the \textsf{AS} first generates $\mathbf{e_{12}}=labEnc_{pk}(m_1\cdot m_2)$ and $\mathbf{e_{34}}=labEnc_{pk}(m_3\cdot m_4)$ using Algorithm 1. Both of this operations can be done in parallel in just one interaction round between the \textsf{AS} and the \textsf{CSP}. In the next round,  the \textsf{AS} can again use Algorithm 1 with inputs $\mathbf{e_{12}}$ and $\mathbf{e_{34}}$ to obtain the final answer $\mathbf{e}$. %consider a case of mu Now with the true \textsf{labHE} cipher $\mathbf{c}=(a',d')$ for the product the \textsf{AS} can compute further multiplications on it. 
+ \end{minipage}}
+  \end{center}
+\end{frame}
+ In the aforementioned example, the \textsf{AS} first generates $\mathbf{e_{12}}=labEnc_{pk}(m_1\cdot m_2)$ and $\mathbf{e_{34}}=labEnc_{pk}(m_3\cdot m_4)$ using Algorithm 1. Both of this operations can be done in parallel in just one interaction round between the \textsf{AS} and the \textsf{CSP}. In the next round,  the \textsf{AS} can again use Algorithm 1 with inputs $\mathbf{e_{12}}$ and $\mathbf{e_{34}}$ to obtain the final answer $\mathbf{e}$. %consider a case of mu Now with the true \textsf{labHE} cipher $\mathbf{c}=(a',d')$ for the product the \textsf{AS} can compute further multiplications on it. 
 Thus for a generic $n-way$ multiplication the order of multiplication can be, in fact, parallelized as  shown in Figure ~\ref{genlab-fig} (Appendix) to require a total of $\lceil \log n\rceil$ rounds of communication with the \textsf{CSP}.
 \subsection{Primitive Implementation}
 %Now let us explain the implementation details of the aforementioned Crypt$\epsilon$ primitives.  
@@ -73,7 +85,7 @@ Note that the \textsf{GroupByCount} primitive could have an alternative implemen
 \end{algorithm}} %The implementation for the \textsf{Laplace} primitive is given by Algorithm ~\ref{lap}.
 Recall that both \textsf{AS} and \textsf{CSP} have to add Laplace noise to the output in Crypt$\epsilon$. Hence the \textsf{Laplace} primitive  has two phase. In the first phase,  the \textsf{AS} adds an instance of encrypted Laplace noise $\eta_1 \in Lap(\frac{\Delta}{\epsilon})$ to the encrypted input \eat{(step 1 in Algorithm ~\ref{lap})} to generate $\mathbf{\hat{\mathcal{V}}}$. This acts as the input to the second phase which is executed by the \textsf{CSP}. Here the \textsf{CSP} decrypts $\mathbf{\hat{\mathcal{V}}}$ and adds a second instance of the Laplace noise $\eta_2 \in Lap(\frac{\Delta}{\epsilon})$ to generate the final noisy output $\hat{V}$ in the clear. %(steps 3-4)
  The \textsf{Laplace} primitive with an encrypted scalar $\encC$ as the input is implemented in a similar way.\\
-{\textbf{Note:}} In Crypt$\epsilon$, we thus add two separate instances of the Laplace noise as opposed to just one instance of noise like in the traditional \textsf{CDP} setting. Hence although the errors of both Crypt$\epsilon$ and \textsf{CDP} are of the same order $O\big(\frac{1}{\epsilon}\big)$, quantitatively the error values of Crypt$\epsilon$ are twice that of \textsf{CDP}. This can be addressed by a joint computation of a single instance of noise by both \textsf{AS} and \textsf{CSP} as discussed in Appendix \ref{jointLap}. Another observation is that this double noise addition does not affect the differential privacy guarantee. After the addition of the first instance of noise by the \textsf{AS}, the second can be seen as a post-processing step. Hence our results Crypt$\epsilon$ programs are still differentially private by Theorem 2.
+ %Another observation is that this double noise addition does not affect the differential privacy guarantee. After the addition of the first instance of noise by the \textsf{AS}, the second can be seen as a post-processing step. Hence our results Crypt$\epsilon$ programs are still differentially private by Theorem 2.
 %\textit{Note:} Following our discussion on the primitive implementations in this section and Appendix C, we see that the major chunk of the work for almost all the transformation primitives is carried out the \textsf{AS} by itself. This conforms to our second requirement in section.
 \subsection{Classification of \system Programs}
 Crypt$\epsilon$ programs can be grouped into three classes based on the number and type of interaction between the \textsf{AS} and the \textsf{CSP}.  \\

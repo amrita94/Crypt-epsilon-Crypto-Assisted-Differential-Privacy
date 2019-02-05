@@ -1,5 +1,12 @@
 \subsection{Security Proof}
 \begin{proof}
+Recall any program in \system is a sequence of transformation primitives followed by either a $\textsf{Laplace}$ primitive or a \textsf{NoisyMax} primitive. First we prove for the case when program $P$ uses Laplace mechanism.
+
+As discussed in section 4.2 and 4.3, the sensitivity of a \system program is computed as the product of the stabilities of the transformation primitives used in it.
+Let the equivalent \system program for $P$ be denoted as $P_{\system}$
+\textbf{Correctness:}
+ Using the homomorphic properties of the underlying encryption
+scheme, it easy to verify that at the end of performing all the transformation primtives the \textsf{AS} knows $P(D)+$.  Now clearly 
 Let simulators $Sim_1$ and $Sim_2$ simulate the view of ${Adv}_1$ and $Adv_2$ respectively. 
 Let $l$ be the bit-length of each data record represented in per-attribute one-hot-coding. \\
 First we prove for the case when $P$ uses Laplace mechanism.
