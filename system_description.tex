@@ -65,7 +65,7 @@ Encoder}$ and $\textit{Data Encryption}$ modules of every data owner, work to pr
 The \emph{Setup} and \emph{Data Collection} phases occur just once at the very beginning, every subsequent program  is handled via the corresponding  \emph{Program Execution} phase. Figure 1 shows the diagrammatic representation of \system. A comparative analysis of \system, \textsf{CDP} and \textsf{LDP} is presented in  Table \ref{DPCompare}.
 \begin{table}[h!]
 \centering
-\caption {Comparative analysis of the different DP models}
+\caption {Comparative analysis of the different DP models \am{LDP does not have a data curator. Maybe a better way to put it is: Centralized Server: Yes/No. Trust assumption on Central Server: NA for LDP; Trusted for CDP and Untrusted/Non colluding for Crypte. Again Data storage in central server should be NA for LDP. Adversary should be Info.Theoretic for LDP and CDP and Computationally bounded for Crypte? Error should be Error on statistical counting query? I do not know about the impossibility result section. We need a tighter charaterization for CDP and Crypte. For instance, one can not learn a threshold function under CDP, but I would not call it unbounded sensitivity. I would drop the last line.  }}
 \scalebox{0.6}{ \begin{tabular}{|l| c c c|}  \toprule
 \multicolumn{1}{|c}{\textbf{Features}} & \textbf{LDP}  & \textbf{CDP}  & \textbf{Crypt$\epsilon$}  \\ [0.5ex] 
  \hline \hline\# Servers & 1& 1 & 2\\\hline
