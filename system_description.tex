@@ -64,22 +64,22 @@ Since in Crypt$\epsilon$ the point of noise addition is just at the two servers,
 The complete workflow of Crypt$\epsilon$ is outlined as follows\\(1) \textbf{ Setup Phase} - This is the very first step in Crypt$\epsilon$ where the key manager of \textsf{CSP} generates the key pair for labHE $(sk,pk)$, publishes $pk$ and stores $sk$. \\(2) \textbf{ Data Collection Phase }- In the next phase, the $\textit{Data 
 Encoder}$ and $\textit{Data Encryption}$ modules of every data owner, work to produce the encrypted data records which are then submitted to the \textsf{AS}. The data owners are relieved of all other duties and can go completely off-line. The $\textit{Aggregator}$ module of the \textsf{AS} then aggregates these encrypted records into a single encrypted database $\boldsymbol{\tilde{\mathcal{D}}}$. \\(3) \textbf{ Program Execution Phase} - In this phase, the \textsf{AS} executes a Crypt$\epsilon$ program with some interaction with the \textsf{CSP}  and generates a differentially private output.  \\
 The \emph{Setup} and \emph{Data Collection} phases occur just once at the very beginning, every subsequent program  is handled via the corresponding  \emph{Program Execution} phase. Figure 1 shows the diagrammatic representation of \system. A comparative analysis of \system, \textsf{CDP} and \textsf{LDP} is presented in  Table \ref{DPCompare}.
+
+
 \begin{table}[h!]
 \centering
 \caption {Comparative analysis of the different DP models \am{LDP does not have a data curator. Maybe a better way to put it is: Centralized Server: Yes/No. Trust assumption on Central Server: NA for LDP; Trusted for CDP and Untrusted/Non colluding for Crypte. Again Data storage in central server should be NA for LDP. Adversary should be Info.Theoretic for LDP and CDP and Computationally bounded for Crypte? Error should be Error on statistical counting query? I do not know about the impossibility result section. We need a tighter charaterization for CDP and Crypte. For instance, one can not learn a threshold function under CDP, but I would not call it unbounded sensitivity. I would drop the last line.  }}
-\scalebox{0.6}{ \begin{tabular}{|l| c c c|}  \toprule
+\scalebox{0.6}{ \begin{tabular}{|c| c c c|}  \toprule
 \multicolumn{1}{|c}{\textbf{Features}} & \textbf{LDP}  & \textbf{CDP}  & \textbf{Crypt$\epsilon$}  \\ [0.5ex] 
- \hline \hline\# Servers & 1& 1 & 2\\\hline
-Trust  & & & Untrusted \\  Assumption & Untrusted & Trusted & Semi Honest \\for Server &  &   &  Non-Colluding  \\ \hline
-Data Storage & \multirow{2}{*}{Noisy} & \multirow{2}{*}{Clear} & \multirow{2}{*}{Encrypted} \\in Server & &  &  \\\hline
-Adversary & Unbounded & Unbounded & Bounded \\\hline
- Error & $O\Big(\frac{\sqrt(n)}{\epsilon}\Big)$& $O\Big(\frac{1}{\epsilon}\Big)$ & $O\Big(\frac{1}{\epsilon}\Big)$\\\hline
- Impossibility & Everything & Algorithms w/ & Same as that \\results & beyond SQ model & Unbounded Sensitivity & of \textsf{CDP} in theory \footnotemark\\
+ \hline \hline\# Centralized Servers & 1& 1 & 2\\\hline
+Trust Assumption & & & Untrusted \\   for Centralized & Untrusted & Trusted & Semi Honest \\ Server &  &   &  Non-Colluding  \\ \hline
+Data Storage & \multirow{2}{*}{N/A} & \multirow{2}{*}{Clear} & \multirow{2}{*}{Encrypted} \\in Server & &  &  \\\hline
+\multirow{2}{*}{Adversary} & Information & Information & Computationally \\& Theoretic & Theoretic & Bounded\\\hline
+ Error on Statistical Counting Query& $O\Big(\frac{\sqrt(n)}{\epsilon}\Big)$& $O\Big(\frac{1}{\epsilon}\Big)$ & $O\Big(\frac{1}{\epsilon}\Big)$\\
   [1ex] 
  \bottomrule
  \end{tabular}}\label{DPCompare}
 \end{table}
-\footnotetext{For practical constraints the current implementation has restrictions}
  %in between that of the central differential privacy model and the local differential privacy model - although it is definitely much weaker than that of the central differential privacy model, Crypt$\epsilon$'s trust model is slightly stronger as compared to that of the local differential privacy model owing to the aforementioned premises. 
 %The formal security analysis for \system is presented in Appendix section B. 
 \begin{comment}
