@@ -129,26 +129,26 @@ However there are two modest differences in the Crypt$\epsilon$ setting from tha
  Moreover we assume that each data owner has a private channel with the \textsf{AS}. This is to prevent any third party (including the \textsf{CSP}) from eavesdropping. \\
  (2) The adversary is now reduced to a \textit{computationally bounded} one as opposed to the information theoretic one  in \textsf{LDP}.
  
-
+ 
  \subsection{\system Security Sketch}
  Let $\Pi$ represent the protocol for the end-to-end execution of a $\epsilon$-DP program in \system.  In this paper we consider a
 semi-honest adversary  $Adv$ (see section 3.4) who can corrupt any subset of the data owners, the data analyst and at most one of the two
 servers. This captures our assumption that the two servers are non-colluding. Thus the requisite security definition should state that $Adv$ only learns the data of the corrupted data owners and the differentially private output but nothing else about the honest data owners. In other words, the view of the adversary $Adv$ should be \emph{computationally indistinguishable} from a truly differentially private protocol. 
-Let $P$ be a program that is submitted by the data analyst to the protocol $\Pi$ and it is to be run on the data set $\mathcal{D}$ with the privacy parameter $\epsilon$. Thus based on our discussion on noise addition in sec 3.2, we define the ideal functionality $\mathcal{F}=(\mathcal{F}_1,\mathcal{F}_2)$ of the protocol $\Pi$ as follows.
-\\If $P$ uses Laplace mechanism \cite{Dork}, then
+Let $P$ be a program that is submitted by the data analyst to the protocol $\Pi$ and it is to be run on the data set $\mathcal{D}$ with the privacy parameter $\epsilon$. Thus based on our discussion on noise addition in sec 3.2, we define the ideal functionality $\mathcal{F}=(\mathcal{F}_1,\mathcal{F}_2)$ of the protocol $\Pi$ as follows. Let $\mathcal{F}^s$ be a sub-module of the ideal functionality $\mathcal{F}$ and let program $P$ be a composition of sub-programs $P^s_i, i \in [l]$, i.e., $P=P^s_l(\cdots (P^s_2(P^s_1(\cdot))$   such that the sub-program $P^s_i$ has a single additional instantiation of a DP mechanism (either Laplace or Noisy-Max) that is not present in the previous sub-program $P^s_{i-1}$. Every sub-program ends at a DP mechanism, any post-processing computation is carried over to the next sub-program. Any additional post-processing after the execution of the entire program, can be captured in $output^\Pi(P,\mathcal{D},\epsilon$  which denotes the published output of \system after running $P$.
+\\If $P^s$ uses Laplace mechanism \cite{Dork}, then
 \begin{gather} 
-\mathcal{F}_1(P,\mathcal{D},\epsilon)=P(\mathcal{D})+\eta_2\\\mathcal{F}_2(P,\mathcal{D},\epsilon)=P(\mathcal{D})+\eta_1 \\ \eta_1, \eta_2 \sim Lap(\frac{\Delta}{\epsilon})\end{gather}  where  $\Delta$  is the suitable sensitivity of the program. In this case, $output^{\Pi}(P,\mathcal{D})$ which denotes the published output of \system, is given by $P(\mathcal{D})+\eta_1+\eta_2$.\\
-If $P$ uses Noisy-Max mechanism \cite{Dork}, then
+\mathcal{F}^s_1(P^s,\mathcal{D},\epsilon^s)=P^s(\mathcal{D})+\eta_2\\\mathcal{F}^s_2(P^s,\mathcal{D},\epsilon^s)=P^s(\mathcal{D})+\eta_1\\ \eta_1, \eta_2 \sim Lap(\frac{\Delta}{\epsilon^s})\end{gather}  where  $\Delta$  is the suitable sensitivity of $P^s$. In this case, $output^{\Pi}(P^s,\mathcal{D},\epsilon^s)$  is given by $f\big(P^s(\mathcal{D})+\eta_1+\eta_2\big)$ where $f(\cdot)$ is an arbitrary post-processing function. \\
+If $P^s$ uses Noisy-Max mechanism \cite{Dork}, then
 \begin{multline}
-\mathcal{F}_1(P,\mathcal{D},\epsilon)=\mathcal{F}_2(P,\mathcal{D},\epsilon)=Noisy-Max(P(\mathcal{D}),\Delta,\epsilon) 
-\end{multline} where $P(\mathcal{D})$ produces a vector and  $\Delta$ is the suitable sensitivity of the program. $output^{\Pi}(P,\mathcal{D},)$ in this case is equal to $Noisy-Max(P(\mathcal{D}),\Delta,\epsilon)$.\\
+\mathcal{F}^s_1(P^s,\mathcal{D},\epsilon^s)=\mathcal{F}^s_2(P,\mathcal{D},\epsilon^s)=f\big(\textit{Noisy-Max}(P^s(\mathcal{D}),\Delta,\epsilon^s)\big) 
+\end{multline} where $P^s(\mathcal{D})$ produces a vector and  $\Delta$ is the suitable sensitivity of the program. $output^{\Pi}(P^s,\mathcal{D},\epsilon^s)$ in this case is equal to \\ $f\big(\textit{Noisy-Max}(P^s(\mathcal{D}),\Delta,\epsilon^s)\big)$.  Thus, using the above equation, \begin{gather*}\mathcal{F}_1(P,\mathcal{D},\epsilon)=\mathcal{F}^{s,l}_1\Big(\cdots\mathcal{F}^{s,2}_1\big(\mathcal{F}_1^{s,1}(P^{s,1},\mathcal{D},\epsilon^1),P^{s,2},\mathcal{D},\epsilon^{2}\big)\\\cdots P^{s,l},\mathcal{D},\epsilon^l\Big) \numberthis \\\mathcal{F}_2(P,\mathcal{D},\epsilon)=\mathcal{F}^{s,l}_2\Big(\cdots\mathcal{F}^{s,2}_2\big(\mathcal{F}_2^{s,1}(P^{s,1},\mathcal{D},\epsilon^1),P^{s,2},\mathcal{D},\epsilon^{2}\big)\\\cdots P^{s,l},\mathcal{D},\epsilon^l\Big) \numberthis \\\epsilon=\sum_i^l\epsilon^i\end{gather*}By Theorem 1, $\mathcal{F}$ is $\epsilon$-DP.
 Formally, using the standard simulation based definition \cite{Oded},
 \begin{theorem}  Let $S \subset \{1,...,m\}$ then $\Pi$, (i.e. the protocol for an end-to-end program execution in \system) realizes $\mathcal{F}$ (eq 3-6)  with correctness and privacy against
 the adversaries $Adv_1=\textsf{AS} \cup \{\textsf{DO}_i, i \in S\} \cup \mbox{Data Analyst}$  and $Adv_2=\textsf{CSP} \cup  \{ \textsf{DO}_i, i \in S\} \cup \mbox{Data Analyst}$
  if there exists  P.P.T algorithms $Sim_1$ and $Sim_2$ such that  \begin{align*}
- \big\{Sim_1({D_i, i \in S},\mathcal{F}_1(P,\mathcal{D},\epsilon)),\mathcal{F}(P,\mathcal{D},\epsilon)\big\} &\\\stackrel{C}{\equiv} \big\{view^{\Pi}_{Adv1}(P,\mathcal{D}),output^{\Pi}(P,\mathcal{D})\big\}  \numberthis\label{adv1}
+ \big\{Sim_1({D_i, i \in S},\mathcal{F}_1(P,\mathcal{D},\epsilon)),\mathcal{F}(P,\mathcal{D},\epsilon)\big\} &\\\stackrel{C}{\equiv} \big\{view^{\Pi}_{Adv1}(P,\mathcal{D},\epsilon),output^{\Pi}(P,\mathcal{D},\epsilon)\big\}  \numberthis\label{adv1}
                \\
- \big\{Sim_2({D_i, i \in S},\mathcal{F}_2(P,\mathcal{D},\epsilon)),\mathcal{F}(P,\mathcal{D},\epsilon))\big\} &\\\stackrel{C}{\equiv}\big\{ view^{\Pi}_{Adv2}(P,\mathcal{D}),output^{\Pi}(P,\mathcal{D})\big\}  \numberthis\label{adv2}
+ \big\{Sim_2({D_i, i \in S},\mathcal{F}_2(P,\mathcal{D},\epsilon)),\mathcal{F}(P,\mathcal{D},\epsilon))\big\} &\\\stackrel{C}{\equiv}\big\{ view^{\Pi}_{Adv2}(P,\mathcal{D},\epsilon),output^{\Pi}(P,\mathcal{D},\epsilon)\big\}  \numberthis\label{adv2}
 \end{align*} for all possible inputs  where $ \stackrel{C}{\equiv}$ denotes computational indistinguishability and $view^{\Pi}_i$ denotes the view of entity $i$ in protocol $\Pi$. 
 \end{theorem}
 \begin{corollary} Protocol $\Pi$ satisfies \textsf{SIM-CDP} \cite{CDP} privacy.\end{corollary}
@@ -162,6 +162,8 @@ to the \textit{Privacy Engine} module of the \textsf{CSP}. This enables the \tex
 compute the sensitivity of the program for itself (required while
 adding its own noise) thereby thwarting any privacy budget over
 expenditure attempts.}
+ 
+
  
 
 
