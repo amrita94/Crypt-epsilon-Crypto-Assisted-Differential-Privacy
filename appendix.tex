@@ -1,12 +1,7 @@
-\section{Theorems \& Proofs}\label{app:proofs}
+
 \input{security_proof}
 
-\subsection{Stability of Transformation}\label{app:stability}
-Transformations with bounded stability scale the differential privacy guarantee of their outputs, by their stability constant \cite{PINQ}.
-\begin{definition}A transformation $\mathcal{T}$ is defined to be $t$-stable if for two datasets $D$ and $D'$, we have\begin{gather}|\mathcal{T}(D)\ominus \mathcal{T}(D')| \leq t \cdot |D\ominus D'|  \end{gather} where  (i.e.,  $D \ominus D' = (D-D') \cup (D'-D)$. \end{definition}
 
-\begin{theorem}
-Given $\mathcal{T}$ be an arbitrary $t$-stable transformation on dataset $D$ and an $\epsilon$-differentially private algorithm $\mu$ which takes output of $\mathcal{T}$ as input, the composite computation $\mu \circ \mathcal{T}$ provides $(\epsilon \cdot t)$-differential privacy.\end{theorem}
 
 \input{primitive_appen.tex}
 \input{relatedwork}
