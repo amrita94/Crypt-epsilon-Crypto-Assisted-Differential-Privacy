@@ -1,0 +1,70 @@
+\section{Security Proof}
+In this section we present the formal proof for Theorem 4.
+\begin{proof}
+ We have {\it nine primitives} in our paper (see Table 3). 
+\begin{itemize}
+\item \textsf{NoisyMax} and \textsf{CountDistinct} use
+  ``standard'' garbled circuit construction and their security proof
+  follows from the proof of these schemes.
+
+\item All other primitives except \textsf{Laplace} essentially use 
+homomorphic properties of our encryption scheme and thus there 
+security follows from semantic-security of these scheme.
+
+\item The proof for the \textsf{Laplace} primitive is given below.
+\end{itemize}
+The proof for an entire program $P$ (which is a composition 
+of these primitives) follows from the composition theorem~\cite[Section 7.3.1]{Oded}
+
+We will prove the theorem for the \textsf{Laplace} primitive.
+mechanism. In this case the views are as follows (the outputs of the
+two parties can simply computed from the views):
+\begin{eqnarray*}
+View_1^{\Pi}(P,\mathcal{D},\epsilon) & = & (\encD,\eta_1,P(\mathcal{D})+\eta_2+\eta_1) \\
+View_2^{\Pi}(P,\mathcal{D},\epsilon) & = & (\eta_2,labEnc_{pk} (P(\mathcal{D})+\eta_1)) \\
+\end{eqnarray*}
+The random variables $\eta_1$ and $\eta_2$ are random variables
+generated according to the Laplace distribution with the requisite
+parameters. The simulators $Sim_1 (z_1)$ (where $z_1$ is the random
+variable distributed $P^{CDP}(\mathcal{D},\epsilon))$) performs the
+following steps:
+\begin{itemize}
+\item Generates a pair of keys $(pk_1,sk_1)$ for the encryption scheme
+  and generates random data set $\mathcal{D}_1$ of the same size as $\mathcal{D}$ and
+  encrypts it using $pk_1$ to get $\encD_1$.
+
+\item Generates $\eta'_1$ according to the Laplace distribution.
+\end{itemize}
+The output of $Sim_1 (z_1)$ is $(\encD_1,\eta'_1,z_1+\eta'_1)$.
+Recall that the view of the \textsf{AS} is
+$(\encD,\eta_1,P(\mathcal{D})+\eta_2+\eta_1)$.  The computational
+indistinguishability of $\encD_1$ and $\encD$ follows from the
+semantic security of the encryption scheme. The tuple
+$(\eta'_1,z_1+\eta'_1)$ has the same distribution as
+$(\eta_1,P(\mathcal{D})+\eta_2+\eta_1)$ and hence the tuples are
+computationally indistinguishable.  Therefore, $Sim_1 (z_1)$ is
+computational indistingushable from $View_1^{\Pi}(P,\mathcal{D},\epsilon)$.
+
+
+The simulators $Sim_2 (z_2)$ (where $z_2$ is the random
+variable distributed according to $P^{CDP}(\mathcal{D},\epsilon))$) performs the following steps:
+\begin{itemize}
+\item Generates a pair of keys $(pk_2,sk_2)$ for our encryption scheme.
+
+\item Generates $\eta'_2$ according to the Laplace distribution.
+\end{itemize}
+The output of $Sim_2 (z_2)$ is $(\eta'_2,labEnc_{pk}(z_2)+\eta'_2)$.
+By similar argument as before $Sim_2 (z_2)$ is computationally indistinguishable 
+from $View_2^{\Pi}(P,\mathcal{D},\epsilon)$.
+\end{proof}
+
+
+
+
+
+
+
+
+
+
+
