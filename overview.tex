@@ -50,27 +50,11 @@ If the database schema in \system is given by  $\langle Age,Gender\rangle$ then 
 (1)\textbf{  Aggregator} - The \textit{Aggregator} collects the encrypted records $\mathbf{\tilde{D_i}}$ from each of the data owners $\textsf{DO}_i$ and collates them into a single encrypted database $\boldsymbol{\tilde{\mathcal{D}}}$. %Note that in contrast, the server in the \textsf{CDP} model, being trusted, stores the data in the clear whereas in the \textsf{LDP} model the untrusted server stores appropriately randomized (noisy) data.   
 \\(2)\textbf{ Program Executor }- The \textit{Program Executor} is the most important module of the \textsf{AS} and is tasked with the execution of \system programs. It takes as input a \system program from an external data analyst, alongside the appropriate privacy parameter $\epsilon$ and publishes the differentially private output computed with the assistance of the \textsf{CSP}. \system programs can access the sensitive data using one of 9 primitives that are  broadly classified into two types -- transformation primitives and measurement primitives. Transformation primitives allow certain modifications on the encrypted data and are performed almost entirely by the \textsf{AS}. The measurement primitives on the other hand reveal some noisy measurement of the data and requires interaction with the \textsf{CSP}. \system supports two types of measurement primitives that implement two of the most popular differentially private mechanisms, Laplace mechanism \cite{Dork} and Noisy-Max \cite{Dork}. A typical \system program execution consists of  a series of transformation on the encrypted data followed by a measurement primitive and arbitrary post-processing. \system programs can also involve programming constructs like loops and conditionals, and permit arbitrary code over the public outputs of the measurement primitives. 
 
-\am{I think we can leave this out?}
+\am{I think we can drop this next paragraph and include the points to some other place later on.}
  \textit{Noise Addition in \system} - For the Laplace mechanism, both the \textsf{AS} and the \textsf{CSP} add two separate instances of the random noise to the program output. This is necessary because had only one of them added the noise, then after the release of the clear text output, that party can simply subtract out the noise to reveal the true private answer. An alternative way can be both \AS and \CSP jointly computing a single instance of the noise using a secure computation protocol (see Appendix D.1). However, we do not implement it in the current version of \system as the two-fold noise addition is more efficient. For the Noisy-Max primitive, we provide an efficient secure computation protocol where only a single instance of noise by either party suffices. 
 Since in Crypt$\epsilon$ the point of noise addition is just at the two servers, unlike at every individual in \textsf{LDP}, we achieve constant error bounds which is of the same order as that of \textsf{CDP} (see section \ref{exp:results}). 
  
 
-\am{Not sure where this one goes ... move to discussion?}
-Figure 1 shows the diagrammatic representation of \system. A comparative analysis of \system, \textsf{CDP} and \textsf{LDP} is presented in  Table \ref{DPCompare}.
-\begin{table}[h!]
-\centering
-\caption {Comparative analysis of the different DP models}
-\scalebox{0.7}{ \begin{tabular}{|c| c c c|}  \toprule
-\multicolumn{1}{|c}{\textbf{Features}} & \textbf{LDP}  & \textbf{CDP}  & \textbf{Crypt$\epsilon$}  \\ [0.5ex] 
- \hline \hline\# Centralized Servers & 1& 1 & 2\\\hline
-Trust Assumption & & & Untrusted \\   for Centralized & Untrusted & Trusted & Semi Honest \\ Server &  &   &  Non-Colluding  \\ \hline
-Data Storage & \multirow{2}{*}{N/A} & \multirow{2}{*}{Clear} & \multirow{2}{*}{Encrypted} \\in Server & &  &  \\\hline
-\multirow{2}{*}{Adversary} & Information & Information & Computationally \\& Theoretic & Theoretic & Bounded\\\hline
- Error on Statistical Counting Query& $O\Big(\frac{\sqrt(n)}{\epsilon}\Big)$& $O\Big(\frac{1}{\epsilon}\Big)$ & $O\Big(\frac{1}{\epsilon}\Big)$\\
-  [1ex] 
- \bottomrule
- \end{tabular}}\label{DPCompare}
-\end{table}
 
 
 
@@ -87,10 +71,40 @@ However there are two modest differences in the Crypt$\epsilon$ setting from tha
  \squishend
 
 
-\subsection{Discussion}\label{sec:discuss-arch}
+\subsection{\system Design Principles}\label{sec:discuss-arch}
+The design of \system is guided by the following principles. 
+
+\noindent{\textbf{Expressiveness}:} \system is designed to ensure that state of the art DP programs can be executed on sensitive data by the \textsf{AS}. This necessitates adding noise to functions computed on the entire database (like in \cdp), and not just to individual records (like in \ldp). In principle, any function can computed on encrypted data, and thus \system can support any differentially private algorithm. However, we currently limit the expressiveness of the programs supported in \system to those that operate on the sensitive data with primitives that can be efficiently implemented using existing secure computation tools  by the \textsf{AS}, and whose privacy can be tracked easily by the \textsf{CSP}. Nevertheless, as shown later in the paper, \system can already support a variety of state of the art DP programs that provide orders of magnitude higher error than their \ldp counterparts. 
+
+\noindent{\textbf{Minimal trust assumptions}:} The only assumptions we make are that adversaries are computationally bounded and that the \textsf{AS} and  \textsf{CSP} do not collude. The former allows us to use cryptographic tools, and is in line with a growing line of work that seeks to address the trust assumptions of \cdp via assistance from cryptographic techniques \cite{Prochlo,mixnets,amplification,Shi,Shi2,kamara,Rastogi}. The latter assumption of non-colluding servers is a popular model for secure computation in the crypto literature \cite{Boneh1,Boneh2,Ridge2,Matrix2,secureML,LReg,Ver}.  
+
+\noindent{\textbf{Data owners are offline}:} \system's goal is to mimic the \cdp model with untrusted centralized servers. Hence, it is designed so that the data owners are offline once they submit their encrypted records to the \textsf{AS}. This beneficial as the \textsf{AS} does not need to maintain communication channels with the data owners over a long period of time. If the data owners were online, some of our algorithms can be made more efficient as some of the computation from the \textsf{AS} and \textsf{CSP} can be offloaded to the data owners. 
+
+\noindent{\textbf{Low burden on \textsf{CSP}}}: \system views the \textsf{AS} as an extension of the analyst, and that it has a vested interest in obtaining the result of the computation.   Thus in \system, we require the \textsf{AS} to  shoulder the major chunk of the workload for any \system program execution; interactions with the \textsf{CSP} should be minimal and only related to data decryption.
+Keeping this in  mind, we design the \textsf{AS} to perform most of the data transformations by itself (Table \ref{perf}). Specifically for every Crypt$\epsilon$ program, the \textsf{AS} processes the whole database and transforms it into concise representations (like an encrypted scalar or a short vector) which is then decrypted with the help of the \textsf{CSP}. It is interesting to note that we could have had an alternative implementation for Crypt$\epsilon$ where the private database is equally shared between the two servers and they engage in a secret share based secure computation protocol for computing the differentially private answers. However, this would require both the servers to do almost equal amount of work for every program. Such an arrangement would be justified only if both the servers are equally invested in learning the differentially private statistics and is ill-suited for Crypt$\epsilon$. Additionally, a secret-share based computation would be much more communication intensive resulting in a performance hit. 
+
+
+\eat{
 \am{Do we need to add some of the discussion that was in the first section in system\_description.tex?? }
  Crypt$\epsilon$  is based on the premise that there are $m$  data owners, each possessing a private data record, and the \textsf{AS} is the primary entity who is interested in learning certain differentially private statistics on the collective data.  Thus in \system, we require the \textsf{AS} to  shoulder the major chunk of the workload for any Crypt$\epsilon$ program execution; interactions with the \textsf{CSP} should be minimal and only related to data decryption.
 Keeping this in  mind, we design the \textsf{AS} to perform most of the data transformations by itself (Table \ref{perf}). Specifically for every Crypt$\epsilon$ program, the \textsf{AS} processes the whole database and transforms it into concise representations (like an encrypted scalar or a short vector) which is then decrypted with the help of the \textsf{CSP}. It is interesting to note that we could have had an alternative implementation for Crypt$\epsilon$ where the private database is equally shared between the two servers and they engage in a secret share based secure computation protocol for computing the differentially private answers. However, this would require both the servers to do almost equal amount of work for every program. Such an arrangement would be justified only if both the servers are equally invested in learning the differentially private statistics and is ill-suited for Crypt$\epsilon$. Additionally, a secret-share based computation would be much more communication intensive resulting in a performance hit. 
 
-The primitives for \system have been designed bearing two things in mind. Firstly, their composition should allow easy sensitivity analysis (for e.g. transformations must have bounded stability). Secondly, all the primitives should have very efficient implementations. Thus although the architecture of \system imposes no fundamental restriction on its expressibility and in theory we can enjoy the same algorithmic power as that of \textsf{CDP}, we restrict the expressibility in the current implementation of \system to ensure practicality of \system programs. Nevertheless, there is a separation between \system and \textsf{LDP} as explained in Appendix D2.
+The primitives for \system have been designed bearing two things in mind. Firstly, their composition should allow easy sensitivity analysis (for e.g. transformations must have bounded stability). Secondly, all the primitives should have very efficient implementations. Thus although the architecture of \system imposes no fundamental restriction on its expressibility and in theory we can enjoy the same algorithmic power as that of \textsf{CDP}, we restrict the expressibility in the current implementation of \system to ensure practicality of \system programs. Nevertheless, there is a separation between \system and \textsf{LDP} as explained in Appendix D2.}
+
+To summarize, \system is designed to bridge the gap between \cdp and \ldp -- the accuracy and algorithmic expressivity of \cdp with the minimal trust assumptions of \ldp. A comparative analysis of \system, \cdp and \ldp is presented in  Table \ref{DPCompare}.
+\begin{table}[t]
+	\centering
+	\caption {Comparative analysis of the different DP models}
+	\scalebox{0.7}{ \begin{tabular}{|c| c c c|}  \toprule
+			\multicolumn{1}{|c}{\textbf{Features}} & \textbf{LDP}  & \textbf{CDP}  & \textbf{Crypt$\epsilon$}  \\ [0.5ex] 
+			\hline \hline\# Centralized Servers & 1& 1 & 2\\\hline
+			Trust Assumption & & & Untrusted \\   for Centralized & Untrusted & Trusted & Semi Honest \\ Server &  &   &  Non-Colluding  \\ \hline
+			Data Storage & \multirow{2}{*}{N/A} & \multirow{2}{*}{Clear} & \multirow{2}{*}{Encrypted} \\in Server & &  &  \\\hline
+			\multirow{2}{*}{Adversary} & Information & Information & Computationally \\& Theoretic & Theoretic & Bounded\\\hline
+			Error on Statistical Counting Query& $O\Big(\frac{\sqrt(n)}{\epsilon}\Big)$& $O\Big(\frac{1}{\epsilon}\Big)$ & $O\Big(\frac{1}{\epsilon}\Big)$\\
+			[1ex] 
+			\bottomrule
+	\end{tabular}}\label{DPCompare}
+\end{table}
+
 
