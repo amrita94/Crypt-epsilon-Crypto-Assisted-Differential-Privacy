@@ -47,8 +47,12 @@ $\epsilon^B$, the \textsf{CSP} refuses to decrypt any further answers thereby en
 If the database schema in \system is given by  $\langle Age,Gender\rangle$ then corresponding one-hot-coding representation for a data owner $DO_i, i \in [m]$ with the record $\langle 30, Male\rangle$, is given by $\tilde{D_i}=\langle[\underbrace{0,\ldots,0}_{29},1,\underbrace{0,\ldots,0}_{70}],[1,0]\rangle$. \\
 (2)\textbf{ Data Encryption} - The \textit{Data Encryption} module stores the public key $pk$ of the labHE scheme used in Crypt$\epsilon$ which is announced by the CSP. This key is used for an element-wise encryption of the data owner's  record of per attribute one-hot-codings. In our aforementioned example, we get
 \begin{eqnarray}
-\mathbf{\tilde{D}}&=&\langle[\underbrace{labEnc_{pk}(0),\ldots}_{29},labEnc_{pk}(1),\nonumber \\
-&& \underbrace{\ldots,labEnc_{pk}(0)}_{70}], [labEnc_{pk}(1),labEnc_{pk}(0)]\rangle. \nonumber \end{eqnarray}
+\scriptstyle
+\mathbf{\tilde{D}}&=&
+\scriptstyle\langle[\underbrace{\scriptstyle Enc(0),\ldots}_{29},Enc(1),%\nonumber 
+% && \scriptstyle 
+\underbrace{\scriptstyle \ldots,Enc(0)}_{70}], [Enc(1),Enc(0)]\rangle. \nonumber \end{eqnarray}
+where $Enc(i) = labEnc_{pk}(i), i \in \{0,1\}$.
 Finally the data owner sends this encrypted record to the \textsf{AS} via a secure channel. This is the only interaction that a data owner ever participates in, all the program executions are carried out by the \textsf{AS} and the \textsf{CSP} with the data owners being completely off line.
 
 \stitle{Analytics Server (\textsf{AS)}}\\
