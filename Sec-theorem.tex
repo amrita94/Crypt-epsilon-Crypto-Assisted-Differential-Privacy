@@ -1,0 +1,43 @@
+\section{\system Security Sketch}
+
+
+
+In this section we provide a sketch of the security proof in the semi-honest model.
+Our proof will follow the well established simulation argument \cite{Oded}. Let
+$P(\mathcal{D})$ be the output of a program $P$ on dataset
+$\mathcal{D}$ and let $P^{CDP}(\mathcal{D},\epsilon)$ be the random
+variable (rv) that corresponds to the output of the equivalent
+\textsf{CDP}-version of $P$ using a privacy parameter $\epsilon$.
+
+\begin{theorem}  
+\rm
+Let $\Pi$ be the protocol corresponding to the execution of program $P$ in \system. The
+views and outputs of \textsf{AS} and \textsf{CSP} are denoted follows:
+\[
+\begin{array}{cc}
+View_1^{\Pi}(P,\mathcal{D},\epsilon) & Output_1^{\Pi}(P,\mathcal{D},\epsilon) \\
+View_2^{\Pi}(P,\mathcal{D},\epsilon) & Output_2^{\Pi}(P,\mathcal{D},\epsilon) \\
+\end{array}
+\]
+There exists Probabilistic Polynomial Time (PPT) simulators $Sim_1$
+and $Sim_2$ such that:\medskip\\
+$Sim_1 (P^{CDP}(\mathcal{D},\epsilon))$ is computationally indistinguishable ($\equiv_c$)
+from $(View_1^{\Pi}(P,\mathcal{D},\epsilon),Output^{\Pi}(P,\mathcal{D},\epsilon))$, and\\
+$Sim_2 (P^{CDP}(\mathcal{D},\epsilon))$ is $\equiv_c$
+to $(View_2^{\Pi}(P,\mathcal{D},\epsilon),Output^{\Pi}(P,\mathcal{D},\epsilon))$.\medskip\\
+The $Output^{\Pi}(P,\mathcal{D},\epsilon))$ is the combined output of the two
+parties\footnote{Notice that the simulators are passed a random variable $P^{CDP}(\mathcal{D},\epsilon))$,
+which essentially means that simulator is given a random draw from this distribution.}
+
+\end{theorem}
+\noindent
+\begin{corollary} Protocol $\Pi$ satisfies \textsf{SIM-CDP} \cite{CDP} privacy.\end{corollary}
+\noindent
+The proof of this is presented in Appendix A.
+\\
+{\bf Discussion:} The statement of the theorem given above assumes
+that \textsf{AS} and \textsf{CSP} do not collude with the users (the
+data owners). However, if \textsf{AS} colludes with a subset of the
+users, which essentially means $Sim_1$ has to be given the data
+corresponding to these users as additional parameter. This provides no
+complications in the proof at all.  Similar argument goes for $Sim_2$.

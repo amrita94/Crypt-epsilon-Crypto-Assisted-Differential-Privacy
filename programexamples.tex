@@ -1,13 +1,22 @@
 \subsection{Program Examples}
 A \system program is a sequence of transformation primitives followed by a measurement primitive and arbitrary post-processing. Consider a database schema $\langle Age$, $Gender$, $NativeCountry$, $Salary\rangle$. We show 7 \system program examples in Table~\ref{tab:programexamples} over this database.
-We also show how privacy parameter allocation and sensitivity analysis is done in \system via one of the programs, P1 as follows. \\
+
+We will use P1 in Table~\ref{tab:programexamples} to illustrate how a \system program can be written and  analyzed. 
+
+Program P1 aims to compute the cumulative distribution function (c.d.f.) of attribute $Age$ with domain $[1,100]$. The first step is to compute 100 range queries, where the $i$-th query computes the the number of records in $\encD$ having $Age \in [1,i]$ with privacy budget $\epsilon_i$.  The sequence of transformation primitives for each range query is $\countagg(\filter_{Age\in [1,i]}(\project_{Age}(\encD)))$. All these three primitives have a stability of 1 and hence by Theorem~\ref{theorem:stability} the resulted range query has a sensitivity upper bounded by the product of these stability values, $1$. Thus, the subsequent measurement primitive $\textsf{Laplace}$ for the $i$-th range query takes in the privacy budget $\epsilon_i$ and sensitivity $\Delta=1$ and outputs a noisy plaintext count $\hat{c}_i$. These steps incurs a privacy loss of $\sum_{i=1}^{100} \epsilon_i$ by Theorem~\ref{theorem:seq}.
+
+After looping over the 100 ranges, P1 obtains a  noisy plaintext output $\hat{V}=[\hat{c}_1,...,\hat{c}_{100}]$ and applies a post-processing step, denoted by $post_{c.d.f}(\hat{V})$. This operator input a noisy histogram $\hat{V}$ for an attribute $A$ and computes its c.d.f $\hat{V}'=[\hat{c}'_1,...,\hat{c}'_{100}]$ via isotonic regression 
+$\min_{\hat{V}'} \|\hat{V}'-\hat{V}\|_2 ~~~~~~s.t.~~~ 0\leq\hat{c}'_1\leq \cdots \leq \hat{c}'_{100} \leq |\encD|.$
+By Theorem~\ref{post}, this step does not amount to any privacy loss. Hence, the entire P1 is $\epsilon$-DP, where $\epsilon=\sum_{i=1}^{100} \epsilon_i$. 
+
+\eat{We also show how privacy parameter allocation and sensitivity analysis is done in \system via one of the programs, P1 as follows. \\
 \textbf{Query} - Compute the c.d.f over the attribute $Age$\\
 \textbf{\system Program }- \\
 $\forall i\in [1,100],\hat{c}_i \leftarrow \lap_{\epsilon_i,1}(\countagg(\filter_{Age \in (0, c_i]}(\project_{Age}(\encD))))$;\\ $post_{c.d.f}([\hat{c}_1,\ldots,\hat{c}_{100}])$\\
 Now we provide a step-by-step breakdown of the program
 \squishlistnum \item The first step is to compute 100 range queries, where the $i$-th query computes the the number of records in with age in $[1,i]$. Thus, if the total privacy budget is $\epsilon$, each individual range query gets a privacy budget of $\frac{\epsilon}{100}$. 
 \item  The sequence of transformation primitives for each such query is $count(\sigma(\pi(\encD))$. Thus the sensitivity of each range query is upper bounded by the product of the stabilities of these three primitives which is $1$. \item Thus the input to the measurement primitive $Lap$ is privacy parameter $\frac{\epsilon}{100}$ and sensitivity 1. \item Finally, the program performs post processing over the noisy plaintext output $\hat{V}=[\hat{c}_1,...,\hat{c}_{100}]$. We denote this operator by $post_{c.d.f}(\hat{V})$. This operator input a noisy histogram $\hat{V}$
-for an attribute $A$ and computes its c.d.f $\hat{V}'$ via isotonic regression. By theorem 2, this step does not amount to any privacy loss.\item Thus by Theorem 1, the above program is $\epsilon$-DP. \squishendnum 
+for an attribute $A$ and computes its c.d.f $\hat{V}'$ via isotonic regression. By theorem 2, this step does not amount to any privacy loss.\item Thus by Theorem 1, the above program is $\epsilon$-DP. \squishendnum }
 \begin{table*}[t]
 \caption{Examples of \system Program}\label{tab:programexamples} \vspace{-3mm}
 \scalebox{0.7}{
