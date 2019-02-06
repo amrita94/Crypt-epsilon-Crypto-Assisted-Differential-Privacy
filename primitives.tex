@@ -1,5 +1,5 @@
 %!TEX root = main.tex
-
+\vspace{-1em}
 \section{\system Primitives}\label{sec:primitives}
 
 Given a database schema $\langle A_1,\ldots,A_y \rangle$ and an encrypted instance of this database, $\encD$, \system permits data analysts to author \textit{logical} \system programs on $\encD$ with differential privacy guarantee.  The logical programs mainly consist of data transformation operators inspired by relational algebra and differentially private measurement operators. These programs can  have constructs like looping and conditionals, and can arbitrarily post-process outputs of measurement operators. \system compiles these logical programs into \system protocols that can work on the encrypted data on the \textsf{AS} and \textsf{CSP}. Though these logical \system programs are designed to run on encrypted data, when operating them on plaintext data, they give differential privacy under \textsf{CDP}.
@@ -9,6 +9,7 @@ In this section, we define the primitives for data transformations and different
 
 \input{table}
 
+\vspace{-1em}
 \subsection{Transformation Primitives}\label{sec:transformation_primitives}
 Transformation primitives take an encrypted data as input and output a transformed encrypted data.  These primitives thus work completely on the encrypted data and do not expend any privacy budget. Three types of data are considered in this context: (1) an encrypted table of $x$ rows and $y$ columns/attributes, denoted by $\encT$, where each attribute value is represented by encrypted one-hot-encoding of the value; (2) an encrypted vector of numbers, denoted by $\encV$; and (3) an encrypted scalar, denoted by $\encC$. In addition, every encrypted table $\encT$ of $x$ rows has a encrypted bit vector $\encB$ of size $x$ to indicate whether the record is relevant to the program at hand. If the $i$-th bit value of $B$ is $1$, then the $i$-th row in $\encT$ will be used for answering the current program and vice versa. The input to the very first transformation primitive in \system program is the encrypted database $\encD$ with all bits of $\encB$ set to be $1$. For brevity, we just use $\encT$ to represent both the encrypted table $\encT$ and $\encB$. The transformation primitives are detailed below.
 
