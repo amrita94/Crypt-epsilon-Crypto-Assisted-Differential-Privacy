@@ -21,9 +21,11 @@ $x \times y \text{ table } \mathbf{T}$   &- \text{an encrypted table  with $x$ r
 
 \begin{figure}
 \includegraphics[width=\columnwidth]{diag.png}\caption{ Crypt$\epsilon$ System Setting: The  \textsf{AS} runs the Crypt$\epsilon$ programs. The \textsf{CSP} manages the cryptographic primitves. } \end{figure}
-This section provides an overview of \system. We begin this section with the desiderata for \system that motivates our design followed by a discourse on the different components of \system and their functionality. Next we discuss about a few additional architectural choices we make for \system. This is followed by a description of \system's trust model and security sketch.
+%This section provides an overview of \system. We begin this section with the desiderata for \system that motivates our design followed by a discourse on the different components of \system and their functionality. Next we discuss about a few additional architectural choices we make for \system. This is followed by a description of \system's trust model and security sketch.
 
-\subsection{Crypt$\epsilon$ Design}
+In this section, we describe \system's architecture (Sec~\ref{sec:arch}), the different modules in the system (Sec~\ref{sec:modules}), and the trust assumptions made by our system (Sec~\ref{sec:trust}). We end with a brief discussion justifying the design of \system (Sec~\ref{sec:discuss-arch}). 
+
+\eat{\subsection{Crypt$\epsilon$ Design}
 The  desiderata for  the functionality of \system are as follows
 \squishlist \item The architecture of \system should be able to support any differentially private algorithm that is permitted in the \textsf{CDP} model at the same order of accuracy guarantee as that of \textsf{CDP}, i.e. constant $O(\frac{1}{\epsilon})$ error bound.
 \item Raw data records cannot be stored in the clear in any server, i.e., the server(s) in \system are untrusted. 
@@ -38,10 +40,13 @@ access only to the encrypted copies of $D_i, i \in [m]$.
  The \textsf{CSP} manages the cryptographic primitives used in Crypt$\epsilon$ and interacts with the \textsf{AS} to compute the
 noisy answers. It is also responsible for monitoring the overall privacy budget expenditure.
 %\xh{Rather than providing all the encryption details, can we just simply have an algorithm box to summarize the interactions between these three components. Then describe the interactions and highlight the key functionalities of each component, and then the trust model. }
+}
+
+\subsection{System Architecture}\label{sec:arch}
 
  
  
-\subsection{Crypt$\epsilon$ Modules}
+\subsection{\system Modules}\label{sec:modules}
 
 \stitle{Cryptographic Service Provider (\textsf{CSP})}\\
 (1)\textbf{ Key Manager }- The foremost duty of the \textsf{CSP} is to initialize the encryption scheme of Crypt$\epsilon$. This task is handled by the \textit{Key Manager} module which generates the key pair $(sk,pk)$ for the \textsf{labHE} scheme. It stores the secret key, $sk$ with itself and releases the public key, $pk$. Note that since the \textsf{CSP} has exclusive access to the secret key $sk$, it is the only entity capable of decryption in Crypt$\epsilon$.\\
@@ -119,7 +124,7 @@ The class of programs supported by Crypt$\epsilon$ is any program that can be ex
 
 
 
-\subsection{Trust Model}
+\subsection{Trust Model}\label{sec:trust}
 Both the servers, \textsf{AS} and \textsf{CSP} are completely untrusted in Crypt$\epsilon$. 
 Thus from the data owners perspective the trust assumption is similar to that of \textsf{LDP}; the data owners need not place their trust in any external entity. 
 However there are two modest differences in the Crypt$\epsilon$ setting from that of \textsf{LDP}.\\
@@ -180,7 +185,7 @@ expenditure attempts.}
 
 
 
-\subsection{Discussion on Crypt$\epsilon$ architecture}\label{architecture}
+\subsection{Discussion}\label{sec:discuss-arch}
  Crypt$\epsilon$  is based on the premise that there are $m$  data owners, each possessing a private data record, and the \textsf{AS} is the primary entity who is interested in learning certain differentially private statistics on the collective data.  Thus in \system, we require the \textsf{AS} to  shoulder the major chunk of the workload for any Crypt$\epsilon$ program execution; interactions with the \textsf{CSP} should be minimal and only related to data decryption.
 Keeping this in  mind, we design the \textsf{AS} to perform most of the data transformations by itself (Table \ref{perf}). Specifically for every Crypt$\epsilon$ program, the \textsf{AS} processes the whole database and transforms it into concise representations (like an encrypted scalar or a short vector) which is then decrypted with the help of the \textsf{CSP}. It is interesting to note that we could have had an alternative implementation for Crypt$\epsilon$ where the private database is equally shared between the two servers and they engage in a secret share based secure computation protocol for computing the differentially private answers. However, this would require both the servers to do almost equal amount of work for every program. Such an arrangement would be justified only if both the servers are equally invested in learning the differentially private statistics and is ill-suited for Crypt$\epsilon$. Additionally, a secret-share based computation would be much more communication intensive resulting in a performance hit. 
 
