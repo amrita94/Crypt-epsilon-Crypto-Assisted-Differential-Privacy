@@ -1,7 +1,8 @@
 \section{Implementation}\label{sec:implementation}
 %To demonstrate the use of Crypt$\epsilon$ primitives let us look at the following example.
 \label{implementation}
-In this section we describe the implementation of \system. First we discuss our proposed technique for extending the $labMult$ operation of \textsf{labHE} to support $n > 2$ multiplicands. Then we describe the implementations of \system primitive. Last, we present a  classification of the \system programs. 
+In this section we describe the implementation of \system. First we discuss our proposed technique for extending the $labMult$ operation of \textsf{labHE} to support $n > 2$ multiplicands. Then we describe the implementations of \system primitive.  Based on these implementations, \system can compile a logical program written by the data analyst into a protocol run by the \textsf{AS} and \textsf{CSP} on the encrypted data. Note that all the post-processing on the output of differentially private measures are executed in clear. Last, we present a classification of the \system programs.
+
 \begin{algorithm}[b]
 \caption{$genLabMult$ - generate label for $labMult$}\label{algo:genlabmult}
 \small
@@ -101,7 +102,9 @@ The \textsf{Laplace} primitive with an encrypted scalar $\encC$ as the input is 
 \system programs can be grouped into three classes based on the number and type of interaction between the \textsf{AS} and the \textsf{CSP}. 
 
 \stitle{Class I : Single Decrypt Interaction Programs}\\
-Recall that the transformation primitives output encrypted data.  Since  the \textsf{CSP} has exclusive access to the secret key, it is the only party in \system capable of decryption. Thus for releasing any result (albeit noisy) in the clear, the \textsf{AS} needs to interact at least once with the \textsf{CSP}. \system supports this type of interactions via the two measurement primitives. Some \system programs require only a single interaction of this type at the very end to release the noisy output. All other transformations can be performed by the \textsf{AS} via homomorphic operations on the encrypted data records. Typically these programs filter the database on a single attribute. Examples of this type of programs are P1, P2 and P3 from Table~\ref{tab:programexamples}.
+Recall that the transformation primitives output encrypted data.  Since  the \textsf{CSP} has exclusive access to the secret key, it is the only party in \system capable of decryption. Thus for releasing any result (albeit noisy) in the clear, the \textsf{AS} needs to interact at least once with the \textsf{CSP}. \system supports this type of interactions via the two measurement primitives. Some \system programs require only a single interaction of this type at the very end to release the noisy output. All other transformations can be performed by the \textsf{AS} via homomorphic operations on the encrypted data records. Typically these programs filter the database on a single attribute. Examples of this type of programs are P1, P2 and P3 from Table~\ref{tab:programexamples}. The post-processing step in P1 is done in the clear and hence requires no more interactions with the \textsf{CSP}.
+
+
 
 \stitle{Class II : \textsf{LabHE} Multiplication Interaction Programs}\\
 Recall that \textsf{labHE} allows multiplication of two ciphers. \system can support a general $n$-way multiplcation of ciphers for $n > 2$ as described in Section~\ref{genlab}. However it requires intermediate interactions with the \textsf{CSP}. Thus all \system programs that require multiplication of more than two ciphers need interaction with the \textsf{CSP}.  All programs that filter the database on more than three attributes would thus fall under this class. P4 and P5 from Table~\ref{tab:programexamples} are in this class.
