@@ -44,8 +44,10 @@ a pair of secret and public keys, $(s_k, p_k) \leftarrow Gen(\kappa)$.
 recover the plaintext $m$ from ciphertext $\mathbf{c}$.
 \squishend
 In addition, \textsf{LHE} supports the operator $\oplus$ that allows the summation of ciphers as follows:
-\\ \textbf{Operator} $\oplus$ - Let $c_1 \leftarrow Enc_{pk}(m1), \ldots, c_a \leftarrow Enc_{pk}(m_a), a \in \mathcal{Z}_{>0}$. Then we have  $Dec_{sk}(c_1\oplus c_2 ...\oplus c_a)=    m_1 + \ldots   + m_a$.  \\
-One can multiply a cipher $c\leftarrow  Enc_{sk}(m)$ by a plaintext positive integer $a$ by $a$ repetitions of $\oplus$. We denote this operation by $cMult(a,c)$ such that $Dec_{sk}\big(cMult(a,c)\big)=a\cdot m$.\\
+%\\ \textbf{Operator} $\oplus$ -
+Let $c_1 \leftarrow Enc_{pk}(m1), \ldots, c_a \leftarrow Enc_{pk}(m_a), a \in \mathcal{Z}_{>0}$. Then we have  $Dec_{sk}(c_1\oplus c_2 ...\oplus c_a)=    m_1 + \ldots   + m_a$.
+One can multiply a cipher $c\leftarrow  Enc_{sk}(m)$ by a plaintext positive integer $a$ by $a$ repetitions of $\oplus$. We denote this operation by $cMult(a,c)$ such that $Dec_{sk}\big(cMult(a,c)\big)=a\cdot m$.
+
 \stitle{Labeled Homomorphic Encryption(\textsf{labHE}).}
 Let $(Gen,Enc,Dec)$ be an \textsf{LHE} scheme with security parameter $\kappa$ and message space $\mathcal{M}$. Assume that a multiplication operation is given in $\mathcal{M}$, i.e., is a finite ring. Let also $\mathcal{F}:\{0,1\}^s \times \mathcal{L}\rightarrow \mathcal{M}$ be a pseudo-random function with seed space $\{0,1\}^s$( s= poly($\kappa $)) and the label space $\mathcal{L}$. A \textsf{labHE} scheme is defined as
 \squishlist
@@ -54,7 +56,8 @@ Let $(Gen,Enc,Dec)$ be an \textsf{LHE} scheme with security parameter $\kappa$ a
 \item $\textbf{labEnc}_{pk}(\sigma_i, m , \tau)$: On input a message $m \in \mathcal{M} $ with label $\tau \in \mathcal{L}$  from user $i$, it computes $b=\mathcal{F}(\sigma_i, \tau)$ (known as the mask) and outputs the labeled ciphertext $\mathbf{c}=(a,d) \in \mathcal{M} \times \mathcal{C}$ with $ a= m- b$  (known as the hidden message) in $\mathcal{M}$ and $d=Enc_{pk}(b)$. For brevity we just use notation $\textbf{labEnc}_{pk}(m)$ to denote the above functionality, in the rest of paper. 
 \item $\textbf{labDec}_{sk}(\mathbf{c})$ - This functions inputs a cipher $\mathbf{c}=(a,d) \in \mathcal{M} \times \mathcal{C}$ encrypted under  \textsf{labHE} and decrypts it as $m=a-Dec_{sk}(d)$.\squishend
 Both \textsf{LHE} and \textsf{labHE} provides semantic security guarantee \cite{Katz}.
-\stitle{Secure Computation}
+
+\stitle{Secure Computation.}
 %\arc{Not final:placeholder}
 Garbled circuit, also known as Yao's protocol \cite{Yao,Yao2},  is a generic method for secure computation. Two data owners with respective private inputs $x_1$ and $x_2$ run the protocol such that, no party learns more  
 than what is revealed from the output value $f(x_1,x_2)$ for a function $f$.  One of the data owners, called
