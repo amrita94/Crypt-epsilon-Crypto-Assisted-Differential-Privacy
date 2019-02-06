@@ -2,9 +2,9 @@
 
 \section{\system Primitives}\label{sec:primitives}
 
-Given a database schema $\langle A_1,\ldots,A_k \rangle$ and an encrypted instance of this database, $\encD$, \system permits data analysts to author \textit{logical} \system programs on $\encD$ with differential privacy guarantee.  The logical programs mainly consists of data transformation operators inspired by relational algebra and differentially private measurement operators. These programs can  have constructs like looping and conditionals, and can arbitrarily post-process outputs of measurement operators. \system compiles these logical programs into \system protocols that can work on the encrypted data on the \textsf{AS} and \textsf{CSP}.
+Given a database schema $\langle A_1,\ldots,A_k \rangle$ and an encrypted instance of this database, $\encD$, \system permits data analysts to author \textit{logical} \system programs on $\encD$ with differential privacy guarantee.  The logical programs mainly consists of data transformation operators inspired by relational algebra and differentially private measurement operators. These programs can  have constructs like looping and conditionals, and can arbitrarily post-process outputs of measurement operators. \system compiles these logical programs into \system protocols that can work on the encrypted data on the \textsf{AS} and \textsf{CSP}. \am{Should we say that logical \system program when operating on the raw data gives you DP under CDP? }
 
-In this section, we define the primitives for data transformations and differentially private measures (summarized in Table~\ref{tab:primitives}). Then, we illustrate how to write logical programs using these primitives to express state-of-the art DP algorithms under the \cdp model.
+In this section, we define the primitives for data transformations and differentially private measures (summarized in Table~\ref{tab:primitives}). Then, we illustrate how to write logical programs using these primitives to express state-of-the art DP algorithms under the \cdp model. \am{added next line} In Section~\ref{sec:implementation} we describe how \system compiles these down to protocols that work on encrypted data. 
 
 \input{table}
 
