@@ -3,25 +3,6 @@
 Recall that in \system,  both the servers, \textsf{AS} and \textsf{CSP} have to add two separate instances of Laplace noise to true answer. Thus the expected error incurred in \system is quantitatively twice that of the traditional Laplace mechanism in traditional \textsf{CDP} model. However, there is an alternative way of jointly computing a single instance of the Laplace noise via a secure multi party computation protocol~\cite{Djoin}. For this, the \CPS generates a garbled circuit that takes one $l$-bit random string from \CPS and \AS each as an input, denoted by $S_1$ and $S_2$ respectively. This circuit performs$S=S_1 xor S_2$  and uses it to generate an instance of random noise, $\eta$ drawn from the distribution $Lap(\frac{1}{\epsilon})$ following the fundamental law of transformation of probabilities.
 Last, the circuit encrypts $\eta$ and returns $\boldsymbol{\eta}=labEnc_{pk}(\eta)$.
 Hence, this approach adds just one instance of the Laplace noise, resulting the same accuracy guarantee as the \textsf{CDP} model. However owing to the garbled circuit, this implementation is computationally heavier. Therefore, we choose the two phase noise addition implementation for \system in this paper.
-\begin{figure*}
-    \begin{subfigure}[b]{0.25\linewidth}
-        \centering
-        %\includegraphics[width=5cm,height=3.1cm]{t1.pdf}
-         \includegraphics[width=1\linewidth]{2_final.pdf}
-        \caption{ Program 2}
-        \label{fig:P2}
-    \end{subfigure}
-    \begin{subfigure}[b]{0.25\linewidth}
-    \centering \includegraphics[width=1\linewidth]{4_final.pdf}
-        \caption{Program 4}
-        \label{fig:P4}\end{subfigure}
-    \begin{subfigure}[b]{0.25\linewidth}
-    \centering    \includegraphics[width=1\linewidth]{6_finals.pdf}
-        \caption{Program 6}
-        \label{fig:P6}\end{subfigure}
-   \caption{Accuracy Analysis of Crypt$\epsilon$ Programs Cntd.}
-   \label{accuracy-appendix}
-\end{figure*}
 
 \eat{\begin{enumerate}\item takes a $l$-bit random string, $S_1$ as an input from the \textsf{CSP}
     \item takes another $l$-bit random string $S_2$ as an input from the \textsf{AS} \item performs $S=S_1 xor S_2$  and uses it to generate an instance of random noise, $\eta$ drawn from the distribution $Lap(\frac{1}{\epsilon})$ following the fundamental law of transformation of probabilities \item encrypts $\eta$ and returns $\boldsymbol{\eta}=labEnc_{pk}(\eta)$\end{enumerate}}
