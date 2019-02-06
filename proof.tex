@@ -1,7 +1,7 @@
 \section{Security Proof}
-In this section we present the formal proof for Theorem 4.
+In this section we present the formal proof for Theorem~\ref{thm:security}.
 \begin{proof}
- We have {\it nine primitives} in our paper (see Table 3). 
+ We have {\it nine primitives} in our paper (see Table~\ref{tab:primitives}).
 \begin{itemize}
 \item \textsf{NoisyMax} and \textsf{CountDistinct} use
   ``standard'' garbled circuit construction and their security proof
@@ -17,11 +17,11 @@ The proof for an entire program $P$ (which is a composition
 of these primitives) follows from the composition theorem~\cite[Section 7.3.1]{Oded}
 
 We will prove the theorem for the \textsf{Laplace} primitive.
-mechanism. In this case the views are as follows (the outputs of the
+In this case the views are as follows (the outputs of the
 two parties can simply computed from the views):
 \begin{eqnarray*}
 View_1^{\Pi}(P,\mathcal{D},\epsilon) & = & (\encD,\eta_1,P(\mathcal{D})+\eta_2+\eta_1) \\
-View_2^{\Pi}(P,\mathcal{D},\epsilon) & = & (\eta_2,labEnc_{pk} (P(\mathcal{D})+\eta_1)) \\
+View_2^{\Pi}(P,\mathcal{D},\epsilon) & = & (\eta_2,labEnc_{pk} (P(\mathcal{D})+\eta_1))
 \end{eqnarray*}
 The random variables $\eta_1$ and $\eta_2$ are random variables
 generated according to the Laplace distribution with the requisite
