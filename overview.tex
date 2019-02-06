@@ -55,20 +55,6 @@ Finally the data owner sends this encrypted record to the \textsf{AS} via a secu
 (1)\textbf{  Aggregator} - The \textit{Aggregator} collects the encrypted records $\mathbf{\tilde{D}}_i$ from each of the data owners $\textsf{DO}_i$ and collates them into a single encrypted database $\boldsymbol{\tilde{\mathcal{D}}}$. %Note that in contrast, the server in the \textsf{CDP} model, being trusted, stores the data in the clear whereas in the \textsf{LDP} model the untrusted server stores appropriately randomized (noisy) data.
 \\(2)\textbf{ Program Executor }- The \textit{Program Executor} is the most important module of the \textsf{AS} and is tasked with the execution of \system programs. It takes as input a logical \system program from an external data analyst, alongside the appropriate privacy parameter $\epsilon$ and publishes the differentially private output computed with the assistance of the \textsf{CSP}. \system programs can access the sensitive data using one of 9 primitives that are  broadly classified into two types -- transformation primitives and measurement primitives. Transformation primitives allow certain modifications on the encrypted data and are performed almost entirely by the \textsf{AS}. The measurement primitives on the other hand reveal some noisy measurement of the data and requires interaction with the \textsf{CSP}. \system supports two types of measurement primitives that implement two of the most popular differentially private mechanisms, Laplace mechanism \cite{Dork} and Noisy-Max \cite{Dork}. A typical \system program execution consists of  a series of transformation on the encrypted data followed by a measurement primitive. \system programs can also involve programming constructs like loops and conditionals, and permit arbitrary post-processing over the public outputs of the measurement primitives.  
  
-\begin{table}[h!]
-\centering
-\caption {Comparative analysis of the different DP models}
-\scalebox{0.7}{ \begin{tabular}{|c| c c c|}  \toprule
-\multicolumn{1}{|c}{\textbf{Features}} & \textbf{LDP}  & \textbf{CDP}  & \textbf{Crypt$\epsilon$}  \\ [0.5ex] 
- \hline \hline\# Centralized Servers & 1& 1 & 2\\\hline
-Trust Assumption & & & Untrusted \\   for Centralized & Untrusted & Trusted & Semi Honest \\ Server &  &   &  Non-Colluding  \\ \hline
-Data Storage & \multirow{2}{*}{N/A} & \multirow{2}{*}{Clear} & \multirow{2}{*}{Encrypted} \\in Server & &  &  \\\hline
-\multirow{2}{*}{Adversary} & Information & Information & Computationally \\& Theoretic & Theoretic & Bounded\\\hline
- Error on Statistical Counting Query& $O\Big(\frac{\sqrt(n)}{\epsilon}\Big)$& $O\Big(\frac{1}{\epsilon}\Big)$ & $O\Big(\frac{1}{\epsilon}\Big)$\\
-  [1ex] 
- \bottomrule
- \end{tabular}}\label{DPCompare}
-\end{table}
 
 
 \subsection{Trust Model}\label{sec:trust}
@@ -80,6 +66,21 @@ However there are two modest differences in the \system setting from the \textsf
 We also assume that each data owner has a private channel with the \textsf{AS}. This is to prevent any third party (including the \textsf{CSP}) from eavesdropping.
 \item The adversary is now reduced to a \textit{computationally bounded} one as opposed to the information theoretic one  in \textsf{LDP}.
  \squishend
+Table~\ref{DPCompare} summarizes the differences between different DP models.
+\begin{table}[t]
+\centering
+\caption {Comparative analysis of the different DP models}
+\scalebox{0.7}{ \begin{tabular}{|c| c c c|}  \toprule
+\multicolumn{1}{|c}{\textbf{Features}} & \textbf{LDP}  & \textbf{CDP}  & \textbf{Crypt$\epsilon$}  \\ [0.5ex]
+ \hline \hline\# Centralized Servers & 1& 1 & 2\\\hline
+Trust Assumption & & & Untrusted \\   for Centralized & Untrusted & Trusted & Semi Honest \\ Server &  &   &  Non-Colluding  \\ \hline
+Data Storage & \multirow{2}{*}{N/A} & \multirow{2}{*}{Clear} & \multirow{2}{*}{Encrypted} \\in Server & &  &  \\\hline
+\multirow{2}{*}{Adversary} & Information & Information & Computationally \\& Theoretic & Theoretic & Bounded\\\hline
+ Error on Statistical Counting Query& $O\Big(\frac{\sqrt(n)}{\epsilon}\Big)$& $O\Big(\frac{1}{\epsilon}\Big)$ & $O\Big(\frac{1}{\epsilon}\Big)$\\
+  [1ex]
+ \bottomrule
+ \end{tabular}}\label{DPCompare}
+\end{table}
 
  
 
