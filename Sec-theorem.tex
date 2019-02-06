@@ -4,12 +4,12 @@
 
 In this section we provide a sketch of the security proof in the semi-honest model.
 Our proof will follow the well established simulation argument \cite{Oded}. Let
-$P(\mathcal{D})$ be the output of a program $P$ on dataset
+$P(\mathcal{D})$ be the output of a program $P$ on dataset \am{should it be ... $P(\mathcal{D}, \epsilon)$ be the output of a differentially private program $P$? And this should also be a random variable?}
 $\mathcal{D}$ and let $P^{CDP}(\mathcal{D},\epsilon)$ be the random
 variable (rv) that corresponds to the output of the equivalent
 \textsf{CDP}-version of $P$ using a privacy parameter $\epsilon$.
 
-\begin{theorem}  
+\begin{theorem}\label{thm:security}
 \rm
 Let $\Pi$ be the protocol corresponding to the execution of program $P$ in \system. The
 views and outputs of \textsf{AS} and \textsf{CSP} are denoted follows:
@@ -20,24 +20,26 @@ View_2^{\Pi}(P,\mathcal{D},\epsilon) & Output_2^{\Pi}(P,\mathcal{D},\epsilon) \\
 \end{array}
 \]
 There exists Probabilistic Polynomial Time (PPT) simulators $Sim_1$
-and $Sim_2$ such that:\medskip\\
-$Sim_1 (P^{CDP}(\mathcal{D},\epsilon))$ is computationally indistinguishable ($\equiv_c$)
-from $(View_1^{\Pi}(P,\mathcal{D},\epsilon),Output^{\Pi}(P,\mathcal{D},\epsilon))$, and\\
-$Sim_2 (P^{CDP}(\mathcal{D},\epsilon))$ is $\equiv_c$
-to $(View_2^{\Pi}(P,\mathcal{D},\epsilon),Output^{\Pi}(P,\mathcal{D},\epsilon))$.\medskip\\
-The $Output^{\Pi}(P,\mathcal{D},\epsilon))$ is the combined output of the two
+and $Sim_2$ such that:
+\squishlist
+\item $Sim_1 (P^{CDP}(\mathcal{D},\epsilon))$ is computationally indistinguishable ($\equiv_c$)
+from $(View_1^{\Pi}(P,\mathcal{D},\epsilon),Output^{\Pi}(P,\mathcal{D},\epsilon))$, and
+\item $Sim_2 (P^{CDP}(\mathcal{D},\epsilon))$ is $\equiv_c$
+to $(View_2^{\Pi}(P,\mathcal{D},\epsilon),Output^{\Pi}(P,\mathcal{D},\epsilon))$.
+\squishend
+$Output^{\Pi}(P,\mathcal{D},\epsilon))$ is the combined output of the two
 parties\footnote{Notice that the simulators are passed a random variable $P^{CDP}(\mathcal{D},\epsilon))$,
 which essentially means that simulator is given a random draw from this distribution.}
-
 \end{theorem}
-\noindent
-\begin{corollary} Protocol $\Pi$ satisfies \textsf{SIM-CDP} \cite{CDP} privacy.\end{corollary}
-\noindent
-The proof of this is presented in Appendix A.
-\\
-{\bf Discussion:} The statement of the theorem given above assumes
+The proof of this is presented in Appendix A. The statement of the theorem given above assumes
 that \textsf{AS} and \textsf{CSP} do not collude with the users (the
 data owners). However, if \textsf{AS} colludes with a subset of the
-users, which essentially means $Sim_1$ has to be given the data
+users, which essentially means $Sim_1$ ($Sim_2$)has to be given the data
 corresponding to these users as additional parameter. This provides no
-complications in the proof at all.  Similar argument goes for $Sim_2$.
+complications in the proof at all. \am{Rather than saying this sentence, can you cite a paper and say: This case can be handled by modifying the proof using arguments from \cite{??}.}  Similar argument goes for $Sim_2$. \am{drop this last line}
+
+
+\am{add the following line here: Since every program $P$ expressible using \system primitives satisfies differential privacy, and it follows from Theorem~\ref{thm:security} that every execution of \system satisfies computational differential privacy}. 
+\begin{corollary} 
+	Protocol $\Pi$ satisfies computational differential privacy under the \textsf{SIM-CDP} notion \cite{CDP}.
+\end{corollary}
