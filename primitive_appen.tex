@@ -8,7 +8,7 @@ Only one bit in $\tilde{\bf{v}}$ for $A'$ will be encrypted 1 and the others wil
 
 %Let $D_1$ and $D_2$  be the encrypted one-hot-coding corresponding to two  values $v_1$ and $v_2$ (integral representation) for attributes $A_1$ and $A_2$ respectively. The corresponding encrypted one-hot-encoding for the two-dimensional attribute $A_1\times A_2$ is given by  \begin{gather} D_{1\times 2}[(i-1)\cdot s_{A_2}+j] = labMult(D_1[i], D_2[j])\\ i \in [s_{A_1}], j \in [s_{A_2}]\end{gather} For this particular case, only $D_{1 \times 2}[(v_1-1)\cdot s_{A_2}+v_2]=Enc(1)$ while all other indices will equate to $Enc(0)$. Note that when computing the one-hot-encoding for a t-dimensional attribute $t > 2$,  for the actual implementation, instead of calling $t$ iterative instances of \textsf{CrossProduct}() we use the $genLabMult()$ operator of labeled homomorphic encryption to speed up the computation.
 
-\stitle{\textsf{Project}} $\project_{\bar{A}}(\cdot)$: The implementation of this primitive simply drops off all but the attributes in $\bar{A}$ from the input table $\encT$ and returns the truncated table $\encT'$.
+\stitle{\textsf{Project}} $\project_{\bar{A}}(\cdot)$: The implementation of this primitive is presented in the main paper in sec 5.2.
 
 \stitle{\textsf{Filter}} $\filter_{\phi}(\cdot)$: The predicate $\phi$ in this primitive is a conjunction of range conditions over $\bar{A}$, defined as: for a row $r$ in input table $\encT$,
 $\phi(r) = \bigwedge_{A_j\in \bar{A}} ~~(r.{A_j} \in V_{A_j}),$ where $r.A_j$ is the value of attribute $A_j$ in row $r$ and $V_{A_j} \subseteq \{0,1,\ldots,s_{A_j}\}$ (the indices for attribute values of $A_{j}$ with domain size $s_{A_j}$).
@@ -36,14 +36,32 @@ Note that when the \textsf{Filter} transformation is applied for the very first 
 
 %The \textsf{Count} primitive takes the associated bit vector $\mathbf{B}$ of its input table $\encT$  and simply adds up its entries to return  \begin{gather}\mathbf{c}=\bigoplus_{i=1}^m\mathbf{B}[i]\end{gather}%\item GroupBy*($\mathbf{V},sk$)- This primitive is an extension of the previous GroupBy transformation.
 
-\stitle{\textsf{GroupBy*}} $\groupbystar_{A}(\cdot)$: The implementation steps for \textsf{Project}, \textsf{Filter} and \textsf{Count} are reused here. First, \system projects the input table $\encT$ on attribute $A$, i.e. $\encT_1 = \project_A(\encT)$. Then, \system loops each possible value of $A$. For each value $v$, \system initializes a temporary $\encB_v=\encB$ and filters $\encT'$ on $A=v$ to get an updated $\encB'_v$. Last, \system counts the number of 1s in $\encB'_v$ and release the counts.
+\stitle{\textsf{GroupBy*}} $\groupbystar_{A}(\cdot)$: The implementation of this primitive is presented in the main paper in sec 5.2. %The implementation steps for \textsf{Project}, \textsf{Filter} and \textsf{Count} are reused here. First, \system projects the input table $\encT$ on attribute $A$, i.e. $\encT_1 = \project_A(\encT)$. Then, \system loops each possible value of $A$. For each value $v$, \system initializes a temporary $\encB_v=\encB$ and filters $\encT'$ on $A=v$ to get an updated $\encB'_v$. Last, \system counts the number of 1s in $\encB'_v$ and release the counts.
 
 \eat{
 \begin{enumerate}[label=\alph*)] \item $\mathbf{\tilde{T}}_1$=\textsf{Project}($\mathbf{\tilde{T}}$, $A$) \item $\mathbf{B}$ =  current indicator bit vector \item  for $i = 1:s_A $ \\Intialize bit vector to $\mathbf{B}$  \\$\phi_i= (A==v_{i,A}) $ \\$\hat{\mathbf{T_2}}$ = \textsf{Filter}($\mathbf{\tilde{T}}_1, \phi_i$)\\ $\mathbf{C}[i]$ = \textsf{Count}($\hat{\mathbf{T_2}}$) \\ end for \item Output $\mathbf{C}$ 
 \end{enumerate}
 }
 
-\stitle{\textsf{GroupByCount}} $\groupbystar_A(\cdot)$: The implementation detail of this primitive is given in the main text (section 5.2).
+\stitle{\textsf{GroupByCount}} $\groupbystar_A(\cdot)$: The implementation detail of this primitive is given in the main text (section 5.2) and is illustrated in Algorithm~\ref{groupby-imp}.
+
+\begin{algorithm}[t]
+	\small{
+		\caption{\textsf{GroupByCount }$\tilde{\encV} \leftarrow \groupby_A(\mathbf{\tilde{T}})$}
+		\begin{algorithmic}[1]
+			%\STATEx \textbf{Input}: $\mathbf{\tilde{T}}$
+			%\STATEx \textbf{Output}:
+			\STATEx \textbf{\textsf{AS}:} \STATE Computes $\mathbf{V}=\groupbystar_{A}(\encT)$.
+			\STATE Masks the encrypted histogram $\mathbf{V}$ for attribute $A$ as follows 
+			$$\boldsymbol{\mathcal{V}}[i]= \mathbf{V}[i] \oplus labEnc_{pk}(M[i]), ~~~~\text{where, }M[i] \in_R [m], i \in [|V|]$$
+			\STATE Sends $\boldsymbol{\mathcal{V}}$ to \textsf{CSP}.
+			\STATEx \textbf{\textsf{CSP}:}
+			\STATE Decrypts  $\boldsymbol{\mathcal{V}}$ as $\mathcal{V}[i]=labDec_{sk}(\boldsymbol{\mathcal{V}}), i \in [|V|]$.\STATE Converts each entry of $\mathcal{V}$ to its corresponding one-hot-coding and encrypts it, $\boldsymbol{\tilde{\mathcal{V}}}[i]=labEnc_{pk}(\tilde{\mathcal{V}[i]}), i \in [|V|]$
+			\STATE Sends $\boldsymbol{\tilde{\mathcal{V}}}$ to \textsf{AS}.
+			\STATEx \textbf{\textsf{AS}}:
+			\STATE  Rotates every entry by its corresponding mask value to obtain the desired  encrypted one-hot-coding $\boldsymbol{\tilde{V}}[i]$. \begin{gather*}\boldsymbol{\tilde{V}}[i]=RightRotate(\boldsymbol{\tilde{\mathcal{V}}},M[i]), i \in [|V|]\end{gather*} 
+		\end{algorithmic} \label{groupby-imp}}
+\end{algorithm} 
 
 \stitle{\textsf{CountDistinct}}  $\countdistinct(\cdot)$: The implementation of this primitive involves both \AS and \CPS. Given the input encrypted vector of counts $\encV$ of length $s$, the AS first masks $\encV$ to form a new encrypted vector ${\bf \mathcal{V}}$ with a vector of random numbers $M$, i.e., for $i\in \{0,1,\ldots, s-1\}$,
 ${\bf \mathcal{V}}[i] = {\encV}[i] \oplus labEnc_{pk}(M[i]).$
@@ -73,14 +91,14 @@ Next, the \CPS decrypts $\hat{\encV}$ using the secret key and add another Lapla
 }
 
 
-\stitle{\textsf{NoisyMax}} $\noisymax_{\epsilon,\Delta}^k(\cdot)$: The input to this primitive is an encrypted vector of counts $\encV$ of size $s$. Similar to \textsf{Laplace} primitive, both \AS and \CPS are involved. First,  the \AS adds to $\encV$
+\stitle{\textsf{NoisyMax}} $\noisymax_{\epsilon,\Delta}(\cdot)$: The input to this primitive is an encrypted vector of counts $\encV$ of size $s$. Similar to \textsf{Laplace} primitive, both \AS and \CPS are involved. First,  the \AS adds to $\encV$
 an encrypted Laplace noise vector and a mask $M$, i.e., for $i\in \{0,1,\ldots,s\}$,
 $\hat{\encV}[i]  = \encV[i] \oplus labEnc_{pk}(\eta_i) \oplus M[i],$
 where $\eta_i\sim Lap(\Delta/\epsilon)$. This encrypted noisy, masked vector $\hat{\encV}$ is then sent to the \CPS.
 
-Next, the \CPS decrypts $\hat{\encV}$ using the secret key, i.e., for  $i\in \{0,1,\ldots,s\}$, $\hat{V}[i] = labDec_{sk}(\hat{\encV}[i])$. The \CPS generates a garbled circuit which takes  (i) the noisy, masked vector $\hat{V}$ from the \CPS, and (ii) the mask $M$ from the \AS as the input. This circuit will remove the mask from $\hat{V}$ to get the noisy counts $\hat{V}'$ and find the indices of the top-$k$ values in $\hat{V}'$.
+Next, the \CPS decrypts $\hat{\encV}$ using the secret key, i.e., for  $i\in \{0,1,\ldots,s\}$, $\hat{V}[i] = labDec_{sk}(\hat{\encV}[i])$. The \CPS generates a garbled circuit which takes  (i) the noisy, masked vector $\hat{V}$ from the \CPS, and (ii) the mask $M$ from the \AS as the input. This circuit will remove the mask from $\hat{V}$ to get the noisy counts $\hat{V}'$ and find the index of the top value in $\hat{V}'$.
 
-Finally, the \AS evaluates the circuit above and returns the indices as the output of this primitive.
+Finally, the \AS evaluates the circuit above and returns the index as the output of this primitive.
 
 
 \eat{

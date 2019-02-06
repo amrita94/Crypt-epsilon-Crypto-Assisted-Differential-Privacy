@@ -46,31 +46,27 @@ Thus for a generic $n-way$ multiplication the order of multiplication can be, in
 
 \subsection{Primitive Implementation}
 %Now let us explain the implementation details of the aforementioned Crypt$\epsilon$ primitives.  
-Here we explain the implementation details of two of the  \system primitives. The rest are covered in Appendix~\ref{app:implement_primitives}.
+We now briefly summarize how \system primitives are compiled into protocols that the \textsf{AS} and \textsf{CSP} can run on encrypted data records. Full details are presented in Appendix~\ref{app:implement_primitives}.
+%Here we explain the implementation details of two of the  \system primitives. The rest are covered in Appendix~\ref{app:implement_primitives}.
 
-\stitle{\textsf{GroupByCount }} $\groupbystar_A(\mathbf{\tilde{T}})$: The implemenation of this primitive is summarized in Algorithm~\ref{groupby-imp}. First, the \textsf{AS} uses the $\textsf{GroupByCount}^*$ primitive to generate the encrypted histogram $\encV$ for attribute $A$. Since each entry of $\mathbf{V}$ is a count of records, its value ranges from $\{0,...,m\}$. The \textsf{AS} then masks $\encV$ (step 2) and sends it to the \textsf{CSP}. The purpose of this mask is to hide the true histogram from the \textsf{CSP}. Next the \textsf{CSP} generates the encrypted one-hot-coding representation for this masked histogram $\boldsymbol{\tilde{\mathcal{V}}}$ (steps 4-5) and returns it back to the \textsf{AS}. %Notice that each entry of $\boldsymbol{\tilde{\mathcal{V}}}$ is a $m$-length vector. 
+\stitle{\textsf{Project}} $\project_{\bar{A}}(\cdot)$: The implementation of this primitive simply drops off all but the attributes in $\bar{A}$ from the input table $\encT$ and returns the truncated table $\encT'$.
+
+\stitle{\textsf{Filter}} $\filter_{\phi}(\cdot)$: Let $\phi$ be a predicate on a single attribute of the form $r.A \in V_A$. Row $i$ satisfies the filter if one of the bits corresponding to positions in $V_A$ are set to 1. Thus the filter bit corresponding to row $i$ is set to: $\encB[i] = labMult(\encB[i], \bigoplus_{l\in V_{A_j}}\tilde{\bf{v}}_j[l])$.
+
+\stitle{\textsf{CrossProduct}} $\crossproduct_{A_i,A_j\rightarrow A'}(\cdot)$: The crossproduct between two attributes are computed using $genLabMult()$ described above.
+
+\stitle{\textsf{Count}} $\countagg(\cdot)$: To evaluate this primitive on its input table $\encT$, \system simply  adds up the bits in the corresponding $\encB$, i.e., $\bigoplus_{i}^m \encB[i]$.
+
+\stitle{\textsf{GroupBy*}} $\groupbystar_{A}(\cdot)$: The implementation steps for \textsf{Project}, \textsf{Filter} and \textsf{Count} are reused here. First, \system projects the input table $\encT$ on attribute $A$, i.e. $\encT_1 = \project_A(\encT)$. Then, \system loops each possible value of $A$. For each value $v$, \system initializes a temporary $\encB_v=\encB$ and filters $\encT'$ on $A=v$ to get an updated $\encB'_v$. Last, \system counts the number of 1s in $\encB'_v$ and release the counts. 
+
+\stitle{\textsf{GroupByCount }} $\groupbystar_A(\mathbf{\tilde{T}})$: The implemenation of this primitive is summarized in Algorithm~\ref{groupby-imp} (in Appendix~\ref{app:implement_primitives}). First, the \textsf{AS} uses the $\textsf{GroupByCount}^*$ primitive to generate the encrypted histogram $\encV$ for attribute $A$. Since each entry of $\mathbf{V}$ is a count of records, its value ranges from $\{0,...,m\}$. The \textsf{AS} then masks $\encV$ (step 2) and sends it to the \textsf{CSP}. The purpose of this mask is to hide the true histogram from the \textsf{CSP}. Next the \textsf{CSP} generates the encrypted one-hot-coding representation for this masked histogram $\boldsymbol{\tilde{\mathcal{V}}}$ (steps 4-5) and returns it back to the \textsf{AS}. %Notice that each entry of $\boldsymbol{\tilde{\mathcal{V}}}$ is a $m$-length vector. 
 The \textsf{AS} can simply rotate $\boldsymbol{\tilde{\mathcal{V}}}[i], i \in [|V|]$ by its respective mask value $M[i]$ (step 7) and get back the true encrypted histogram in one-hot-coding $\tilde{\encV}$.
-Note that the \textsf{GroupByCount} primitive could have an alternative implementation using a garbled circuit that takes as input the encrypted vector and outputs the corresponding one-hot-coding representation. However this would require the circuit to decrypt and re-encrypt $O(m)$ data inside it which would be very costly. 
- 
+%Note that the \textsf{GroupByCount} primitive could have an alternative implementation using a garbled circuit that takes as input the encrypted vector and outputs the corresponding one-hot-coding representation. However this would require the circuit to decrypt and re-encrypt $O(m)$ data inside it which would be very costly. 
+
+\stitle{\textsf{CountDistinct}}  $\countdistinct(\cdot)$: This primitive can be implemented using \textsf{GroupByCount} followed by a \textsf{Filter}. We present an optimized implementation in the appendix.
 
 
-\begin{algorithm}[t]
-\small{
-\caption{\textsf{GroupByCount }$\tilde{\encV} \leftarrow \groupby_A(\mathbf{\tilde{T}})$}
-\begin{algorithmic}[1]
-%\STATEx \textbf{Input}: $\mathbf{\tilde{T}}$
-%\STATEx \textbf{Output}:
-\STATEx \textbf{\textsf{AS}:} \STATE Computes $\mathbf{V}=\groupbystar_{A}(\encT)$.
-\STATE Masks the encrypted histogram $\mathbf{V}$ for attribute $A$ as follows 
-$$\boldsymbol{\mathcal{V}}[i]= \mathbf{V}[i] \oplus labEnc_{pk}(M[i]), ~~~~\text{where, }M[i] \in_R [m], i \in [|V|]$$
-\STATE Sends $\boldsymbol{\mathcal{V}}$ to \textsf{CSP}.
-\STATEx \textbf{\textsf{CSP}:}
-\STATE Decrypts  $\boldsymbol{\mathcal{V}}$ as $\mathcal{V}[i]=labDec_{sk}(\boldsymbol{\mathcal{V}}), i \in [|V|]$.\STATE Converts each entry of $\mathcal{V}$ to its corresponding one-hot-coding and encrypts it, $\boldsymbol{\tilde{\mathcal{V}}}[i]=labEnc_{pk}(\tilde{\mathcal{V}[i]}), i \in [|V|]$
-\STATE Sends $\boldsymbol{\tilde{\mathcal{V}}}$ to \textsf{AS}.
-\STATEx \textbf{\textsf{AS}}:
-\STATE  Rotates every entry by its corresponding mask value to obtain the desired  encrypted one-hot-coding $\boldsymbol{\tilde{V}}[i]$. \begin{gather*}\boldsymbol{\tilde{V}}[i]=RightRotate(\boldsymbol{\tilde{\mathcal{V}}},M[i]), i \in [|V|]\end{gather*} 
- \end{algorithmic} \label{groupby-imp}}
-\end{algorithm} 
+
 
 
 \stitle{\textsf{Laplace }}$\lap_{\epsilon,\Delta}(\mathbf{V})$:  Recall that both \textsf{AS} and \textsf{CSP} have to add Laplace noise to the output in Crypt$\epsilon$. Hence the \textsf{Laplace} primitive  has two phases. In the first phase,  the \textsf{AS} adds an instance of encrypted Laplace noise $\eta_1 \sim Lap(\frac{\Delta}{\epsilon})$ to the encrypted input \eat{(step 1 in Algorithm ~\ref{lap})} to generate $\mathbf{\hat{\mathcal{V}}}$. This acts as the input to the second phase which is executed by the \textsf{CSP}. Here the \textsf{CSP} decrypts $\mathbf{\hat{\mathcal{V}}}$ and adds a second instance of the Laplace noise $\eta_2 \sim Lap(\frac{\Delta}{\epsilon})$ to generate the final noisy output $\hat{V}$ in the clear. %(steps 3-4)
@@ -78,7 +74,7 @@ The \textsf{Laplace} primitive with an encrypted scalar $\encC$ as the input is 
  %Another observation is that this double noise addition does not affect the differential privacy guarantee. After the addition of the first instance of noise by the \textsf{AS}, the second can be seen as a post-processing step. Hence our results Crypt$\epsilon$ programs are still differentially private by Theorem 2.
 %\textit{Note:} Following our discussion on the primitive implementations in this section and Appendix C, we see that the major chunk of the work for almost all the transformation primitives is carried out the \textsf{AS} by itself. This conforms to our second requirement in section.
 
-
+\stitle{\textsf{NoisyMax}} $\noisymax_{\epsilon,\Delta}(\cdot)$: This primitive is implemented using two-party computation between \textsf{AS} and \textsf{CSP} using garbled circuits. Details are in  Appendix~\ref{app:implement_primitives}.
 
 \eat{\begin{algorithm}
 \small{
@@ -110,7 +106,7 @@ Recall that the transformation primitives output encrypted data.  Since  the \te
 Recall that \textsf{labHE} allows multiplication of two ciphers. \system can support a general $n$-way multiplcation of ciphers for $n > 2$ as described in Section~\ref{genlab}. However it requires intermediate interactions with the \textsf{CSP}. Thus all \system programs that require multiplication of more than two ciphers need interaction with the \textsf{CSP}.  All programs that filter the database on more than three attributes would thus fall under this class. P4 and P5 from Table~\ref{tab:programexamples} are in this class.
 
 \stitle{Class III : Other Interaction Programs}\\
- The \textsf{GroupBy} primitive requires an intermediate interaction with the \textsf{CSP} (for generating the encrypted one-hot-coding). The \textsf{CountDistinct} primitive also uses a garbled circuit (Appendix~\ref{app:implement_primitives}) and hence requires interactions with the \textsf{CSP}. This is in addition to the interaction required for decrypting the noisy answer (as explained in Class I above). Therefore, any program with the \textsf{GroupBy} or \textsf{CountDistinct} primitive requires at least two rounds of interaction. P6 and P7 from Table~\ref{tab:programexamples} are examples of this class of \system programs. 
+ The \textsf{GroupBy} primitive requires an intermediate interaction with the \textsf{CSP} (for generating the encrypted one-hot-coding). The \textsf{CountDistinct} primitive also uses a garbled circuit (Appendix~\ref{app:implement_primitives}) and hence requires interactions with the \textsf{CSP}. This is in addition to the interaction required for decrypting the noisy answer (as explained in Class I above). Therefore, any program with the \textsf{GroupBy} or \textsf{CountDistinct} primitive requires at least two rounds of interaction. P6 and P7 from Table~\ref{tab:programexamples} are examples of this class. 
 
 
 \eat{

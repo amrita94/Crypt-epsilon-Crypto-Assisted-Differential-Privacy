@@ -14,11 +14,11 @@
                                 & \textsf{Filter}       & $\filter_{\phi}(\cdot)$   &  $\encT$      &   $\encB'$     &  Zeros out records not satisfying $\phi$    in $\encB$          \\ \cline{2-6}
                                 & \textsf{Count}             & $\countagg(\cdot)$         & $\encT$  &  $\encC$    &  Counts the number of 1s in $\encB$               \\ \cline{2-6}
                                 & \textsf{GroupByCount*}             & $\groupbystar_{A}(\cdot)$ &  $\encT$  & $\encV$    & Returns encrypted histogram of $A$                \\ \cline{2-6}
-                                & \textsf{GroupByCount}              & $\groupbystar_{A}(\cdot)$    &$\encT$       & $\tilde{\encV}$        &  Returns encrypted histogram of $A$ in one-hot-encoding    \\ \cline{2-6}
+                                & \textsf{GroupByCount}              & $\groupbystar_{A}(\cdot)$    &$\encT$       & $\tilde{\encV}$        &  Returns encrypted table of $A$ and count in one-hot-encoding    \\ \cline{2-6}
                                 & \textsf{CountDistinct}             & $\countdistinct(\cdot)$     &    $\encV$   & $\encC$   &  Counts the number of non-zero values in $\encV$       \\ \hline
 \multirow{2}{*}{Measurement}    & \textsf{Laplace}     & $\lap_{\epsilon,\Delta}(\cdot)$    &  $\encV$      &   $\hat{V}$    &  Adds Laplace noise to $\encV$    \\ \cline{2-6}
-                                & \textsf{NoisyMax}     & $\noisymax_{\epsilon,\Delta}^k(\cdot)$         & $\encV$       &  $\hat{\mathcal{P}}$      &  %Adds Laplace noise to $\encV$ and 
-                                Returns indices of the top $k$ noisy values              \\ \hline
+                                & \textsf{NoisyMax}     & $\noisymax_{\epsilon,\Delta}(\cdot)$         & $\encV$       &  $\hat{\mathcal{P}}$      & Adds Laplace noise to $\encV$ and 
+                                returns indices of the top noisy value             \\ \hline
 \end{tabular}
 }
 \end{table*}
