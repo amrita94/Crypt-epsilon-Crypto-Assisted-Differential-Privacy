@@ -51,7 +51,7 @@ We now briefly summarize how \system primitives are compiled into protocols that
 
 \stitle{\textsf{Project}} $\project_{\bar{A}}(\cdot)$: The implementation of this primitive simply drops off all but the attributes in $\bar{A}$ from the input table $\encT$ and returns the truncated table $\encT'$.
 
-\stitle{\textsf{Filter}} $\filter_{\phi}(\cdot)$: Let $\phi$ be a predicate on a single attribute of the form $r.A_j \in V_{A_j}$. Row $i$ satisfies the filter if one of the bits corresponding to positions in $V_{A_j}$ are set to 1. Thus the filter bit corresponding to row $i$ is set to: $\encB[i] = labMult(\encB[i], \bigoplus_{l\in V_{A_j}}\tilde{\bf{v}}_j[l])$.
+\stitle{\textsf{Filter}} $\filter_{\phi}(\cdot)$: Let $\phi$ be a predicate on a single attribute of the form $r.A_j \in V_{A_j}$. Row $i$ satisfies the filter if one of the bits corresponding to positions in $V_{A_j}$ are set to 1. Thus the filter bit corresponding to row $i$ is set to: $\encB[i] = labMult(\encB[i], \bigoplus_{l\in V_{A_j}}\tilde{\bf{v}}_j[l])$. Multi-attribute filter implementation is described in Appendix~\ref{app:implement_primitives}.
 
 \stitle{\textsf{CrossProduct}} $\crossproduct_{A_i,A_j\rightarrow A'}(\cdot)$: The crossproduct between two attributes are computed using $genLabMult()$ described above.
 
