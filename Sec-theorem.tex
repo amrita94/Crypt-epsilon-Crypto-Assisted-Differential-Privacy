@@ -3,11 +3,10 @@
 
 
 In this section we provide a sketch of the security proof in the semi-honest model.
-Our proof will follow the well established simulation argument \cite{Oded}. Let
-$P(\mathcal{D})$ be the output of a program $P$ on dataset \am{should it be ... $P(\mathcal{D}, \epsilon)$ be the output of a differentially private program $P$? And this should also be a random variable?}
-$\mathcal{D}$ and let $P^{CDP}(\mathcal{D},\epsilon)$ be the random
-variable (rv) that corresponds to the output of the equivalent
-\textsf{CDP}-version of $P$ using a privacy parameter $\epsilon$.
+Our proof will follow the well established simulation argument \cite{Oded}. Let $P$ be a program that is to be run on dataset $\mathcal{D}$ with privacy parameter $\epsilon$
+ and let $P^{CDP}(\mathcal{D},\epsilon)$ denote the random
+variable (rv) that corresponds to the output of running $P$ on the 
+\textsf{CDP} model.
 
 \begin{theorem}\label{thm:security}
 \rm
@@ -36,10 +35,8 @@ that \textsf{AS} and \textsf{CSP} do not collude with the users (the
 data owners). However, if \textsf{AS} colludes with a subset of the
 users, which essentially means $Sim_1$ ($Sim_2$)has to be given the data
 corresponding to these users as additional parameter. This provides no
-complications in the proof at all. \am{Rather than saying this sentence, can you cite a paper and say: This case can be handled by modifying the proof using arguments from \cite{??}.}  Similar argument goes for $Sim_2$. \am{drop this last line}
-
-
-\am{add the following line here: Since every program $P$ expressible using \system primitives satisfies differential privacy, and it follows from Theorem~\ref{thm:security} that every execution of \system satisfies computational differential privacy}. 
+complications in the proof at all (see the proof in \cite{LReg}). 
+ Since every program $P$ expressible using \system primitives satisfies differential privacy, it follows from Theorem~\ref{thm:security} that every execution of \system satisfies computational differential privacy. 
 \begin{corollary} 
 	Protocol $\Pi$ satisfies computational differential privacy under the \textsf{SIM-CDP} notion \cite{CDP}.
 \end{corollary}
