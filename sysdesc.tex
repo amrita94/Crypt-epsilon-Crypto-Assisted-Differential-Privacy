@@ -206,3 +206,12 @@ Adversary & Unbounded & Unbounded & Bounded \\\hline
 \footnotetext{Theoretically no restriction, however practical constraints maybe present}}
 
 %\arc{ Can add another column for Mixnets maybe?}
+
+
+
+
+
+
+
+\noindent{\textbf{Expressibility}:} \system is designed to ensure that state-of-the-art DP programs can be executed on sensitive data by the \textsf{AS}. This necessitates adding noise to functions computed on the entire database (like in \cdp), and not just to individual records (like in \ldp). In principle, any function can computed on encrypted data via secure computation, and thus \system can support any differentially private algorithm. However, we currently limit the expressibility of the programs supported in \system to those that operate on the sensitive data with efficiently implementable primitives, and whose privacy can be easily tracked by the \textsf{CSP}. Nevertheless, as shown later in the paper, \system can already support a variety of state of the art DP programs that provide orders of magnitude higher error than their \ldp counterparts. Additional discussion on the separation between \textsf{LDP} and \system is presented in Appendix
+\ref{app:sepldp}.
