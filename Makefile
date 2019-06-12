@@ -6,7 +6,7 @@ all:
 	bibtex $(FILE).new
 	pdflatex --jobname=$(FILE).new $(FILE).tex
 	pdflatex --jobname=$(FILE).new $(FILE).tex
-	mv $(FILE).new.pdf CrypteCCS2019.pdf
+	mv $(FILE).new.pdf CryptESIGMOD2019.pdf
 	rm -f *.aux *.bbl *.blg *.dvi *.log *.out *.gz *~
 
 clean:
