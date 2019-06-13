@@ -112,8 +112,7 @@ Program &  \multicolumn{3}{c}{Base} & \multicolumn{2}{c}{Optimized} \\
 \label{perf}
 \end{table}
 
-\stitle{DP Range Tree}:
-For P1 we see that the total time taken for execution for the unoptimized Crypt$\epsilon$ implementation is about half an hour. However, using the range tree optimization reduces the execution time by $5667\times$. The reason behind this huge speed-up is that the time required by the \textsf{AS} in the optimized implementation becomes almost negligible because it simply needs to do a memory fetch to read off the answer from the pre-computed range tree instead of computing it from the entire encrypted database.
+
  \begin{figure}[ht]
    \begin{subfigure}[b]{0.45\linewidth}
     \centering \includegraphics[width=1\linewidth]{index_error.pdf}
@@ -124,12 +123,43 @@ For P1 we see that the total time taken for execution for the unoptimized Crypt$
         \caption{}
         \label{fig:time}
         \end{subfigure}
+        \\
+         \begin{subfigure}[b]{0.45\linewidth}
+    \centering \includegraphics[width=1\linewidth]{index_numberOfBins_error.pdf}
+        \caption{}
+        \label{fig:error:NumberOfBins}\end{subfigure}
+        \begin{subfigure}[b]{0.45\linewidth}
+        \includegraphics[width=1\linewidth]{index_numberOfBins_time.pdf}
+        \caption{}
+        \label{fig:time:NumberOfBins}
+        \end{subfigure}
+        \\  
+        \begin{subfigure}[b]{0.45\linewidth}
+    \centering \includegraphics[width=1\linewidth]{index_NeighboringBins_error.pdf}
+        \caption{}
+        \label{fig:error:NeighboringBins}\end{subfigure}
+        \begin{subfigure}[b]{0.45\linewidth}
+        \includegraphics[width=1\linewidth]{index_NeigboringBins_time.pdf}
+        \caption{}
+        \label{fig:time:NeighboringBins}
+        \end{subfigure}
         \caption{Program 5: Accuracy vs Performance Trade-off Analysis for DP Index Optimization }\label{index}
     \end{figure}
+\stitle{\system Specific Differentially Private Optimization}
 
-\stitle{DP Index}: For P5, we observe that the base case implementation takes around $20$ minutes to run. However  a DP index over the attribute $NativeCountry$  reduces the execution time to about $30s$ giving us a $41\times $ speed-up. It is so because, only about 2\% of the data records satisfy $NativeCountry$=Mexico. Thus the index reduces the number of records to be considered for the program execution drastically thereby resulting in a huge performance boost. %The is because only the cost for the \textsf{Filter} primitive decreases, not all the primitives scale 10 drop is due to the
+\stitle{DP Index}: For P5, we observe that the unoptimized implementation takes around $20$ minutes to run. However  a DP index over the attribute $NativeCountry$  reduces the execution time to about $30s$ giving us a $41\times $ speed-up. It is so because, only about 2\% of the data records satisfy $NativeCountry$=Mexico. Thus the index reduces the number of records to be considered for the program execution drastically thereby resulting in a huge performance boost. %The is because only the cost for the \textsf{Filter} primitive decreases, not all the primitives scale 10 drop is due to the
 
-Let $\rho$ represent the fraction of the privacy parameter used towards constructing the DP index. In Figure \ref{index} we study how the mean execution time and the error of the final result vary as a function of $\rho$ for P5 for a total privacy parameter of $\epsilon=1.1$.  From Figure \ref{fig:error} we observe that the mean error incurred drops sharply from $\rho=0.1$ to $\rho=0.2$, stabilises till $\rho=0.5$ and starts increasing again. This is so because, at $\rho=0.2$, the noisy index correctly identifies almost all the records satisfying the $\textsf{Filter}$ condition and hence does not contribute much to the total error. However as we keep increasing $\rho$, the amount of privacy budget left for the $\textsf{Laplace}$ primitive keeps decreasing which results in higher error. From Figure \ref{fig:time}, we observe that the execution time increases till $\rho=0.5$ and then stabilizes. The reason behind this is that, the total number of records returned after $\rho=0.5$ does not differ by much. Thus from the two figures we observe that for $\rho=0.2$ we get a high speed up ($40\times$) with relatively low error ($3$). Hence we choose $\rho=0.2$ for our experiments. A formal accuracy vs speed up trade-off analysis would be very helpful in this regard and is part of our future plan.
+Additionally we study the dependency of the accuracy and execution times of P5 implemented with DP index on the following three parameters -- \squishlist \item fraction of privacy budget used for building the DP index \item total number of bins in the c.d.f used for constructing the DP index \item number of neighboring bins considered for answering P5\squishend
+Let $\rho$ represent the fraction of the privacy parameter used towards constructing the DP index. In Figure \ref{index} we study how the mean execution time and the error of the final result vary as a function of $\rho$ for P5 for a total privacy parameter of $\epsilon=1.1$, total number of bins equal to 10 and no extra neighboring bin considered.  From Figure \ref{fig:error} we observe that the mean error incurred drops sharply from $\rho=0.1$ to $\rho=0.2$, stabilises till $\rho=0.5$ and starts increasing again. This is so because, at $\rho=0.2$, the noisy index correctly identifies almost all the records satisfying the $\textsf{Filter}$ condition and hence does not contribute much to the total error. However as we keep increasing $\rho$, the amount of privacy budget left for the $\textsf{Laplace}$ primitive keeps decreasing which results in higher error. From Figure \ref{fig:time}, we observe that the execution time increases till $\rho=0.5$ and then stabilizes. The reason behind this is that, the total number of records returned after $\rho=0.5$ does not differ by much. Thus from the two figures we observe that for $\rho=0.2$ we get a high speed up ($40\times$) with relatively low error ($3$). Hence we choose $\rho=0.2$ for our experiments. %A formal accuracy vs speed up trade-off analysis would be very helpful in this regard and is part of our future plan.
+
+Recall from our discussion in Section \ref{sec:dp_optimization}, for constructing the DP index, first we compute a noisy c.d.f on the indexing attribute by partitioning its domain into $k$ bins. We plot the mean error and execution time for P5 with $\epsilon=1.1$ and $\rho=0.2$ by varying the total number of bins from $2$ to $40$ (\textit{NativeCountry} has a domain size of 40) in Figure \ref{fig:error:NumberOfBins} and \ref{fig:time:NumberOfBins} respectively. No extra neighboring bins (i.e., $i_{start}=\hat{C}[r_s-1$ and  $i_{end}=\hat{C}[r_e]$ from Section \ref{sec:dp_optimization}] are considered for the above two experiments. From Figure \ref{fig:error:NumberOfBins}, we observe that the error increases with increase in the total number of bins. It is so because, as $k$ increases, individual bin size decreases thereby increasing the risk of missing some records that do satisfy the requisite \textsf{Filter} condition. Additionally, from the construction of the c.d.f we note that the amount of noise added increases with $k$ (as noise is drawn from $Lap(\frac{k}{\epsilon})$. Figure \ref{fig:time:NumberOfBins} shows that the execution time decreases with $k$. This is intuitive because increase in $k$ results in smaller bins, hence the total number of records included in $[i_{start}, i_{end}]$ decreases.
+
+For increased accuracy,  bins preceding $r_s-1$ and following $r_e$ can be considered for $i_{start}$ and $i_{end}$ respectively. This is showcased in Figure \ref{fig:error:NeighboringBins} where the total number of bins is 10, $\epsilon=1.1$ and $\rho=0.2$. We observe that the error stabilises after considering 4 extra neighboring bins. It is so because all the records satisfying the \textsf{Filter} condition that were missing in $i_{start}=\hat{C}[r_s-1]$ and  $i_{end}=\hat{C}[r_e]$, are captured with just 4 extra neighboring bins. However, as shown in Figure \ref{fig:time:NeighboringBins}, the execution time naturally increases with extra neighboring bins.
+
+\stitle{Crypto-Engineering Optimizations}
+
+\stitle{DP Range Tree}:
+For P1 we see that the total time taken for execution for the unoptimized Crypt$\epsilon$ implementation is about half an hour. However, using the range tree optimization reduces the execution time by $5667\times$. The reason behind this huge speed-up is that the time required by the \textsf{AS} in the optimized implementation becomes almost negligible because it simply needs to do a memory fetch to read off the answer from the pre-computed range tree instead of computing it from the entire encrypted database.
 
 \stitle{Pre-computation}: For P3 the unoptimized execution time on the dataset of $32561$ records is around 2 days. This is so because the $\textsf{CrossProduct}$ primitive used in the program needs to perform $200\cdot 32561$ $labMult$ operations which is very time consuming. Hence from Table \ref{perf} we see that, pre-computing the 2-D attribute over $Age$ and $Gender$ is a very useful optimization as now the execution reduces to just about 5 minutes giving us a $596.86\times$ speed up.  %The un-optimized implementation for  Program D takes . It is because of the \textsf{CrossProduct} Primitiev because ot needs to compute . Pre-computaion f thsi saves a lot of time and cuts down the executioj tiem by.
 
