@@ -41,3 +41,59 @@ complications in the proof at all (see the proof in \cite{LReg}).
 \begin{corollary} 
 	Protocol $\Pi$ satisfies computational differential privacy under the \textsf{SIM-CDP} notion \cite{CDP}.
 \end{corollary}
+
+\subsection{Malicious Model}
+In \system, malicious adversarial behaviour can be characterized as follows \begin{itemize}\item Violating Integrity  \item Violating Privacy \end{itemize}
+
+\stitle{Malicious \AS: }The \AS has vested interest in learning the correct output and hence has no incentive of violating integrity (just like the receiver in the Private Set Intersection setting).
+ However, it might try to violate privacy. In \system we have two measurement primitives namely \textsf{Laplace} and \textsf{NoisyMax}. Since \textsf{NoisyMax} is implemented via a garbled circuit, the corresponding maliciously secure implementation can be obtained from standard approaches \cite{Wang:2017:AGE:3133956.3134053}. Hence, for the rest of the section, we limit ourselves to the \textsf{Laplace} primitive. For this, the \AS might try to violate privacy by not adding noise to the cipher of the true answer before sending it to the \CSP. In this case since the \CSP is honest, \AS still gets $\epsilon$-DP output.
+However, since the output can be public, in this way the \CSP can actually compute the non-noisy answer.
+Thus from the \AS's perspective it is gaining nothing itself but rather revealing the non-noisy answer to a third party \CSP - a lose-lose situation for the \AS. Hence by a game theoretic argument, we observe that adding noise is the Nash equilibrium (Table \ref{tab:Malicous_AS}) in this case.
+Note that the case of adding less noise, (i.e. adding noise drawn from $Lap(\frac{1}{\epsilon'})$ while reporting a privacy budget of $\epsilon$, $\epsilon' > \epsilon$) is very similar to that of adding no noise.
+Overall privacy budget violation is disallowed by the honest \CSP who monitors all the budget expenditures via the public ledger.
+\begin{table}\caption{Gain Table for Malicious AS}
+\begin{tabular}{|l|l|}
+\hline
+AS(M)\textbackslash CSP(H) & Add noise\\
+\hline
+ Don't add noise& $-\infty$    \\\hline
+ Add noise & 0   \\
+ \hline
+\end{tabular}\label{tab:Malicous_AS}
+\end{table}
+
+\stitle{Malicious \CSP:}
+As discussed in Section 3, the \CSP maintains a public ledger with the following information
+\begin{enumerate}\item  total privacy budget $\epsilon^B$ which is publicly known
+\item the privacy budget $\epsilon$ used up every time the \AS submits a cipher for decryption
+\end{enumerate}
+Since the ledger is public, the \AS can verify whether the per program reported privacy budget is correct and raise a flag otherwise. This prevents any disparities in the privacy budget allocation.
+
+For the other cases, a malicious \CSP can be accounted for in two ways --\\
+(1) \stitle{Joint Laplace Noise Generation: } Instead of having  both the servers, \textsf{AS} and \textsf{CSP} add two separate instances of Laplace noise to the true answer, we can jointly compute a single instance of the Laplace noise in \system via a SMPC protocol ~\cite{Djoin,DworkOurData}. For this, the \CPS generates a garbled circuit that takes one $l$-bit random string from \CPS and \AS each as an input, denoted by $S_1$ and $S_2$ respectively. This circuit performs $S=S_1 xor S_2$  and uses it to generate an instance of random noise, $\eta$ drawn from the distribution $Lap(\frac{1}{\epsilon})$ following the fundamental law of transformation of probabilities.
+Last, the circuit encrypts $\eta$ and returns $\boldsymbol{\eta}=labEnc_{pk}(\eta)$. 
+The \AS can now simple add $\boldsymbol{\eta}$ to the cipher of the true answer and send it over to the \CSP for decryption. A malicious \CSP might attempt at incorrectly decrypting the ciphers. However, this can be circumvented by standard techniques which involves the \CSP to efficiently prove the validity of the decryption in zero knowledge to the \AS.\\
+(2) \stitle{Trusted Execution Environment (TEE): } Another alternative approach can be removing a separate physical server for the \CSP altogether and instead implementing it on a TEE \cite{Boneh2,Prochlo,Aïmeur2008}. All the required functionalities of the \CSP like receive a cipher and encrypt it correctly using stored secret key, adding noise drawn from correct distribution etc can be captured in the TEE and its validity can be verified and attested to by the data owners.
+\\Note that the violation of integrity by a malicious \CSP for the $genLabMult$ function can also be prevented by standard zero knowledge proofs.
+%Hence, this approach adds just one instance of the Laplace noise, resulting the same accuracy guarantee as the \textsf{CDP} model. However owing to the garbled circuit, this implementation is computationally heavier. Therefore, we choose the two phase noise addition implementation for \system in this paper.For our \system setting, we assume that there is no harm in \CSP learning the final $\epsilon$-DP output but the \CSP has no dedicated use for the $\epsilon$-DP statistic (Section 3). Hence it has no incentive to cheat for the sake of getting a non-noisy output, i.e., violate privacy. The only scenario when the \CSP can be incentivized to cheat is when the \CSP has it in for the\ AS, i.e, it has some personal agenda in screwing up \AS's computations and wants the \AS to get incorrect output. Now, if the \CSP violates privacy, i.e., by not adding noise to the output, then again the \CSP still learns $\epsilon$-DP output but the \AS can now learn true answer. Given our above assumption, the \CSP thus has no incentive in aiding the \AS to learn the true output (Table \ref{tab:Malicous_CSP}). 
+\begin{comment}\begin{table}\caption{Gain Table for Malicious \CSP}
+\begin{tabular}{|l|l|}
+\hline
+\CSP(M)\textbackslash \AS(H) & Add noise\\
+\hline
+ Don't add noise& $-\infty$    \\\hline
+ Add noise & 0   \\
+ \hline
+\end{tabular}\label{tab:Malicous_CSP}
+\end{table}
+However, it can violate the integrity by just decrypting wrong answer. For this we need to prove that the \CSP decrypts the given cipher correctly with a mask (which in this case is \CSP's instance of the $\epsilon$-DP noise) that is known only to the \CSP. This can be acheived via a zero-knwoledge-proof that works as follows-
+\begin{enumerate}\item  \CSP samples noise $n$ from an appropriate Laplace distribution, and encrypts it $Enc(n)$. Let $x$ be the true cipher that the \AS wants to be decrypted.
+The \CSP then commits to this value of $Enc(n)$ and send the commitment, $C_n$ to the \AS along with the correct answer $v_1=Dec(x)+n$. 
+\item \AS  sends $c_1=x+Enc(r)$ to the \CSP. 
+\item  \CSP returns $v_2=Dec(c_1)+n$ to the \AS and also opens its commitments to show that $C_n$ was indeed a commitment to $Enc(n)$ 
+\item \AS now samples a random value $r'$ and sends $c_2= c1+Enc(r')+Enc(n)$ to the \CSP.
+\item \CSP decrypts $c_2$ and send $v_3=Dec(c_2)$ to the \AS.
+\item \AS accepts only iff $v_3-r'-r==v_1$
+\end{enumerate}
+The soundness and completeness of this protocol can be shown easily. The main point here is that due to $Enc(r)$ (Step 2), the challenge $c_1$ looks like an encryption of a random number for the \CSP. Hence there is no way the \CSP can cheat the \AS into accepting an incorrect answer. Also since only the initial commitment is done only to the encrypted value of the noise, the true noise added also still remains hidden from the \AS.
+\end{comment}
