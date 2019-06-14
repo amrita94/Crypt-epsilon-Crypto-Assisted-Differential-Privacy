@@ -1,11 +1,13 @@
 \section{\system Optimizations}\label{sec:optimization}
 In this section we present several optimization techniques used by \system. These optimizations do not alter the end-to-end privacy guarantees of the system. 
-\subsection{Differential Privacy Based Optimizations}\label{sec:dp_optimization}
-These optimizations expend some of the overall $\epsilon$ privacy budget to build differentially private indexes that can be used to speed up computation on encrypted data.
 
-\stitle{{\normalfont (1)} DP Indexing}: This optimization is motivated by the fact that several programs first filter out a large fraction of the rows in the dataset. For instance, the program  P5 in Table~\ref{tab:programexamples} constructs a histogram over $Age$ and $Gender$ on the subset of data for which $NativeCountry$ is Mexican. Our filter implementation keeps all the rows (even if they do not satisfy the condition) as the \textsf{AS} has no way to tell if the filter condition is satisfied or not. This results in the subsequent GroupbyCount* being run on the full data instead of on a small subset. If there were an index on $NativeCountry$,  \system could run the GroupbyCount* on only the subset of records that have $NativeCountry$=Mexican instead of on the entire dataset, but an exact index would leak the true data distribution, violating DP. 
+\subsection{Novel \system Differential Privacy Based Optimization}\label{sec:dp_optimization}
+This optimization expend some of the overall $\epsilon$ privacy budget to build differentially private indexes that can be used to speed up computation on encrypted data.
 
-Hence, \system allows a differentially private index be built on a prespecified attribute $A$ on the encrypted database $\encD$.   Let $P=(P_1,\ldots,P_k)$ be a uniform partition on the sorted domain of $A$ such that each partition contains $\frac{s_A}{k}$ consecutive domain values. First we use a garbled circuit to sort $\encD$ over $A$ into $\encD_s$ and additionally output a noisy histogram $\hat{V}$ on this $k$ partitions, $\hat{V}[i]=\sum_j ct_{A,j}+\eta_i$ where $i \in [k], j \in P_i, \eta_i\sim Lap(1/\epsilon_A)$ and $ct_{A,j}$ denotes the number of records with value $j$ for attribute $A$. 
+
+\stitle{{\normalfont (1)} DP Indexing}: This optimization is motivated by the fact that several programs first filter out a large fraction of the rows in the dataset. For instance, the program  P5 in Table~\ref{tab:programexamples} constructs a histogram over $Age$ and $Gender$ on the subset of data for which $NativeCountry$ is Mexico. Our filter implementation keeps all the rows (even if they do not satisfy the condition) as the \textsf{AS} has no way to tell if the filter condition is satisfied or not. This results in the subsequent GroupbyCount* being run on the full data instead of on a small subset. If there were an index on $NativeCountry$,  \system could run the GroupbyCount* on only the subset of records that have $NativeCountry$=Mexico instead of on the entire dataset, but an exact index would leak the true data distribution, violating DP. 
+
+Hence, \system allows a differentially private index be built on a prespecified attribute $A$ on the encrypted database $\encD$.   Let $P=(P_1,\ldots,P_k)$ be a uniform partition on the sorted domain of $A$ such that each partition contains $\frac{s_A}{k}$ consecutive domain values. First we use a garbled circuit to sort $\encD$ over $A$ into $\encD_s$ and additionally output a noisy cumulative histogram $\hat{V}$ on this $k$ partitions, $\hat{V}[i]=\sum_j ct_{A,j}+\eta_i$ where $i \in [k], j \in \cup_{l=1}^i P_k, \eta_i\sim Lap(k/\epsilon_A)$ and $ct_{A,j}$ denotes the number of records with value $j$ for attribute $A$. 
 Next the \textsf{AS} computes a noisy c.d.f, $\hat{\mathcal{C}}$ over the $k$ bins using the noisy counts in $\hat{V}$ using inference based on isotonic regression \cite{cdf}. For executing a program conditioned as $\phi=A \in [v_s,v_e]$, we compute first compute $i_{start}=\hat{\mathcal{C}}[r_s-1], v_s \in [\frac{s_A}{k}\cdot(r_s-1)+1,\frac{s_A}{k}\cdot r_s]$, i.e., $v_s$ belongs to bin $r_s$   and  $i_{end}=\hat{\mathcal{C}}[r_e], v_e \in [\frac{s_A}{k}\cdot(r_e-1)+1,\frac{s_A}{k}\cdot r_e]$, i.e., $v_e$ belongs to bin $r_e$. We then run the program on this subset of records in $[i_{start},i_{end}]$. For increased accuracy we can also consider preceding bins of $r_s-1$ for $i_{start}$ and succeeding bins of $r_e$ for $i_{end}$.
 
 There are two heuristics that can be considered for selecting the indexing attribute $A$. First, $A$ should be very frequently queried. This is intuitive as this would mean a larger fraction of the queries will benefit from this optimization. Second, if $\{v_1,...v_n\} \subset dom(A)$ is the set of most frequently queried values for attribute $A$, then $ct_{A,i}, i \in [n] << m$ where $ct_{A,i}$ is the number of records in $\encD$ having value $v_i$ for attribute $A$. This would ensure that the first selection performed alone on $A$ will filter out majority of the records and reduce the intermediate dataset size to be considered for the subsequent predicate.
@@ -37,7 +39,13 @@ In all other cases, we end up disregarding some of the records that satisfy $A==
 
 
  
-\stitle{{\normalfont (2)} DP Range Tree}:
+
+
+\subsection{Crypto-Engineering Optimizations} \label{sec:im_optimization}
+In this section we present three crypto-engineering optimizations. The first one (DP range tree) expends privacy budget and but results in better accuracy in the long run. The other two optimizations (precomputation and off-line processing) work completely on the encrypted data and do not expend any privacy budget. Hence they do not affect the accuracy of the executed programs.
+
+
+\stitle{{\normalfont (1)} DP Range Tree}:
 Range queries constitute a very popular category of queries for typical databases and range trees are a popular data structure constructed to speed up range query answering. 
 A 1-dimensional range tree for an attribute $A$ is an ordered hierarchical data structure such that the leaf nodes correspond to the individual counts for each possible value of $A$, while the parent nodes cover a range of values and store the sum of the counts of its children. Hence, if range queries are common, pre-computing noisy range trees is an useful optimization, e.g. building a range tree on $Age$ attribute can be useful for programs P1 and P2 in Table~\ref{tab:programexamples}. The sensitivity for  such a noisy range tree is $\log s_A$ where $s_A$ is the domain size of the attribute on which the tree is constructed. To answer any arbitrary range query, we need to access at most $2\log s_A$ number of nodes in the range tree. Thus to answer all possible range queries on $A$, the total squared error accumulated is $O(\frac{s^2(\log s_A)^2 }{\epsilon})$. In contrast for the naive case, we would have incurred error $O(\frac{s_A^3}{\epsilon})$ \cite{cdf}. Hence this range tree optimization not only gives us a huge performance boost but also results in better answer accuracy.
 
@@ -53,10 +61,7 @@ A 1-dimensional range tree for an attribute $A$ is an ordered hierarchical data 
 \item \textbf{Privacy Cost} - If the range tree is constructed  with privacy parameter $\epsilon_R$, then any measurement on it is a post-processing step. Hence, the overall privacy cost is $\epsilon_R$-DP.
 \squishend
 
-\subsection{Implementation Based Optimizations} \label{sec:im_optimization}
-These optimizations work completely on the encrypted data and do not expend any privacy budget. Hence they do not affect the accuracy of the executed programs.
-
-\stitle{{\normalfont (1)} Precomputation}:  
+\stitle{{\normalfont (2)} Precomputation}:  
 Recall that the data owners $\textsf{DO}_i$ send per-attribute encrypted one-hot-codings of their data to the \textsf{AS}. We can use the \textsf{CrossProduct} primitive to generate the one-hot-coding of data across two attributes during program executions. However, this step is very costly due to the intermediate interactions required with the \textsf{CSP}. Hence, an  useful optimization can be  pre-computing the one-hot-coding for the data across a set of popular attributes $\bar{A}$ so that during subsequent program executions, the \textsf{AS} can get the desired representation via simple look-ups. For example, this can be useful for P3 in Table~\ref{tab:programexamples}.
 \squishlist
 \item \textbf{Optimized Feature} - This optimization improves the execution time of \system programs. These multi-attribute one-hot-encodings can be re-used for all subsequent programs.
@@ -65,7 +70,7 @@ Recall that the data owners $\textsf{DO}_i$ send per-attribute encrypted one-hot
 \item \textbf{Privacy Cost} - Since this computation is carried completely on the encrypted data, we do not expend any privacy budget.
 \squishend
 
-\stitle{{\normalfont (2)} Off-line Processing}:
+\stitle{{\normalfont (3)} Off-line Processing}:
 In the implementation of $\textsf{GroupByCount}$ primitive, the \textsf{CSP} needs to generate the encrypted one-hot-codings for the masked histogram (Algorithm~\ref{groupby-imp}). Note that the one-hot-coding representation for any such count would simply be a vector of $(m-1)$ ciphertexts for `0', $labEnc_{pk}(0)$ and 1 ciphertext for `1', $labEnc_{pk}(1)$. Thus one useful optimization can be generating these ciphertexts for $0$ and $1$ in an off-line phase. (This is similar to the idea of off-line generation of Beaver's multiplication triples \cite{Beaver} used in secure multi-party computation.) In this way the encryption time will not be a part of the program execution time, thereby giving us a performance boost.
 \squishlist
 \item \textbf{Optimized Feature} - This optimization results in a reduction in the run time of \system programs. 
