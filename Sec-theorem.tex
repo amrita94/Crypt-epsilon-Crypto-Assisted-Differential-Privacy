@@ -2,11 +2,16 @@
 
 
 
-In this section we provide a sketch of the security proof in the semi-honest model.
-Our proof will follow the well established simulation argument \cite{Oded}. Let $P$ be a program that is to be run on dataset $\mathcal{D}$ with privacy parameter $\epsilon$
- and let $P^{CDP}(\mathcal{D},\epsilon)$ denote the random
-variable (rv) that corresponds to the output of running $P$ on the 
-\textsf{CDP} model.
+In this section we provide a sketch of the security proof in the
+semi-honest model.  Our proof will follow the well established
+simulation argument~\cite[Chapter 7]{Oded}. We assume that the reader
+is familiar with standard concepts, such when two distributions are
+computationally indistinguishable ($\equiv_c$).
+
+Let $P$ be a program that is to be executed on a dataset $\mathcal{D}$
+with privacy parameter $\epsilon$ and let
+$P^{CDP}(\mathcal{D},\epsilon)$ denote the random variable (rv) that
+corresponds to the output of running $P$ in the \textsf{CDP} model.
 
 \begin{theorem}\label{thm:security}
 \rm
@@ -23,20 +28,44 @@ and $Sim_2$ such that:
 \squishlist
 \item $Sim_1 (P^{CDP}(\mathcal{D},\epsilon))$ is computationally indistinguishable ($\equiv_c$)
 from $(View_1^{\Pi}(P,\mathcal{D},\epsilon),Output^{\Pi}(P,\mathcal{D},\epsilon))$, and
-\item $Sim_2 (P^{CDP}(\mathcal{D},\epsilon))$ is $\equiv_c$
-to $(View_2^{\Pi}(P,\mathcal{D},\epsilon),Output^{\Pi}(P,\mathcal{D},\epsilon))$.
-\squishend
-$Output^{\Pi}(P,\mathcal{D},\epsilon))$ is the combined output of the two
-parties\footnote{Notice that the simulators are passed a random variable $P^{CDP}(\mathcal{D},\epsilon))$,
-which essentially means that simulator is given a random draw from this distribution.}
+\item $Sim_2 (P^{CDP}(\mathcal{D},\epsilon))$ is $\equiv_c$ to
+  $(View_2^{\Pi}(P,\mathcal{D},\epsilon),Output^{\Pi}(P,\mathcal{D},\epsilon))$.
+  \squishend $Output^{\Pi}(P,\mathcal{D},\epsilon))$ is the combined
+  output of the two parties\footnote{Notice that the simulators are
+    passed a random variable $P^{CDP}(\mathcal{D},\epsilon))$, which
+    essentially means that simulator is given the ability to sample
+    from this distribution.}
 \end{theorem}
-The proof of this is presented in Appendix A. The statement of the theorem given above assumes
-that \textsf{AS} and \textsf{CSP} do not collude with the users (the
-data owners). However, if \textsf{AS} colludes with a subset of the
-users, which essentially means $Sim_1$ ($Sim_2$)has to be given the data
-corresponding to these users as additional parameter. This provides no
-complications in the proof at all (see the proof in \cite{LReg}). 
- Since every program $P$ expressible using \system primitives satisfies differential privacy, it follows from Theorem~\ref{thm:security} that every execution of \system satisfies computational differential privacy.
+The proof of this is presented in Appendix A. One of the main
+ingredients of the theorem is the composition theorem~\cite[Section
+  7.3.1]{Oded}, which informally states: Suppose a protocol $\Pi_f^g$
+implements functionality $f$ and uses function $g$ as an oracle (i.e.,
+uses only input-output behavior of $g$).  Assume that $\Pi_g$ is a
+protocol to implement $g$ and calls to $g$ in $\Pi_f^g$ are replaced
+by instance of $\Pi_g$ (we refer to this as the composite
+protocol). If $\Pi_f$ and $\Pi_g$ are correct (satisfy the simulator
+definition described earlier), then the composite protocol is
+correct. Note that this means that the proof can be done in a modular
+fashion as long as the underlying primitives and sub-protocols are
+used in a blackbox manner (i.e. only the input-out behavior are used
+and none of the internal state or messages are used).
+
+Next we discuss some easy extensions to the theorem.  The statement of
+the theorem given above assumes that \textsf{AS} and \textsf{CSP} do
+not collude with the users (the data owners). However, if \textsf{AS}
+colludes with a subset of the users $U$ , which essentially means $Sim_1$
+($Sim_2$) have to be given the data corresponding to users in $U$ as
+additional parameters. This presents no complications in the proof at
+all (see the proof in~\cite{LReg}). If a new user $u$ joins, their
+data can be encrypted and simply added to the database. Notice that
+because of the semantic-security property of the encryption scheme
+encryption of $d$ provides no information about encryptions of other
+data items. 
+
+Since every program $P$
+expressible using \system primitives satisfies differential privacy,
+it follows from Theorem~\ref{thm:security} that every execution of
+\system satisfies computational differential privacy.
  \noindent
 \begin{corollary} 
 	Protocol $\Pi$ satisfies computational differential privacy under the \textsf{SIM-CDP} notion \cite{CDP}.
