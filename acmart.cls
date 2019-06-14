@@ -201,7 +201,7 @@ Computing Machinery]
   \or % acmtog
     \def\ACM@fontsize{9pt}%
   \or % sigconf
-    \def\ACM@fontsize{9pt}%
+    \def\ACM@fontsize{10pt}%
   \or % siggraph
     \def\ACM@fontsize{9pt}%
    \or % sigplan
