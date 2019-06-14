@@ -12,15 +12,15 @@
 % the commands and values with those provided to you when you complete the rights form.
 %
 % These commands are for a PROCEEDINGS abstract or paper.
-\copyrightyear{2018}
-\acmYear{2018}
-\settopmatter{printacmref=false}
-\setcopyright{acmlicensed}
-\acmConference[CCS '19]{CCS '19: ACM  Conference on Computer and Communications Security}{Nov 11--15, 2019}{London, UK}
-\acmBooktitle{CCS '19: ACM  Conference on Computer and Communications Security, Nov 11--15, 2019, London, UK}
-\acmPrice{15.00}
-\acmDOI{10.1145/1122445.1122456}
-\acmISBN{978-1-4503-9999-9/18/06}
+%\copyrightyear{2018}
+%\acmYear{2018}
+%\settopmatter{printacmref=false}
+%\setcopyright{acmlicensed}
+%\acmConference[Woodstock '18]{Woodstock '18: ACM Symposium on Neural Gaze Detection}{June 03--05, 2018}{Woodstock, NY}
+%\acmBooktitle{Woodstock '18: ACM Symposium on Neural Gaze Detection, June 03--05, 2018, Woodstock, NY}
+%\acmPrice{15.00}
+%\acmDOI{10.1145/1122445.1122456}
+%\acmISBN{978-1-4503-9999-9/18/06}
 %\usepackage{cite}
 %\usepackage[bottom]{footmisc}
 \usepackage{enumitem}
@@ -44,6 +44,8 @@
 %\captionsetup[figure]{font=small,labelfont=small}
 \usepackage{subcaption}
 %\captionsetup[subfigure]{font=scriptsize,labelfont=scriptsize}
+\usepackage[color]{changebar}
+\cbcolor{red}
 \newtheorem{theorem}{Theorem}
 \newtheorem{definition}{Definition}
 \newtheorem{exmp}{Example}[section]
@@ -59,12 +61,12 @@
 \title{\system: Crypto-Assisted Differential Privacy on Untrusted Servers}
 \author{}
 \begin{abstract}
-Differential privacy has steadily become the de-facto standard for achieving strong privacy guarantees in data analysis. It is typically implemented either in the ``central" or ``local" model. In the former, a trusted centralized server collects the records \textit{in the clear} from the data owners and outputs differentially private statistics; while in the latter, the data owners individually randomize their inputs to ensure differential privacy.  The local model has been popular as it dispenses with the need for a trusted data collector. This increased security in the local model, however, comes at the cost of strictly lower accuracy and restricted algorithmic expressibility for differentially private programs compared to the central model. 
+Differential privacy has steadily become the de-facto standard for achieving strong privacy guarantees in data analysis. It is typically implemented either in the ``central'' or ``local'' model. In the former, a trusted centralized server collects the records \textit{in the clear} from the data owners and outputs differentially private statistics; while in the latter, the data owners individually randomize their inputs to ensure differential privacy.  The local model has been popular as it dispenses with the need for a trusted data collector. This increased security in the local model, however, comes at the cost of strictly lower accuracy and restricted algorithmic expressibility for differentially private programs compared to the central model. 
 
-In this work, we propose, \system, a  system for differential privacy that (1) eliminates the need for a trusted data collector like in the local model, but still (2) achieves the accuracy guarantees and algorithmic expressibility of DP programs of the central model. \system achieves the ``best of both worlds" by employing two non-colluding untrusted servers that run differentially private programs on encrypted data from data owners. \system 
+In this work, we propose, \system, a  system for differential privacy that (1) eliminates the need for a trusted data collector like in the local model, but still (2) achieves the accuracy guarantees and algorithmic expressibility of DP programs of the central model. \system achieves the ``best of both worlds'' by employing two non-colluding untrusted servers that run differentially private programs on encrypted data from data owners. \system 
 supports a rich class of differentially private programs that can be written in terms of a small set of data transformation and differentially private measurement primitives. Further, we propose optimizations that speed up computation on encrypted data by leveraging the fact that the final output is differentially private. We demonstrate the feasibility of \system for practical differentially private analysis on untrusted servers with an extensive empirical evaluation on real datasets.
 \end{abstract}
-\begin{CCSXML}
+\eat{\begin{CCSXML}
 <ccs2012>
 <concept>
 <concept_id>10002978.10002979.10002981.10011745</concept_id>
@@ -79,10 +81,10 @@ supports a rich class of differentially private programs that can be written in 
 </ccs2012>
 \end{CCSXML}
 \ccsdesc[300]{Security and privacy~Public key encryption}
-\ccsdesc[300]{Security and privacy~Privacy-preserving protocols}
+\ccsdesc[300]{Security and privacy~Privacy-preserving protocols}}
 %\begin{IEEEkeywords}
 
-\keywords{Differential Privacy, Crypto Service Provider, Linear Homomorphic Encryption, Secure Computation}
+\keywords{Differential Privacy, Crypto Service Provider, Linear Homomorphic Encryption, Secure Computation, Two Server Model}
  \settopmatter{printfolios=true}
 \maketitle
 %\end{IEEEkeywords}
