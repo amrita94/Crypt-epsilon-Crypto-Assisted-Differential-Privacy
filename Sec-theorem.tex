@@ -1,13 +1,17 @@
+
+
 \section{\system Security Sketch}
 
 
-
-In this section we provide a sketch of the security proof in the semi-honest model.
-Our proof will follow the well established simulation argument \cite{Oded}. Let $P$ be a program that is to be run on dataset $\mathcal{D}$ with privacy parameter $\epsilon$
- and let $P^{CDP}(\mathcal{D},\epsilon)$ denote the random
-variable (rv) that corresponds to the output of running $P$ on the 
-\textsf{CDP} model.
-
+In this section we provide a sketch of the security proof in the
+semi-honest model and provide a discussion on how to extend it to account for malicious adversaries.
+\subsection{Semi-honest model}
+The security proof for \system in the semi-honest follows the well established
+simulation argument~\cite[Chapter 7]{Oded}. %We assume that the reader is familiar with standard concepts, such when two distributions are computationally indistinguishable ($\equiv_c$).
+Let program $P$ be executed on a dataset $\mathcal{D}$
+with privacy parameter $\epsilon$ and let
+$P^{CDP}(\mathcal{D},\epsilon)$ denote the random variable
+corresponding to the output of running $P$ in the \textsf{CDP} model. \noindent
 \begin{theorem}\label{thm:security}
 \rm
 Let $\Pi$ be the protocol corresponding to the execution of program $P$ in \system. The
@@ -23,34 +27,54 @@ and $Sim_2$ such that:
 \squishlist
 \item $Sim_1 (P^{CDP}(\mathcal{D},\epsilon))$ is computationally indistinguishable ($\equiv_c$)
 from $(View_1^{\Pi}(P,\mathcal{D},\epsilon),Output^{\Pi}(P,\mathcal{D},\epsilon))$, and
-\item $Sim_2 (P^{CDP}(\mathcal{D},\epsilon))$ is $\equiv_c$
-to $(View_2^{\Pi}(P,\mathcal{D},\epsilon),Output^{\Pi}(P,\mathcal{D},\epsilon))$.
-\squishend
-$Output^{\Pi}(P,\mathcal{D},\epsilon))$ is the combined output of the two
-parties\footnote{Notice that the simulators are passed a random variable $P^{CDP}(\mathcal{D},\epsilon))$,
-which essentially means that simulator is given a random draw from this distribution.}.
+\item $Sim_2 (P^{CDP}(\mathcal{D},\epsilon))$ is $\equiv_c$ to
+  $(View_2^{\Pi}(P,\mathcal{D},\epsilon),Output^{\Pi}(P,\mathcal{D},\epsilon))$.
+  \squishend $Output^{\Pi}(P,\mathcal{D},\epsilon))$ is the combined
+  output of the two parties\footnote{Note that the simulators are
+    passed a random variable $P^{CDP}(\mathcal{D},\epsilon))$, i.e., the simulator is given the ability to sample
+    from this distribution.}
 \end{theorem}
-The proof of this is presented in Appendix A. The statement of the theorem given above assumes
-that \textsf{AS} and \textsf{CSP} do not collude with the users (the
-data owners). However, if \textsf{AS} colludes with a subset of the
-users, which essentially means $Sim_1$ ($Sim_2$)has to be given the data
-corresponding to these users as additional parameter. This provides no
-complications in the proof at all (see the proof in \cite{LReg}). 
- Since every program $P$ expressible using \system primitives satisfies differential privacy, it follows from Theorem~\ref{thm:security} that every execution of \system satisfies computational differential privacy.
+The proof of this is presented in Appendix \ref{sec:proof}. One of the main
+ingredients of the proof is the composition theorem~\cite[Section
+  7.3.1]{Oded}, which informally states: Suppose a protocol $\Pi_f^g$
+implements functionality $f$ and uses function $g$ as an oracle (i.e.,
+uses only input-output behavior of $g$).  Assume that $\Pi_g$ is a
+protocol to implement $g$ and calls to $g$ in $\Pi_f^g$ are replaced
+by instances of $\Pi_g$ (we refer to this as the composite
+protocol). If $\Pi_f$ and $\Pi_g$ are correct (satisfy the aforementioned simulator
+definition), then the composite protocol is
+correct. Note that this means that the proof can be done in a modular
+fashion as long as the underlying operators are
+used in a blackbox manner (i.e. only the input-out behavior are used
+and none of the internal state or messages are used).
+
+Next we discuss some easy extensions to the theorem.  The statement in Theorem \ref{thm:security} assumes that \textsf{AS} and \textsf{CSP} do
+not collude with the users (data owners). However, if \textsf{AS}
+colludes with a subset of the users $U$ , which essentially means $Sim_1$
+($Sim_2$) have to be given the data corresponding to users in $U$ as
+additional parameters. This presents no complications in the proof at
+all (see the proof in~\cite{LReg}). If a new user $u$ joins, their
+data can be encrypted and simply added to the database. %Notice that because of the semantic-security property of the encryption scheme encryption of $d$ provides no information about encryptions of other data items. 
+Since every program $P$
+expressible using \system operators satisfies differential privacy,
+it follows from Theorem~\ref{thm:security} that every execution of
+\system satisfies computational DP.
  \noindent
 \begin{corollary} 
 	Protocol $\Pi$ satisfies computational differential privacy under the \textsf{SIM-CDP} notion \cite{CDP}.
 \end{corollary}
+
 \subsection{Malicious Model}
-In \system, malicious adversarial behaviour can be characterized as follows \begin{itemize}\item Violating Integrity  \item Violating Privacy \end{itemize}
+In \system, malicious adversarial behaviour can be characterized in two ways (1) Violating Integrity  (2) Violating Privacy 
 
 \stitle{Malicious \AS: }The \AS has vested interest in learning the correct output and hence has no incentive of violating integrity (just like the receiver in the Private Set Intersection setting).
- However, it might try to violate privacy. In \system we have two measurement primitives namely \textsf{Laplace} and \textsf{NoisyMax}. Since \textsf{NoisyMax} is implemented via a garbled circuit, the corresponding maliciously secure implementation can be obtained from standard approaches \cite{Wang:2017:AGE:3133956.3134053}. Hence, for the rest of the section, we limit ourselves to the \textsf{Laplace} primitive. For this, the \AS might try to violate privacy by not adding noise to the cipher of the true answer before sending it to the \CSP. In this case since the \CSP is honest, \AS still gets $\epsilon$-DP output.
-However, since the output can be public, in this way the \CSP can actually compute the non-noisy answer.
-Thus from the \AS's perspective it is gaining nothing itself but rather revealing the non-noisy answer to a third party \CSP - a lose-lose situation for the \AS. Hence by a game theoretic argument, we observe that adding noise is the Nash equilibrium (Table \ref{tab:Malicous_AS}) in this case.
-Note that the case of adding less noise, (i.e. adding noise drawn from $Lap(\frac{1}{\epsilon'})$ while reporting a privacy budget of $\epsilon$, $\epsilon' > \epsilon$) is very similar to that of adding no noise.
+ However, it might try to violate privacy. In \system we have two measurement operators namely \textsf{Laplace} and \textsf{NoisyMax}. Since \textsf{NoisyMax} is implemented via a garbled circuit, the corresponding maliciously secure implementation can be obtained from standard approaches \cite{Wang:2017:AGE:3133956.3134053}. Hence, for the rest of the section, we limit ourselves to the \textsf{Laplace} operator. For this, the \AS might try to violate privacy by not adding noise to the cipher of the true answer before sending it to the \CSP. In this case since the \CSP is honest, \AS still gets $\epsilon$-DP output.
+However, since the output can be public, the \CSP can compute the non-noisy answer.
+Thus from the \AS's perspective it is \eat{gaining nothing itself but rather revealing the non-noisy answer to a third party \CSP - } a lose-lose situation for the \AS. Hence by a game theoretic argument, we observe that adding noise is the Nash equilibrium %(Table \ref{tab:Malicous_AS}) 
+in this case.
+Note that the case of adding less noise, (i.e. adding noise drawn from $Lap(\frac{1}{\epsilon'})$ while reporting a privacy budget of $\epsilon$, $\epsilon' > \epsilon$) is  similar to that of adding no noise.
 Overall privacy budget violation is disallowed by the honest \CSP who monitors all the budget expenditures via the public ledger.
-\begin{table}\caption{Gain Table for Malicious AS}
+\eat{\begin{table}\caption{Gain Table for Malicious AS}
 \begin{tabular}{|l|l|}
 \hline
 AS(M)\textbackslash CSP(H) & Add noise\\
@@ -60,20 +84,18 @@ AS(M)\textbackslash CSP(H) & Add noise\\
  \hline
 \end{tabular}\label{tab:Malicous_AS}
 \end{table}
+}
 
 \stitle{Malicious \CSP:}
-As discussed in Section 3, the \CSP maintains a public ledger with the following information
-\begin{enumerate}\item  total privacy budget $\epsilon^B$ which is publicly known
-\item the privacy budget $\epsilon$ used up every time the \AS submits a cipher for decryption
-\end{enumerate}
-Since the ledger is public, the \AS can verify whether the per program reported privacy budget is correct and raise a flag otherwise. This prevents any disparities in the privacy budget allocation.
-
+As discussed in Section 3, the \CSP maintains a public ledger with the following information\\
+(1) total privacy budget $\epsilon^B$ which is publicly known
+\\(2) the privacy budget $\epsilon$ used up every time the \AS submits a cipher for decryption\\
+Since the ledger is public, the \AS can verify whether the per program reported privacy budget is correct preventing any disparities in the privacy budget allocation.
 For the other cases, a malicious \CSP can be accounted for in two ways --\\
-(1) \stitle{Joint Laplace Noise Generation: } Instead of having  both the servers, \textsf{AS} and \textsf{CSP} add two separate instances of Laplace noise to the true answer, we can jointly compute a single instance of the Laplace noise in \system via a SMPC protocol ~\cite{Djoin,DworkOurData}. For this, the \CPS generates a garbled circuit that takes one $l$-bit random string from \CPS and \AS each as an input, denoted by $S_1$ and $S_2$ respectively. This circuit performs $S=S_1 xor S_2$  and uses it to generate an instance of random noise, $\eta$ drawn from the distribution $Lap(\frac{1}{\epsilon})$ following the fundamental law of transformation of probabilities.
-Last, the circuit encrypts $\eta$ and returns $\boldsymbol{\eta}=labEnc_{pk}(\eta)$. 
-The \AS can now simple add $\boldsymbol{\eta}$ to the cipher of the true answer and send it over to the \CSP for decryption. A malicious \CSP might attempt at incorrectly decrypting the ciphers. However, this can be circumvented by standard techniques which involves the \CSP to efficiently prove the validity of the decryption in zero knowledge to the \AS.\\
-(2) \stitle{Trusted Execution Environment (TEE): } Another alternative approach can be removing a separate physical server for the \CSP altogether and instead implementing it on a TEE \cite{Boneh2,Prochlo,Aïmeur2008}. All the required functionalities of the \CSP like receive a cipher and encrypt it correctly using stored secret key, adding noise drawn from correct distribution etc can be captured in the TEE and its validity can be verified and attested to by the data owners.
-\\Note that the violation of integrity by a malicious \CSP for the $genLabMult$ function can also be prevented by standard zero knowledge proofs.
+(1) \stitle{Joint Laplace Noise Generation: } Instead of having  both the servers, \textsf{AS} and \textsf{CSP} add two separate instances of Laplace noise to the true answer, we can jointly compute a single instance of the Laplace noise in \system via a SMPC protocol ~\cite{Djoin,DworkOurData}. For this, the \CPS generates a garbled circuit that generates an instance of random noise, $\eta \sim Lap(\frac{1}{\epsilon})$ using the fundamental law of transformation of probabilities and returns $\boldsymbol{\eta}=labEnc_{pk}(\eta)$. 
+The \AS can now simply add $\boldsymbol{\eta}$ to the cipher of the true answer and send it to the \CSP for decryption. A malicious \CSP could decrypt the ciphers incorrectly. However, this can be circumvented by standard techniques which involves the \CSP to efficiently prove the validity of the decryption in zero knowledge to the \AS.\\
+(2) \stitle{Trusted Execution Environment (TEE): } Another approach can be removing a separate physical server for the \CSP altogether and instead capturing all its functionalities in a TEE \cite{Boneh2,Prochlo,Aïmeur2008}. The validity of each of \CSP's actions can be verified and attested to by the data owners in a TEE.
+%\\Note that the violation of integrity by a malicious \CSP for the $genLabMult$ function can also be prevented by standard zero knowledge proofs.
 %Hence, this approach adds just one instance of the Laplace noise, resulting the same accuracy guarantee as the \textsf{CDP} model. However owing to the garbled circuit, this implementation is computationally heavier. Therefore, we choose the two phase noise addition implementation for \system in this paper.For our \system setting, we assume that there is no harm in \CSP learning the final $\epsilon$-DP output but the \CSP has no dedicated use for the $\epsilon$-DP statistic (Section 3). Hence it has no incentive to cheat for the sake of getting a non-noisy output, i.e., violate privacy. The only scenario when the \CSP can be incentivized to cheat is when the \CSP has it in for the\ AS, i.e, it has some personal agenda in screwing up \AS's computations and wants the \AS to get incorrect output. Now, if the \CSP violates privacy, i.e., by not adding noise to the output, then again the \CSP still learns $\epsilon$-DP output but the \AS can now learn true answer. Given our above assumption, the \CSP thus has no incentive in aiding the \AS to learn the true output (Table \ref{tab:Malicous_CSP}). 
 \begin{comment}\begin{table}\caption{Gain Table for Malicious \CSP}
 \begin{tabular}{|l|l|}

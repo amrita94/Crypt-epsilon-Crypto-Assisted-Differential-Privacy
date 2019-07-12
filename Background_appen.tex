@@ -1,0 +1,20 @@
+\section{Background Cntd.} \label{app:background}
+The \emph{stability} of a transformation operation is defined as
+\begin{definition}\label{def:stability}
+A transformation $\mathcal{T}$ is defined to be $t$-stable if for two datasets $D$ and $D'$, we have\begin{gather}|\mathcal{T}(D)\ominus \mathcal{T}(D')| \leq t \cdot |D\ominus D'|  \end{gather} where  (i.e.,  $D \ominus D' = (D-D') \cup (D'-D)$. \end{definition}
+Transformations with bounded stability scale the DP guarantee of their outputs, by their stability constant \cite{PINQ}.
+\begin{theorem}\label{theorem:stability}
+If $\mathcal{T}$ is an arbitrary $t$-stable transformation on dataset $D$ and $\mathcal{A}$ is an $\epsilon$-DP algorithm  which takes output of $\mathcal{T}$ as input, the composite computation $\mathcal{A} \circ \mathcal{T}$ provides $(\epsilon \cdot t)$-DP.\end{theorem}
+\stitle{Labeled Homomorphic Encryption(\textsf{labHE}).}
+Let $(Gen,$\\
+$Enc,Dec)$ be an \textsf{LHE} scheme with security parameter $\kappa$ and message space $\mathcal{M}$. Assume that a multiplication operation exists in $\mathcal{M}$, i.e., is a finite ring. Let $\mathcal{F}:\{0,1\}^s \times \mathcal{L}\rightarrow \mathcal{M}$ be a pseudo-random function with seed space $\{0,1\}^s$( s= poly($\kappa $)) and the label space $\mathcal{L}$. A \textsf{labHE} scheme is defined as
+\squishlist
+ \item $\textbf{labGen}(\kappa):$ Runs $Gen(\kappa)$ and outputs $(sk,pk)$.
+\item $\textbf{localGen}(pk):$ For each user $i$ and with the public key as input, it samples a random seed $\sigma_i \in \{0,1\}^s$ and computes $pk_i = Enc_{pk}(\underline{\sigma_i})$ where $\underline{\sigma_i}$ is an  encoding of $\sigma_i$ as an  element of $\mathcal{M}$. It outputs $(\sigma_i,pk_i)$.
+\item $\textbf{labEnc}_{pk}(\sigma_i, m , \tau):$ On input a message $m \in \mathcal{M} $ with label $\tau \in \mathcal{L}$  from user $i$, it computes $b=\mathcal{F}(\sigma_i, \tau)$ (mask) and outputs the labeled ciphertext $\mathbf{c}=(a,d) \in \mathcal{M} \times \mathcal{C}$ with $ a= m- b$  (hidden message) in $\mathcal{M}$ and $d=Enc_{pk}(b)$. For brevity we just use notation $\textbf{labEnc}_{pk}(m)$ to denote the above functionality, in the rest of paper. 
+\item $\textbf{labDec}_{sk}(\mathbf{c}):$ This functions inputs a cipher $\mathbf{c}=(a,d) \in \mathcal{M} \times \mathcal{C}$  and decrypts it as $m=a-Dec_{sk}(d)$.\squishend
+%\textsf{LHE} and \textsf{labHE} provides semantic security guarantee \cite{Katz}. In addition to the operations supported by an \textsf{LHE}  scheme, \textsf{labHE} supports multiplication of two \textsf{labHE} ciphers. 
+\squishlist
+\item $\textbf{labMult}(\mathbf{c}_1,\mathbf{c}_2)$ - On input two \textsf{labHE} ciphers $\mathbf{c}_1=(a_1,d_1)$ and $\mathbf{c}_2=(a_2,d_2)$, it computes a "multiplication" ciphertext  $\mathbf{e}=labMult(\mathbf{c_1,}$ $\mathbf{c_2})=Enc_{pk}(a_1,a_2)\oplus cMult(d_1,a_2) \oplus cMult(d_2,a_1)$. Observe that $Dec_{sk}(\mathbf{e})=m_1\cdot m_2 -b_1 \cdot b_2$.
+\item $\textbf{labMultDec}_{sk}(d_1,d_2,\mathbf{e})$ - On input two encrypted masks $d_1,d_2$ of two \textsf{labHE} ciphers $\mathbf{c_1},\mathbf{c_2}$, this algorithm decryts the output $\mathbf{e}$ of $labMult(\mathbf{c_1},\mathbf{c_2})$ as $m_3=Dec_{sk}(\mathbf{e})+Dec_{sk}(d_1)\cdot Dec_{sk}(d_2)$ which is equals to $m_1\cdot m_2$.   
+\squishend

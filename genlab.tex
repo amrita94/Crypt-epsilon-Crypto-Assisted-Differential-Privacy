@@ -1,0 +1,32 @@
+\subsection{\textbf{General $n$-way Multiplication for \textsf{labHE}}}\label{genlab_appen}
+The $labMult()$ operator of a \textsf{labHE} scheme allows the multiplication of two ciphers.
+However, it cannot be used directly for a $n$-way muplication where $n>2$.  It is so because the "multiplication" cipher $\mathbf{e}=labMult(\mathbf{c_1},\mathbf{c_2})$ does not have  a corresponding label, i.e., it is not in the correct \textsf{labHE} cipher representation. Hence we propose Algorithm~\ref{algo:genlabmult} to generate a label $\tau'$ and a seed $b'$ for every intermediary product of two multiplicands so that it we can do a generic $n$-way multiplication on the ciphers. Note that the mask $r$ protects the value of $(m_1\cdot m_2)$ from the \textsf{CSP} (Step 3) and $b'$ hides $(m_1\cdot m_2)$ from the \textsf{AS} (Step 6). 
+For example, suppose we want to multiply the respective ciphers of  $4$ messages $\{m_1,m_2,m_3,m_4\} \in \mathcal{M}^4$ and obtain $\mathbf{e}=labEnc_{pk}(m_1\cdot m_2\cdot m_3 \cdot m_4)$. For this, the \textsf{AS} first generates $\mathbf{e_{1,2}}=labEnc_{pk}(m_1\cdot m_2)$ and $\mathbf{e_{3,4}}=labEnc_{pk}(m_3\cdot m_4)$ using Algorithm~\ref{algo:genlabmult}. Both operations can be done in parallel in just one interaction round between the \textsf{AS} and the \textsf{CSP}. In the next round,  the \textsf{AS} can again use Algorithm~\ref{algo:genlabmult} with inputs $\mathbf{e_{1,2}}$ and $\mathbf{e_{3,4}}$ to obtain the final answer $\mathbf{e}$. %consider a case of mu Now with the true \textsf{labHE} cipher $\mathbf{c}=(a',d')$ for the product the \textsf{AS} can compute further multiplications on it. 
+Thus for a generic $n-way$ multiplication the order of multiplication can be, in fact, parallelized as  shown in Figure ~\ref{genlab-fig} to require a total of $\lceil \log n\rceil$ rounds of communication with the \textsf{CSP}.
+\begin{algorithm}[b]
+\caption{$genLabMult$ - generate label for $labMult$}\label{algo:genlabmult}
+\small
+\begin{algorithmic}[1]
+\STATEx
+\textbf{Input}: $\mathbf{c_1}=(a_1,d_1)=labEnc_{pk}(m_1)$ and $\mathbf{c_2}=labEnc_{pk}(m_2)$ 
+\STATEx where $a_1= m_1-b_1, d_1=Enc_{pk}(b_1)$, $a_2= m_2-b_2, d_2=Enc_{pk}(b_2)$
+\STATEx \textbf{Output}: $\mathbf{e}=labEnc_{pk}(m_1\cdot m_2)$
+\STATEx \textbf{\textsf{AS}:} 
+\STATE Computes $\textbf{e}'=labMult(\mathbf{c_1,c_2}) \oplus Enc_{pk}(r)$ where $r$ is a random mask 
+\STATEx  //$e'$ corresponds to $m_1\cdot m_2-b_1\cdot b_2+r$
+\STATE Sends $\mathbf{e'},d_1,d_2$ to \textsf{CSP}
+\STATEx \textbf{\textsf{CSP}:}
+\STATE Computes $e''= Dec_{sk}(\mathbf{e'}) + Dec_{sk}(d_1)\cdot Dec_{sk}(d_2)$
+\STATEx //$e''$ corresponds to $m_1\cdot m_2 + r$ 
+%\STATE Decrypts $\mathbf{e'}$, to get $Dec_{sk}(\mathbf{e}')=m_1\cdot m_2 -b_2\cdot b_1 + r$
+%\STATE Computes $b_1 \cdot b_2$ from $d_1$ and $d_2$.
+%\STATE Removes $b_1\cdot b_2$ from $e'$ to compute $e''=m_1\cdot m_2+r$
+\STATE Picks a seed $\sigma'$ and label $\tau'$ and computes $b'=\mathcal{F}(\sigma',\tau')$ 
+%\STATE Computes $\bar{a}=e''-b'=m_1\cdot m_2 +r -b'$,  and $d'=Enc_{pk}(b')$
+\STATE Sends $\bar{e}=(\bar{a},d')$ to \textsf{AS}, where $\bar{a} = e''-b'$ and $d' = Enc_{pk}(b')$
+\STATEx //$\bar{a}$ corresponds to $m_1\cdot m_2 + r-b'$.
+\STATEx \textbf{\textsf{AS}:}
+\STATE Computes true cipher $\mathbf{e}=(a',d')$ where $a'=\bar{a}-r$ %m_1\cdot m_2 - b'$
+ \end{algorithmic}
+\end{algorithm}
+
